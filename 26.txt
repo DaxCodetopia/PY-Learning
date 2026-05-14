@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>While Loops</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            overflow-y: auto;
+            min-height: 100vh;
+        }
+        
+        /* Custom scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #1a1a2e;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #4ec9b0, #9cdcfe);
+            border-radius: 6px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #3db8a0, #7db9e0);
+        }
+        
+        /* Scroll buttons */
+        .scroll-buttons {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 100;
+        }
+        
+        .scroll-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(40, 44, 52, 0.8);
+            border: none;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .scroll-btn:hover {
+            background: rgba(78, 201, 176, 0.7);
+            transform: scale(1.1);
+        }
+        
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            margin: 0 auto;
+            padding-bottom: 40px;
+        }
+    .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .header {
+            padding: 40px 70px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .slide-header {
+            padding: 50px 70px 30px;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+    .content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: 0 70px 40px;
+            gap: 20px;
+        }
+        .slide-content {
+            flex-grow: 1;
+            display: flex;
+            padding: 0 70px 50px;
+            gap: 30px;
+        }
+        .content-container {
+            display: flex;
+            width: 100%;
+            gap: 30px;
+        }
+        .left-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .right-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .loop-card {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .loop-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .basics-card {
+            border-left: 4px solid #4ec9b0;
+        }
+        .control-card {
+            border-left: 4px solid #dcdcaa;
+        }
+        .examples-card {
+            border-left: 4px solid #c586c0;
+        }
+        .tips-card {
+            border-left: 4px solid #9cdcfe;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-icon {
+            font-size: 28px;
+        }
+        .basics-card .card-icon {
+            color: #4ec9b0;
+        }
+        .control-card .card-icon {
+            color: #dcdcaa;
+        }
+        .examples-card .card-icon {
+            color: #c586c0;
+        }
+        .tips-card .card-icon {
+            color: #9cdcfe;
+        }
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #d4d4d4;
+        }
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+        }
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .point-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .point-icon {
+            font-size: 20px;
+            margin-top: 3px;
+        }
+        .basics-card .point-icon {
+            color: #4ec9b0;
+        }
+        .control-card .point-icon {
+            color: #dcdcaa;
+        }
+        .examples-card .point-icon {
+            color: #c586c0;
+        }
+        .tips-card .point-icon {
+            color: #9cdcfe;
+        }
+        .point-text {
+            font-size: 20px;
+            line-height: 1.4;
+            color: #cccccc;
+        }
+        .key-concept {
+            display: inline-block;
+            background-color: rgba(78, 201, 176, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin: 0 2px;
+            color: #4ec9b0;
+            font-weight: 500;
+        }
+        .control-card .key-concept {
+            background-color: rgba(220, 220, 170, 0.2);
+            color: #dcdcaa;
+        }
+        .examples-card .key-concept {
+            background-color: rgba(197, 134, 192, 0.2);
+            color: #c586c0;
+        }
+        .tips-card .key-concept {
+            background-color: rgba(156, 220, 254, 0.2);
+            color: #9cdcfe;
+        }
+        .code-example {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 18px;
+            color: #cccccc;
+            line-height: 1.5;
+            overflow: auto;
+            flex-grow: 1;
+        }
+        .keyword {
+            color: #569cd6;
+        }
+        .function {
+            color: #dcdcaa;
+        }
+        .string {
+            color: #ce9178;
+        }
+        .comment {
+            color: #608b4e;
+        }
+        .number {
+            color: #b5cea8;
+        }
+        .python-logo {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 10s linear infinite;
+        }
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .code-decoration {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            opacity: 0.6;
+            padding: 20px;
+            overflow: hidden;
+        }
+        .code-line {
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+        .flow-visual {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 15px 0;
+        }
+        .flow-step {
+            width: 120px;
+            height: 60px;
+            background-color: rgba(86, 156, 214, 0.2);
+            border: 2px solid #569cd6;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 600;
+            color: #d4d4d4;
+            position: relative;
+        }
+        .flow-step::after {
+            content: "→";
+            position: absolute;
+            right: -25px;
+            color: #569cd6;
+            font-size: 24px;
+        }
+        .flow-step:last-child::after {
+            content: "";
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-buttons">
+        <button class="scroll-btn" id="scrollUpBtn">
+            <i class="material-icons">keyboard_arrow_up</i>
+        </button>
+        <button class="scroll-btn" id="scrollDownBtn">
+            <i class="material-icons">keyboard_arrow_down</i>
+        </button>
+    </div>
+    
+    <div class="slide">
+        <div class="slide-header">
+            <div class="title">While Loops</div>
+        </div>
+        <div class="slide-content">
+            <div class="content-container">
+                <div class="left-column">
+                    <div class="loop-card basics-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">loop</i>
+                            <div class="card-title">While Loop Basics</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Executes code <span class="key-concept">repeatedly</span> while condition is true</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Checks condition <span class="key-concept">before</span> each iteration</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Useful when <span class="key-concept">unknown</span> number of iterations</div>
+                                </div>
+                            </div>
+                            <div class="flow-visual">
+                                <div class="flow-step">Check Condition</div>
+                                <div class="flow-step">Execute Code</div>
+                                <div class="flow-step">Repeat</div>
+                            </div>
+                            <div class="code-example">
+                                <span class="comment"># Basic while loop syntax</span><br>
+                                count = <span class="number">0</span><br><br>
+                                
+                                <span class="keyword">while</span> count < <span class="number">5</span>:<br>
+                                &nbsp;&nbsp;<span class="function">print</span>(<span class="string">f"Count: {count}"</span>)<br>
+                                &nbsp;&nbsp;count += <span class="number">1</span><br><br>
+                                
+                                <span class="comment"># Output:</span><br>
+                                <span class="comment"># Count: 0</span><br>
+                                <span class="comment"># Count: 1</span><br>
+                                <span class="comment"># Count: 2</span><br>
+                                <span class="comment"># Count: 3</span><br>
+                                <span class="comment"># Count: 4</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="loop-card control-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">settings</i>
+                            <div class="card-title">Loop Control</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">break</span> - Exit loop immediately</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">continue</span> - Skip current iteration</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">else</span> - Execute when loop completes normally</div>
+                                </div>
+                            </div>
+                            <div class="code-example">
+                                <span class="comment"># Loop control example</span><br>
+                                count = <span class="number">0</span><br><br>
+                                
+                                <span class="keyword">while</span> count < <span class="number">10</span>:<br>
+                                &nbsp;&nbsp;count += <span class="number">1</span><br>
+                                &nbsp;&nbsp;<span class="keyword">if</span> count == <span class="number">5</span>:<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">continue</span>  <span class="comment"># Skip iteration 5</span><br>
+                                &nbsp;&nbsp;<span class="keyword">if</span> count == <span class="number">8</span>:<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">break</span>     <span class="comment"># Exit loop</span><br>
+                                &nbsp;&nbsp;<span class="function">print</span>(count)<br>
+                                <span class="keyword">else</span>:<br>
+                                &nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Loop completed normally"</span>)<br><br>
+                                
+                                <span class="comment"># Output: 1, 2, 3, 4, 6, 7</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="right-column">
+                    <div class="loop-card examples-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">code</i>
+                            <div class="card-title">Practical Examples</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="code-example">
+                                <span class="comment"># Example 1: User input validation</span><br>
+                                password = <span class="string">""</span><br>
+                                <span class="keyword">while</span> <span class="keyword">not</span> password:<br>
+                                &nbsp;&nbsp;password = <span class="function">input</span>(<span class="string">"Enter password: "</span>)<br>
+                                &nbsp;&nbsp;<span class="keyword">if</span> <span class="function">len</span>(password) < <span class="number">8</span>:<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Password too short!"</span>)<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;password = <span class="string">""</span><br><br>
+                                
+                                <span class="comment"># Example 2: Number guessing game</span><br>
+                                <span class="keyword">import</span> random<br>
+                                target = random.<span class="function">randint</span>(<span class="number">1</span>, <span class="number">100</span>)<br>
+                                guess = <span class="number">0</span><br><br>
+                                
+                                <span class="keyword">while</span> guess != target:<br>
+                                &nbsp;&nbsp;guess = <span class="keyword">int</span>(<span class="function">input</span>(<span class="string">"Guess a number: "</span>))<br>
+                                &nbsp;&nbsp;<span class="keyword">if</span> guess < target:<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Too low!"</span>)<br>
+                                &nbsp;&nbsp;<span class="keyword">elif</span> guess > target:<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Too high!"</span>)<br><br>
+                                
+                                <span class="function">print</span>(<span class="string">"Correct!"</span>)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="loop-card tips-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">tips_and_updates</i>
+                            <div class="card-title">Best Practices</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Always ensure <span class="key-concept">exit condition</span> is reachable</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Avoid <span class="key-concept">infinite loops</span> unless intentional</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Use <span class="key-concept">meaningful</span> variable names</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Consider <span class="key-concept">for loops</span> for known iterations</div>
+                                </div>
+                            </div>
+                            <div class="code-example">
+                                <span class="comment"># Simulating do-while loop</span><br>
+                                <span class="keyword">while</span> <span class="keyword">True</span>:<br>
+                                &nbsp;&nbsp;user_input = <span class="function">input</span>(<span class="string">"Continue? (y/n): "</span>)<br>
+                                &nbsp;&nbsp;<span class="keyword">if</span> user_input.<span class="function">lower</span>() != <span class="string">'y'</span>:<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">break</span><br>
+                                &nbsp;&nbsp;<span class="comment"># Process user input here</span><br>
+                                &nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Processing..."</span>)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="python-logo">
+            <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" style="width: 100%; height: 100%;">
+        </div>
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">def</span> <span class="function">while_loop_example</span>():</div>
+            <div class="code-line">    <span class="keyword">while</span> condition:</div>
+            <div class="code-line">        <span class="function">execute</span>()</div>
+            <div class="code-line">        <span class="keyword">if</span> exit_condition:</div>
+            <div class="code-line">            <span class="keyword">break</span></div>
+        </div>
+    </div>
+    
+    <script>
+        // Scroll functionality
+        document.getElementById('scrollUpBtn').addEventListener('click', function() {
+            window.scrollBy({
+                top: -200,
+                behavior: 'smooth'
+            });
+        });
+        
+        document.getElementById('scrollDownBtn').addEventListener('click', function() {
+            window.scrollBy({
+                top: 200,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Show/hide scroll buttons based on scroll position
+        window.addEventListener('scroll', function() {
+            const scrollUpBtn = document.getElementById('scrollUpBtn');
+            const scrollDownBtn = document.getElementById('scrollDownBtn');
+            
+            // Show up button only if not at the top
+            if (window.pageYOffset > 100) {
+                scrollUpBtn.style.opacity = '1';
+            } else {
+                scrollUpBtn.style.opacity = '0.5';
+            }
+            
+            // Show down button only if not at the bottom
+            if ((window.innerHeight + window.pageYOffset) < document.body.offsetHeight - 100) {
+                scrollDownBtn.style.opacity = '1';
+            } else {
+                scrollDownBtn.style.opacity = '0.5';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Handling in Python</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            overflow: auto;
+            min-height: 100vh;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 100vh;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: visible;
+            display: flex;
+            flex-direction: column;
+        }
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .header {
+            padding: 40px 70px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .slide-header {
+            padding: 30px 70px 20px;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+        .content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: 0 70px 40px;
+            gap: 20px;
+        }
+
+        .slide-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 0 70px 50px;
+            gap: 30px;
+        }
+        .content-container {
+            display: flex;
+            width: 100%;
+            gap: 30px;
+        }
+        .left-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .right-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .io-card {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .io-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .open-card {
+            border-left: 4px solid #4ec9b0;
+        }
+        .read-card {
+            border-left: 4px solid #dcdcaa;
+        }
+        .write-card {
+            border-left: 4px solid #c586c0;
+        }
+        .append-card {
+            border-left: 4px solid #569cd6;
+        }
+        .video-card {
+            border-left: 4px solid #ff6b6b;
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .video-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-icon {
+            font-size: 28px;
+        }
+        .open-card .card-icon {
+            color: #4ec9b0;
+        }
+        .read-card .card-icon {
+            color: #dcdcaa;
+        }
+        .write-card .card-icon {
+            color: #c586c0;
+        }
+        .append-card .card-icon {
+            color: #569cd6;
+        }
+        .video-card .card-icon {
+            color: #ff6b6b;
+        }
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #d4d4d4;
+        }
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+        }
+        .code-example {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 16px;
+            color: #cccccc;
+            line-height: 1.5;
+            overflow: auto;
+            max-height: 300px;
+        }
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .point-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .point-icon {
+            font-size: 20px;
+            margin-top: 3px;
+            flex-shrink: 0;
+        }
+        .open-card .point-icon {
+            color: #4ec9b0;
+        }
+        .read-card .point-icon {
+            color: #dcdcaa;
+        }
+        .write-card .point-icon {
+            color: #c586c0;
+        }
+        .append-card .point-icon {
+            color: #569cd6;
+        }
+        .video-card .point-icon {
+            color: #ff6b6b;
+        }
+        .point-text {
+            font-size: 18px;
+            line-height: 1.4;
+            color: #cccccc;
+        }
+        .key-concept {
+            display: inline-block;
+            background-color: rgba(78, 201, 176, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin: 0 2px;
+            color: #4ec9b0;
+            font-weight: 500;
+        }
+        .read-card .key-concept {
+            background-color: rgba(220, 220, 170, 0.2);
+            color: #dcdcaa;
+        }
+        .write-card .key-concept {
+            background-color: rgba(197, 134, 192, 0.2);
+            color: #c586c0;
+        }
+        .append-card .key-concept {
+            background-color: rgba(86, 156, 214, 0.2);
+            color: #569cd6;
+        }
+        .video-card .key-concept {
+            background-color: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+        }
+        .keyword {
+            color: #569cd6;
+        }
+        .function {
+            color: #dcdcaa;
+        }
+        .string {
+            color: #ce9178;
+        }
+        .comment {
+            color: #608b4e;
+        }
+        .number {
+            color: #b5cea8;
+        }
+        .python-logo {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 10s linear infinite;
+        }
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .code-decoration {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            opacity: 0.6;
+            padding: 20px;
+            overflow: hidden;
+        }
+        .code-line {
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+        .mode-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+        .mode-table th, .mode-table td {
+            padding: 6px 8px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .mode-table th {
+            color: #4ec9b0;
+            font-weight: 600;
+        }
+        .mode-table td {
+            color: #cccccc;
+        }
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 8px;
+        }
+        .video-description {
+            font-size: 16px;
+            color: #cccccc;
+            margin-top: 10px;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="slide-header">
+            <div class="title">File Handling in Python</div>
+        </div>
+        <div class="slide-content">
+            <div class="content-container">
+                <div class="left-column">
+                    <div class="io-card open-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">folder_open</i>
+                            <div class="card-title">The open() Function</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="code-example">
+                                <span class="comment"># Basic syntax: open(filename, mode)</span><br>
+                                file = <span class="function">open</span>(<span class="string">"example.txt"</span>, <span class="string">"r"</span>)<br><br>
+                                
+                                <span class="comment"># Using with statement (recommended)</span><br>
+                                <span class="keyword">with</span> <span class="function">open</span>(<span class="string">"example.txt"</span>, <span class="string">"r"</span>) <span class="keyword">as</span> file:<br>
+                                &nbsp;&nbsp;content = file.<span class="function">read</span>()<br>
+                                &nbsp;&nbsp;<span class="function">print</span>(content)
+                            </div>
+                            <table class="mode-table">
+                                <tr>
+                                    <th>Mode</th>
+                                    <th>Description</th>
+                                </tr>
+                                <tr>
+                                    <td>'r'</td>
+                                    <td>Read mode (default)</td>
+                                </tr>
+                                <tr>
+                                    <td>'w'</td>
+                                    <td>Write mode (overwrites)</td>
+                                </tr>
+                                <tr>
+                                    <td>'a'</td>
+                                    <td>Append mode</td>
+                                </tr>
+                                <tr>
+                                    <td>'r+'</td>
+                                    <td>Read and Write mode</td>
+                                </tr>
+                                <tr>
+                                    <td>'b'</td>
+                                    <td>Binary mode</td>
+                                </tr>
+                            </table>
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Use <span class="key-concept">with statement</span> for automatic file closing</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="io-card write-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">edit</i>
+                            <div class="card-title">Writing to a File</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="code-example">
+                                <span class="comment"># Writing (overwrites existing file)</span><br>
+                                <span class="keyword">with</span> <span class="function">open</span>(<span class="string">"example.txt"</span>, <span class="string">"w"</span>) <span class="keyword">as</span> file:<br>
+                                &nbsp;&nbsp;file.<span class="function">write</span>(<span class="string">"Hello, Python!\n"</span>)<br>
+                                &nbsp;&nbsp;file.<span class="function">write</span>(<span class="string">"File handling is easy.\n"</span>)<br><br>
+                                
+                                <span class="comment"># Writing multiple lines</span><br>
+                                lines = [<span class="string">"Line 1\n"</span>, <span class="string">"Line 2\n"</span>, <span class="string">"Line 3\n"</span>]<br>
+                                <span class="keyword">with</span> <span class="function">open</span>(<span class="string">"example.txt"</span>, <span class="string">"w"</span>) <span class="keyword">as</span> file:<br>
+                                &nbsp;&nbsp;file.<span class="function">writelines</span>(lines)
+                            </div>
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">'w'</span> mode creates new file or overwrites existing</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Use <span class="key-concept">write()</span> for single line, <span class="key-concept">writelines()</span> for multiple</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="right-column">
+                    <div class="io-card read-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">visibility</i>
+                            <div class="card-title">Reading from a File</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="code-example">
+                                <span class="comment"># Reading the entire file</span><br>
+                                <span class="keyword">try</span>:<br>
+                                &nbsp;&nbsp;<span class="keyword">with</span> <span class="function">open</span>(<span class="string">"example.txt"</span>, <span class="string">"r"</span>) <span class="keyword">as</span> file:<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;content = file.<span class="function">read</span>()<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(content)<br>
+                                <span class="keyword">except</span> FileNotFoundError:<br>
+                                &nbsp;&nbsp;<span class="function">print</span>(<span class="string">"The file was not found."</span>)<br><br>
+                                
+                                <span class="comment"># Reading line by line (memory efficient)</span><br>
+                                <span class="keyword">with</span> <span class="function">open</span>(<span class="string">"example.txt"</span>, <span class="string">"r"</span>) <span class="keyword">as</span> file:<br>
+                                &nbsp;&nbsp;<span class="keyword">for</span> line <span class="keyword">in</span> file:<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(line.<span class="function">strip</span>()) <span class="comment"># removes newline</span><br><br>
+                                
+                                <span class="comment"># Reading all lines into a list</span><br>
+                                <span class="keyword">with</span> <span class="function">open</span>(<span class="string">"example.txt"</span>, <span class="string">"r"</span>) <span class="keyword">as</span> file:<br>
+                                &nbsp;&nbsp;lines = file.<span class="function">readlines</span>()<br>
+                                &nbsp;&nbsp;<span class="function">print</span>(lines)
+                            </div>
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">read()</span> reads entire file as string</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">readline()</span> reads one line at a time</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">readlines()</span> returns list of all lines</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="io-card append-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">add_circle</i>
+                            <div class="card-title">Appending to a File</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="code-example">
+                                <span class="comment"># Appending to an existing file</span><br>
+                                <span class="keyword">with</span> <span class="function">open</span>(<span class="string">"example.txt"</span>, <span class="string">"a"</span>) <span class="keyword">as</span> file:<br>
+                                &nbsp;&nbsp;file.<span class="function">write</span>(<span class="string">"This line is appended.\n"</span>)<br><br>
+                                
+                                <span class="comment"># Appending with read/write mode</span><br>
+                                <span class="keyword">with</span> <span class="function">open</span>(<span class="string">"example.txt"</span>, <span class="string">"r+"</span>) <span class="keyword">as</span> file:<br>
+                                &nbsp;&nbsp;content = file.<span class="function">read</span>()<br>
+                                &nbsp;&nbsp;file.<span class="function">seek</span>(<span class="number">0</span>, <span class="number">2</span>) <span class="comment"># Move to end of file</span><br>
+                                &nbsp;&nbsp;file.<span class="function">write</span>(<span class="string">"\nNew content at the end"</span>)<br><br>
+                                
+                                <span class="comment"># Binary mode for non-text files</span><br>
+                                <span class="keyword">with</span> <span class="function">open</span>(<span class="string">"image.jpg"</span>, <span class="string">"rb"</span>) <span class="keyword">as</span> img_file:<br>
+                                &nbsp;&nbsp;data = img_file.<span class="function">read</span>()<br>
+                                &nbsp;&nbsp;<span class="function">print</span>(<span class="keyword">len</span>(data))
+                            </div>
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">'a'</span> mode adds content to end of file</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Use <span class="key-concept">'b'</span> with other modes for binary files</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- New Video Section -->
+            <div class="video-card">
+                <div class="card-header">
+                    <i class="material-icons card-icon">ondemand_video</i>
+                    <div class="card-title">C++ vs Python File Handling</div>
+                </div>
+                <div class="card-content">
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/-H3N9xEubBw" title="C++ vs Python File Handling" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="video-description">
+                        This video compares file handling approaches in C++ and Python, highlighting the differences in syntax, complexity, and functionality. See how Python's <span class="key-concept">with statement</span> simplifies file operations compared to C++'s more verbose approach.
+                    </div>
+                    <div class="key-points">
+                        <div class="point-item">
+                            <i class="material-icons point-icon">lightbulb</i>
+                            <div class="point-text">Python offers <span class="key-concept">simpler syntax</span> for file operations compared to C++</div>
+                        </div>
+                        <div class="point-item">
+                            <i class="material-icons point-icon">lightbulb</i>
+                            <div class="point-text">Both languages support similar file modes but with different syntax</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="python-logo">
+            <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" style="width: 100%; height: 100%;">
+        </div>
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">def</span> <span class="function">file_operations</span>():</div>
+            <div class="code-line">    <span class="keyword">with</span> <span class="function">open</span>(<span class="string">"data.txt"</span>, <span class="string">"w"</span>) <span class="keyword">as</span> f:</div>
+            <div class="code-line">        f.<span class="function">write</span>(<span class="string">"Python file handling"</span>)</div>
+            <div class="code-line">    <span class="keyword">return</span> <span class="string">"File operations complete"</span></div>
+        </div>
+    </div>
+</body>
+</html>

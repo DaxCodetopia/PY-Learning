@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Returning Values Using Return Statements</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: visible;
+            display: flex;
+            flex-direction: column;
+        }
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.1;
+            z-index: 0;
+        }
+        .slide-header {
+            position: relative;
+            z-index: 1;
+            padding: 30px 70px 10px;
+        }
+        .title {
+            font-size: 64px;
+            font-weight: 700;
+            text-align: center;
+            background: linear-gradient(90deg, #4CAF50, #2196F3, #9C27B0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0px 0px 30px rgba(76, 175, 80, 0.3);
+        }
+        .python-logo {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 10s linear infinite;
+            z-index: 2;
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .slide-content {
+            position: relative;
+            z-index: 1;
+            flex-grow: 1;
+            display: flex;
+            padding: 10px 70px 100px;
+            gap: 30px;
+        }
+        .content-container {
+            display: flex;
+            width: 100%;
+            gap: 30px;
+        }
+        .left-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .right-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .return-card {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .return-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .basics-card {
+            border-left: 4px solid #4ec9b0;
+        }
+        .multiple-card {
+            border-left: 4px solid #dcdcaa;
+        }
+        .early-card {
+            border-left: 4px solid #c586c0;
+        }
+        .implicit-card {
+            border-left: 4px solid #9cdcfe;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-icon {
+            font-size: 28px;
+        }
+        .basics-card .card-icon {
+            color: #4ec9b0;
+        }
+        .multiple-card .card-icon {
+            color: #dcdcaa;
+        }
+        .early-card .card-icon {
+            color: #c586c0;
+        }
+        .implicit-card .card-icon {
+            color: #9cdcfe;
+        }
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #d4d4d4;
+        }
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+        }
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .point-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .point-icon {
+            font-size: 20px;
+            margin-top: 3px;
+        }
+        .basics-card .point-icon {
+            color: #4ec9b0;
+        }
+        .multiple-card .point-icon {
+            color: #dcdcaa;
+        }
+        .early-card .point-icon {
+            color: #c586c0;
+        }
+        .implicit-card .point-icon {
+            color: #9cdcfe;
+        }
+        .point-text {
+            font-size: 20px;
+            line-height: 1.4;
+            color: #cccccc;
+        }
+        .key-concept {
+            display: inline-block;
+            background-color: rgba(78, 201, 176, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin: 0 2px;
+            color: #4ec9b0;
+            font-weight: 500;
+        }
+        .multiple-card .key-concept {
+            background-color: rgba(220, 220, 170, 0.2);
+            color: #dcdcaa;
+        }
+        .early-card .key-concept {
+            background-color: rgba(197, 134, 192, 0.2);
+            color: #c586c0;
+        }
+        .implicit-card .key-concept {
+            background-color: rgba(156, 220, 254, 0.2);
+            color: #9cdcfe;
+        }
+        .code-example {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 18px;
+            color: #cccccc;
+            line-height: 1.5;
+            overflow: auto;
+            flex-grow: 1;
+            max-height: 250px;
+        }
+        .keyword {
+            color: #569cd6;
+        }
+        .function {
+            color: #dcdcaa;
+        }
+        .string {
+            color: #ce9178;
+        }
+        .comment {
+            color: #608b4e;
+        }
+        .number {
+            color: #b5cea8;
+        }
+        .code-decoration {
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            opacity: 0.6;
+            padding: 20px 70px;
+            height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .code-line {
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="slide-header">
+            <div class="title">Returning Values Using Return Statements</div>
+        </div>
+        <div class="slide-content">
+            <div class="content-container">
+                <div class="left-column">
+                    <div class="return-card basics-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">arrow_back</i>
+                            <div class="card-title">Basic Return Statements</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Use <span class="key-concept">return</span> keyword to send back values</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Immediately <span class="key-concept">exits</span> the function</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Can return <span class="key-concept">any</span> Python object</div>
+                                </div>
+                            </div>
+                            <div class="code-example">
+                                <span class="comment"># Basic return examples</span><br>
+                                <span class="keyword">def</span> <span class="function">add</span>(a, b):<br>
+                                  <span class="keyword">return</span> a + b<br><br>
+                                
+                                <span class="keyword">def</span> <span class="function">get_name</span>():<br>
+                                  <span class="keyword">return</span> <span class="string">"Alice"</span><br><br>
+                                
+                                <span class="comment"># Using return values</span><br>
+                                result = <span class="function">add</span>(<span class="number">5</span>, <span class="number">3</span>)<br>
+                                name = <span class="function">get_name</span>()<br>
+                                <span class="function">print</span>(<span class="string">f"{name}: {result}"</span>)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="return-card multiple-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">call_split</i>
+                            <div class="card-title">Multiple Return Values</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Return <span class="key-concept">tuples</span> for multiple values</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Unpack with <span class="key-concept">multiple assignment</span></div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Can return <span class="key-concept">collections</span> like lists</div>
+                                </div>
+                            </div>
+                            <div class="code-example">
+                                <span class="comment"># Multiple return values</span><br>
+                                <span class="keyword">def</span> <span class="function">calculate_stats</span>(numbers):<br>
+                                  <span class="keyword">return</span> <span class="function">sum</span>(numbers), <span class="function">len</span>(numbers), <span class="function">max</span>(numbers)<br><br>
+                                
+                                <span class="comment"># Unpacking return values</span><br>
+                                total, count, maximum = <span class="function">calculate_stats</span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])<br><br>
+                                
+                                <span class="comment"># Returning a list</span><br>
+                                <span class="keyword">def</span> <span class="function">get_primes</span>(limit):<br>
+                                  primes = []<br>
+                                  <span class="keyword">for</span> num <span class="keyword">in</span> <span class="function">range</span>(<span class="number">2</span>, limit + <span class="number">1</span>):<br>
+                                    <span class="keyword">if</span> <span class="function">is_prime</span>(num):<br>
+                                      primes.<span class="function">append</span>(num)<br>
+                                  <span class="keyword">return</span> primes
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="right-column">
+                    <div class="return-card early-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">exit_to_app</i>
+                            <div class="card-title">Early Returns</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Use <span class="key-concept">conditional</span> returns for different paths</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Useful for <span class="key-concept">validation</span> and error handling</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Code after <span class="key-concept">return</span> is not executed</div>
+                                </div>
+                            </div>
+                            <div class="code-example">
+                                <span class="comment"># Early return examples</span><br>
+                                <span class="keyword">def</span> <span class="function">divide</span>(a, b):<br>
+                                  <span class="keyword">if</span> b == <span class="number">0</span>:<br>
+                                    <span class="keyword">return</span> <span class="string">"Cannot divide by zero"</span><br>
+                                  <span class="keyword">return</span> <span class="keyword">None</span><br><br>
+                                  <span class="keyword">return</span> a / b<br><br>
+                                
+                                <span class="comment"># Validation with early return</span><br>
+                                <span class="keyword">def</span> <span class="function">validate_age</span>(age):<br>
+                                  <span class="keyword">if</span> age < <span class="number">0</span>:<br>
+                                    <span class="keyword">return</span> <span class="keyword">False</span>, <span class="string">"Age cannot be negative"</span><br>
+                                  <span class="keyword">if</span> age > <span class="number">120</span>:<br>
+                                    <span class="keyword">return</span> <span class="keyword">False</span>, <span class="string">"Age seems unrealistic"</span><br><br>
+                                  <span class="keyword">return</span> <span class="keyword">True</span>, <span class="string">"Valid age"</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="return-card implicit-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">auto_awesome</i>
+                            <div class="card-title">Implicit Return</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Functions without <span class="key-concept">return</span> return <span class="key-concept">None</span></div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Last expression <span class="key-concept">evaluated</span> is returned</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Useful for <span class="key-concept">procedures</span> or actions</div>
+                                </div>
+                            </div>
+                            <div class="code-example">
+                                <span class="comment"># Function without explicit return</span><br>
+                                <span class="keyword">def</span> <span class="function">print_message</span>(message):<br>
+                                  <span class="function">print</span>(message)<br>
+                                  <span class="comment"># No explicit return</span><br><br>
+                                
+                                <span class="comment"># Returns None</span><br>
+                                result = <span class="function">print_message</span>(<span class="string">"Hello"</span>)<br>
+                                <span class="function">print</span>(result)  <span class="comment"># None</span><br><br>
+                                
+                                <span class="comment"># Function with side effects</span><br>
+                                <span class="keyword">def</span> <span class="function">update_global</span>():<br>
+                                  <span class="keyword">global</span> counter<br>
+                                  counter += <span class="number">1</span><br>
+                                  <span class="comment"># Returns None but has side effect</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="python-logo">
+            <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" style="width: 100%; height: 100%;">
+        </div>
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">def</span> <span class="function">function_with_return</span>():</div>
+            <div class="code-line">    <span class="comment"># Code to execute</span></div>
+            <div class="code-line">    <span class="keyword">if</span> condition:</div>
+            <div class="code-line">        <span class="keyword">return</span> value</div>
+            <div class="code-line">    <span class="keyword">else</span>:</div>
+            <div class="code-line">        <span class="keyword">return</span> other_value</div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introduction to Python Programming</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            overflow: hidden;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+	.slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .header {
+            padding: 40px 70px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .slide-header {
+            padding: 50px 70px 30px;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+	.content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: 0 70px 40px;
+            gap: 20px;
+        }
+
+        .slide-content {
+            flex-grow: 1;
+            display: flex;
+            padding: 0 70px 50px;
+        }
+        .content-container {
+            display: flex;
+            width: 100%;
+            gap: 30px;
+        }
+        .left-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .right-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .info-card {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            border-left: 4px solid #4ec9b0;
+            flex-grow: 1;
+        }
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #4ec9b0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .feature-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .feature-icon {
+            font-size: 20px;
+            color: #dcdcaa;
+            margin-top: 3px;
+        }
+        .feature-text {
+            font-size: 20px;
+            line-height: 1.4;
+            color: #cccccc;
+        }
+        .applications-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        .application-item {
+            background-color: rgba(86, 156, 214, 0.2);
+            border-radius: 6px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.2s;
+        }
+        .application-item:hover {
+            transform: translateY(-3px);
+            background-color: rgba(86, 156, 214, 0.3);
+        }
+        .app-icon {
+            font-size: 24px;
+            color: #569cd6;
+        }
+        .app-text {
+            font-size: 18px;
+            color: #d4d4d4;
+        }
+        .highlight {
+            color: #dcdcaa;
+            font-weight: 500;
+        }
+        .key-concept {
+            display: inline-block;
+            background-color: rgba(78, 201, 176, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin: 0 2px;
+            color: #4ec9b0;
+            font-weight: 500;
+        }
+        .python-logo {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 10s linear infinite;
+        }
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .code-decoration {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            opacity: 0.6;
+            padding: 20px;
+            overflow: hidden;
+        }
+        .code-line {
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+        .keyword {
+            color: #569cd6;
+        }
+        .string {
+            color: #ce9178;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="slide-header">
+            <div class="title">Introduction to Python Programming</div>
+        </div>
+        <div class="slide-content">
+            <div class="content-container">
+                <div class="left-column">
+                    <div class="info-card">
+                        <div class="card-title">
+                            <i class="material-icons">history</i>
+                            History & Overview
+                        </div>
+                        <div class="feature-list">
+                            <div class="feature-item">
+                                <i class="material-icons feature-icon">event</i>
+                                <div class="feature-text">Created by <span class="key-concept">Guido van Rossum</span> in <span class="highlight">1989</span></div>
+                            </div>
+                            <div class="feature-item">
+                                <i class="material-icons feature-icon">event</i>
+                                <div class="feature-text">First released in <span class="highlight">1991</span></div>
+                            </div>
+                            <div class="feature-item">
+                                <i class="material-icons feature-icon">event</i>
+                                <div class="feature-text">Named after <span class="key-concept">Monty Python's Flying Circus</span></div>
+                            </div>
+                            <div class="feature-item">
+                                <i class="material-icons feature-icon">event</i>
+                                <div class="feature-text">Open-source with <span class="key-concept">active community</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="card-title">
+                            <i class="material-icons">stars</i>
+                            Key Features
+                        </div>
+                        <div class="feature-list">
+                            <div class="feature-item">
+                                <i class="material-icons feature-icon">check_circle</i>
+                                <div class="feature-text"><span class="key-concept">Simple & Readable</span> syntax</div>
+                            </div>
+                            <div class="feature-item">
+                                <i class="material-icons feature-icon">check_circle</i>
+                                <div class="feature-text"><span class="key-concept">Interpreted</span> language</div>
+                            </div>
+                            <div class="feature-item">
+                                <i class="material-icons feature-icon">check_circle</i>
+                                <div class="feature-text"><span class="key-concept">Dynamically typed</span></div>
+                            </div>
+                            <div class="feature-item">
+                                <i class="material-icons feature-icon">check_circle</i>
+                                <div class="feature-text"><span class="key-concept">Cross-platform</span> compatibility</div>
+                            </div>
+                            <div class="feature-item">
+                                <i class="material-icons feature-icon">check_circle</i>
+                                <div class="feature-text">Extensive <span class="key-concept">standard library</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="right-column">
+                    <div class="info-card">
+                        <div class="card-title">
+                            <i class="material-icons">apps</i>
+                            Practical Applications
+                        </div>
+                        <div class="applications-grid">
+                            <div class="application-item">
+                                <i class="material-icons app-icon">web</i>
+                                <div class="app-text">Web Development</div>
+                            </div>
+                            <div class="application-item">
+                                <i class="material-icons app-icon">analytics</i>
+                                <div class="app-text">Data Science</div>
+                            </div>
+                            <div class="application-item">
+                                <i class="material-icons app-icon">psychology</i>
+                                <div class="app-text">Machine Learning</div>
+                            </div>
+                            <div class="application-item">
+                                <i class="material-icons app-icon">auto_fix_high</i>
+                                <div class="app-text">Automation</div>
+                            </div>
+                            <div class="application-item">
+                                <i class="material-icons app-icon">science</i>
+                                <div class="app-text">Scientific Computing</div>
+                            </div>
+                            <div class="application-item">
+                                <i class="material-icons app-icon">gamepad</i>
+                                <div class="app-text">Game Development</div>
+                            </div>
+                            <div class="application-item">
+                                <i class="material-icons app-icon">cloud</i>
+                                <div class="app-text">Cloud Computing</div>
+                            </div>
+                            <div class="application-item">
+                                <i class="material-icons app-icon">security</i>
+                                <div class="app-text">Cybersecurity</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="card-title">
+                            <i class="material-icons">trending_up</i>
+                            Why Python?
+                        </div>
+                        <div class="feature-list">
+                            <div class="feature-item">
+                                <i class="material-icons feature-icon">speed</i>
+                                <div class="feature-text"><span class="key-concept">Rapid development</span> with less code</div>
+                            </div>
+                            <div class="feature-item">
+                                <i class="material-icons feature-icon">extension</i>
+                                <div class="feature-text">Rich <span class="key-concept">ecosystem</span> of libraries</div>
+                            </div>
+                            <div class="feature-item">
+                                <i class="material-icons feature-icon">school</i>
+                                <div class="feature-text">Beginner-<span class="key-concept">friendly</span> learning curve</div>
+                            </div>
+                            <div class="feature-item">
+                                <i class="material-icons feature-icon">business</i>
+                                <div class="feature-text">Widely used in <span class="key-concept">industry</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="python-logo">
+            <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" style="width: 100%; height: 100%;">
+        </div>
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">import</span> <span class="highlight">python</span></div>
+            <div class="code-line"><span class="keyword">print</span>(<span class="string">"Hello, World!"</span>)  # Simple, readable, powerful</div>
+            <div class="code-line"><span class="keyword">def</span> <span class="highlight">versatility</span>():</div>
+            <div class="code-line">    <span class="keyword">return</span> [<span class="string">"web"</span>, <span class="string">"data"</span>, <span class="string">"AI"</span>, <span class="string">"automation"</span>]</div>
+        </div>
+    </div>
+</body>
+</html>

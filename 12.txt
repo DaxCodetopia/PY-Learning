@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algorithm Representation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            overflow: hidden;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+	.slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .header {
+            padding: 40px 70px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .slide-header {
+            padding: 50px 70px 30px;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+	.content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: 0 70px 40px;
+            gap: 20px;
+        }
+
+        .slide-content {
+            flex-grow: 1;
+            display: flex;
+            padding: 0 70px 50px;
+            gap: 30px;
+        }
+        .content-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .representation-card {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+        }
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .flowchart-card .card-title {
+            color: #4ec9b0;
+            border-left: 4px solid #4ec9b0;
+            padding-left: 10px;
+        }
+        .pseudocode-card .card-title {
+            color: #dcdcaa;
+            border-left: 4px solid #dcdcaa;
+            padding-left: 10px;
+        }
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+        }
+        .image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            overflow: hidden;
+        }
+        .image-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 4px;
+        }
+        .symbol-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .symbol-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: rgba(78, 201, 176, 0.1);
+            padding: 10px;
+            border-radius: 6px;
+            flex: 1 0 45%;
+        }
+        .symbol-icon {
+            font-size: 24px;
+            color: #4ec9b0;
+        }
+        .symbol-text {
+            font-size: 18px;
+            color: #cccccc;
+        }
+        .pseudocode-example {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 18px;
+            color: #cccccc;
+            line-height: 1.5;
+            overflow: auto;
+            flex-grow: 1;
+        }
+        .keyword {
+            color: #569cd6;
+        }
+        .function {
+            color: #dcdcaa;
+        }
+        .string {
+            color: #ce9178;
+        }
+        .comment {
+            color: #608b4e;
+        }
+        .key-concept {
+            display: inline-block;
+            background-color: rgba(78, 201, 176, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin: 0 2px;
+            color: #4ec9b0;
+            font-weight: 500;
+        }
+        .python-logo {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 10s linear infinite;
+        }
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .code-decoration {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            opacity: 0.6;
+            padding: 20px;
+            overflow: hidden;
+        }
+        .code-line {
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="slide-header">
+            <div class="title">Algorithm Representation</div>
+        </div>
+        <div class="slide-content">
+            <div class="content-column">
+                <div class="representation-card flowchart-card">
+                    <div class="card-title">
+                        <i class="material-icons">account_tree</i>
+                        Flowcharts
+                    </div>
+                    <div class="card-content">
+                        <div class="image-container">
+                            <img src="https://sfile.chatglm.cn/images-ppt/8ef669998790.jpg" alt="Flowchart Example">
+                        </div>
+                        <div class="symbol-list">
+                            <div class="symbol-item">
+                                <i class="material-icons symbol-icon">play_arrow</i>
+                                <div class="symbol-text">Start/End</div>
+                            </div>
+                            <div class="symbol-item">
+                                <i class="material-icons symbol-icon">input</i>
+                                <div class="symbol-text">Input/Output</div>
+                            </div>
+                            <div class="symbol-item">
+                                <i class="material-icons symbol-icon">code</i>
+                                <div class="symbol-text">Process</div>
+                            </div>
+                            <div class="symbol-item">
+                                <i class="material-icons symbol-icon">call_split</i>
+                                <div class="symbol-text">Decision</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content-column">
+                <div class="representation-card pseudocode-card">
+                    <div class="card-title">
+                        <i class="material-icons">description</i>
+                        Pythonic Pseudocode
+                    </div>
+                    <div class="card-content">
+                        <div class="pseudocode-example">
+                            <span class="comment"># Algorithm to find the largest number in a list</span><br>
+                            <span class="keyword">def</span> <span class="function">find_largest</span>(numbers):<br>
+                            &nbsp;&nbsp;<span class="comment"># Check if list is empty</span><br>
+                            &nbsp;&nbsp;<span class="keyword">if not</span> numbers:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="keyword">None</span><br>
+                            <br>
+                            &nbsp;&nbsp;<span class="comment"># Initialize largest with first element</span><br>
+                            &nbsp;&nbsp;largest = numbers[0]<br>
+                            <br>
+                            &nbsp;&nbsp;<span class="comment"># Iterate through the list</span><br>
+                            &nbsp;&nbsp;<span class="keyword">for</span> num <span class="keyword">in</span> numbers:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> num > largest:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;largest = num<br>
+                            <br>
+                            &nbsp;&nbsp;<span class="keyword">return</span> largest
+                        </div>
+                        <div style="display: flex; gap: 15px; margin-top: 15px;">
+                            <div style="flex: 1; background-color: rgba(220, 220, 170, 0.1); padding: 10px; border-radius: 6px;">
+                                <div style="font-size: 18px; color: #dcdcaa; margin-bottom: 5px;">Benefits</div>
+                                <div style="font-size: 16px; color: #cccccc;">
+                                    • <span class="key-concept">Language-agnostic</span><br>
+                                    • <span class="key-concept">Easy to understand</span><br>
+                                    • <span class="key-concept">Implementation-ready</span>
+                                </div>
+                            </div>
+                            <div style="flex: 1; background-color: rgba(220, 220, 170, 0.1); padding: 10px; border-radius: 6px;">
+                                <div style="font-size: 18px; color: #dcdcaa; margin-bottom: 5px;">Pythonic Style</div>
+                                <div style="font-size: 16px; color: #cccccc;">
+                                    • <span class="key-concept">Indentation</span> for blocks<br>
+                                    • <span class="key-concept">Simple syntax</span><br>
+                                    • <span class="key-concept">Readable</span> structure
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="python-logo">
+            <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" style="width: 100%; height: 100%;">
+        </div>
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">def</span> <span class="function">algorithm_representation</span>():</div>
+            <div class="code-line">    <span class="keyword">return</span> {</div>
+            <div class="code-line">        <span class="string">"visual"</span>: <span class="string">"flowcharts"</span>,</div>
+            <div class="code-line">        <span class="string">"textual"</span>: <span class="string">"pseudocode"</span></div>
+            <div class="code-line">    }</div>
+        </div>
+    </div>
+</body>
+</html>

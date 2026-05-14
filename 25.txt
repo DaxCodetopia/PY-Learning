@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practical Programming Exercises: Logical and Relational Operators</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            /* Changed from overflow: hidden to allow scrolling */
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        .slide {
+            width: 1280px;
+            /* Changed from min-height to allow content to expand */
+            min-height: 100vh;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: visible;
+            display: flex;
+            flex-direction: column;
+        }
+    .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .header {
+            padding: 40px 70px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .slide-header {
+            padding: 50px 70px 30px;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+    .content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: 0 70px 40px;
+            gap: 20px;
+        }
+        .slide-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 0 70px 50px;
+            gap: 25px;
+        }
+        .exercises-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            flex-grow: 1;
+        }
+        .exercise-card {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .exercise-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .password-card {
+            border-left: 4px solid #4ec9b0;
+        }
+        .eligibility-card {
+            border-left: 4px solid #dcdcaa;
+        }
+        .loan-card {
+            border-left: 4px solid #c586c0;
+        }
+        .discount-card {
+            border-left: 4px solid #9cdcfe;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-icon {
+            font-size: 28px;
+        }
+        .password-card .card-icon {
+            color: #4ec9b0;
+        }
+        .eligibility-card .card-icon {
+            color: #dcdcaa;
+        }
+        .loan-card .card-icon {
+            color: #c586c0;
+        }
+        .discount-card .card-icon {
+            color: #9cdcfe;
+        }
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #d4d4d4;
+        }
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+        }
+        .exercise-desc {
+            font-size: 20px;
+            line-height: 1.4;
+            color: #cccccc;
+        }
+        .code-example {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 16px;
+            color: #cccccc;
+            line-height: 1.5;
+            overflow: auto;
+            flex-grow: 1;
+        }
+        .key-concepts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .concept-tag {
+            background-color: rgba(78, 201, 176, 0.2);
+            color: #4ec9b0;
+            font-size: 14px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: 'Source Code Pro', monospace;
+        }
+        .eligibility-card .concept-tag {
+            background-color: rgba(220, 220, 170, 0.2);
+            color: #dcdcaa;
+        }
+        .loan-card .concept-tag {
+            background-color: rgba(197, 134, 192, 0.2);
+            color: #c586c0;
+        }
+        .discount-card .concept-tag {
+            background-color: rgba(156, 220, 254, 0.2);
+            color: #9cdcfe;
+        }
+        .keyword {
+            color: #569cd6;
+        }
+        .function {
+            color: #dcdcaa;
+        }
+        .string {
+            color: #ce9178;
+        }
+        .comment {
+            color: #608b4e;
+        }
+        .number {
+            color: #b5cea8;
+        }
+        .python-logo {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 10s linear infinite;
+        }
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .code-decoration {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            opacity: 0.6;
+            padding: 20px;
+            overflow: hidden;
+        }
+        .code-line {
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+        
+        /* Scroll indicators */
+        .scroll-indicator {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 100;
+        }
+        .scroll-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: rgba(33, 150, 243, 0.7);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .scroll-btn:hover {
+            background-color: rgba(33, 150, 243, 0.9);
+            transform: scale(1.1);
+        }
+        
+        /* Custom scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(26, 26, 46, 0.5);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(33, 150, 243, 0.7);
+            border-radius: 6px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(33, 150, 243, 0.9);
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="slide-header">
+            <div class="title">Practical Programming Exercises: Logical and Relational Operators</div>
+        </div>
+        <div class="slide-content">
+            <div class="exercises-grid">
+                <div class="exercise-card password-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">password</i>
+                        <div class="card-title">Password Validator</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="exercise-desc">
+                            Create a program that validates passwords based on multiple criteria
+                        </div>
+                        <div class="code-example">
+                            <span class="keyword">def</span> <span class="function">validate_password</span>(password):<br>
+                            &nbsp;&nbsp;<span class="comment"># Check length, uppercase, digit, special character</span><br>
+                            &nbsp;&nbsp;has_length = <span class="function">len</span>(password) >= <span class="number">8</span><br>
+                            &nbsp;&nbsp;has_upper = <span class="keyword">any</span>(c.<span class="function">isupper</span>() <span class="keyword">for</span> c <span class="keyword">in</span> password)<br>
+                            &nbsp;&nbsp;has_digit = <span class="keyword">any</span>(c.<span class="function">isdigit</span>() <span class="keyword">for</span> c <span class="keyword">in</span> password)<br>
+                            &nbsp;&nbsp;has_special = <span class="keyword">any</span>(c <span class="keyword">in</span> <span class="string">"!@#$%^&*"</span> <span class="keyword">for</span> c <span class="keyword">in</span> password)<br><br>
+                            &nbsp;&nbsp;<span class="keyword">return</span> has_length <span class="keyword">and</span> has_upper <span class="keyword">and</span> has_digit <span class="keyword">and</span> has_special
+                        </div>
+                        <div class="key-concepts">
+                            <div class="concept-tag">logical operators</div>
+                            <div class="concept-tag">string methods</div>
+                            <div class="concept-tag">any()</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="exercise-card eligibility-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">how_to_reg</i>
+                        <div class="card-title">Eligibility Checker</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="exercise-desc">
+                            Create a program that checks eligibility based on multiple conditions
+                        </div>
+                        <div class="code-example">
+                            age = <span class="keyword">int</span>(<span class="function">input</span>(<span class="string">"Enter age: "</span>))<br>
+                            has_degree = <span class="function">input</span>(<span class="string">"Has degree? (y/n): "</span>).<span class="function">lower</span>() == <span class="string">'y'</span><br>
+                            experience = <span class="keyword">int</span>(<span class="function">input</span>(<span class="string">"Years of experience: "</span>))<br><br>
+                            
+                            <span class="comment"># Check eligibility for senior position</span><br>
+                            is_eligible = (age >= <span class="number">25</span> <span class="keyword">and</span> age <= <span class="number">55</span>) <span class="keyword">and</span> \\\br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;(has_degree <span class="keyword">or</span> experience >= <span class="number">5</span>)<br><br>
+                            
+                            <span class="function">print</span>(<span class="string">f"Eligible: {is_eligible}"</span>)
+                        </div>
+                        <div class="key-concepts">
+                            <div class="concept-tag">compound conditions</div>
+                            <div class="concept-tag">relational operators</div>
+                            <div class="concept-tag">user input</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="exercise-card loan-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">account_balance</i>
+                        <div class="card-title">Loan Eligibility</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="exercise-desc">
+                            Create a program that determines loan eligibility and interest rates
+                        </div>
+                        <div class="code-example">
+                            credit_score = <span class="keyword">int</span>(<span class="function">input</span>(<span class="string">"Credit score: "</span>))<br>
+                            income = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">"Monthly income: "</span>))<br>
+                            existing_loans = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">"Existing loan payments: "</span>))<br><br>
+                            
+                            <span class="comment"># Check loan eligibility</span><br>
+                            eligible = credit_score >= <span class="number">650</span> <span class="keyword">and</span> \\\br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;(income - existing_loans) > income * <span class="number">0.3</span><br><br>
+                            
+                            <span class="comment"># Determine interest rate</span><br>
+                            <span class="keyword">if</span> eligible:<br>
+                            &nbsp;&nbsp;<span class="keyword">if</span> credit_score >= <span class="number">750</span>:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;rate = <span class="number">3.5</span><br>
+                            &nbsp;&nbsp;<span class="keyword">elif</span> credit_score >= <span class="number">700</span>:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;rate = <span class="number">4.5</span><br>
+                            &nbsp;&nbsp;<span class="keyword">else</span>:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;rate = <span class="number">6.0</span><br>
+                            &nbsp;&nbsp;<span class="function">print</span>(<span class="string">f"Interest rate: {rate}%"</span>)<br>
+                            <span class="keyword">else</span>:<br>
+                            &nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Not eligible for loan"</span>)
+                        </div>
+                        <div class="key-concepts">
+                            <div class="concept-tag">nested conditions</div>
+                            <div class="concept-tag">complex logic</div>
+                            <div class="concept-tag">financial calculations</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="exercise-card discount-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">local_offer</i>
+                        <div class="card-title">Discount Calculator</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="exercise-desc">
+                            Create a program that calculates discounts based on multiple factors
+                        </div>
+                        <div class="code-example">
+                            <span class="keyword">def</span> <span class="function">calculate_discount</span>(price, is_member, is_holiday, quantity):<br>
+                            &nbsp;&nbsp;<span class="comment"># Base discount</span><br>
+                            &nbsp;&nbsp;discount = <span class="number">0</span><br><br>
+                            &nbsp;&nbsp;<span class="comment"># Apply membership discount</span><br>
+                            &nbsp;&nbsp;<span class="keyword">if</span> is_member:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;discount += <span class="number">0.1</span><br><br>
+                            &nbsp;&nbsp;<span class="comment"># Apply holiday discount</span><br>
+                            &nbsp;&nbsp;<span class="keyword">if</span> is_holiday:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;discount += <span class="number">0.15</span><br><br>
+                            &nbsp;&nbsp;<span class="comment"># Apply quantity discount</span><br>
+                            &nbsp;&nbsp;<span class="keyword">if</span> quantity >= <span class="number">10</span>:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;discount += <span class="number">0.2</span><br>
+                            &nbsp;&nbsp;<span class="keyword">elif</span> quantity >= <span class="number">5</span>:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;discount += <span class="number">0.1</span><br><br>
+                            &nbsp;&nbsp;<span class="comment"># Cap maximum discount</span><br>
+                            &nbsp;&nbsp;<span class="keyword">if</span> discount > <span class="number">0.4</span>:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;discount = <span class="number">0.4</span><br><br>
+                            &nbsp;&nbsp;<span class="keyword">return</span> price * (<span class="number">1</span> - discount)
+                        </div>
+                        <div class="key-concepts">
+                            <div class="concept-tag">compound logic</div>
+                            <div class="concept-tag">business rules</div>
+                            <div class="concept-tag">conditional calculations</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="python-logo">
+            <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" style="width: 100%; height: 100%;">
+        </div>
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">def</span> <span class="function">operator_exercises</span>():</div>
+            <div class="code-line">    exercises = [<span class="string">"password validator"</span>, <span class="string">"eligibility checker"</span>, <span class="string">"loan calculator"</span>, <span class="string">"discount calculator"</span>]</div>
+            <div class="code-line">    <span class="keyword">for</span> exercise <span class="keyword">in</span> exercises:</div>
+            <div class="code-line">        <span class="function">implement</span>(exercise)</div>
+        </div>
+    </div>
+    
+    <!-- Scroll buttons -->
+    <div class="scroll-indicator">
+        <button class="scroll-btn" id="scrollUpBtn" title="Scroll Up">
+            <i class="material-icons">keyboard_arrow_up</i>
+        </button>
+        <button class="scroll-btn" id="scrollDownBtn" title="Scroll Down">
+            <i class="material-icons">keyboard_arrow_down</i>
+        </button>
+    </div>
+    
+    <script>
+        // Scroll functionality
+        document.getElementById('scrollUpBtn').addEventListener('click', function() {
+            window.scrollBy({
+                top: -300,
+                behavior: 'smooth'
+            });
+        });
+        
+        document.getElementById('scrollDownBtn').addEventListener('click', function() {
+            window.scrollBy({
+                top: 300,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Show/hide scroll buttons based on scroll position
+        window.addEventListener('scroll', function() {
+            const scrollUpBtn = document.getElementById('scrollUpBtn');
+            const scrollDownBtn = document.getElementById('scrollDownBtn');
+            
+            // Show/hide up button
+            if (window.pageYOffset > 100) {
+                scrollUpBtn.style.opacity = '1';
+            } else {
+                scrollUpBtn.style.opacity = '0.5';
+            }
+            
+            // Show/hide down button
+            if ((window.innerHeight + window.pageYOffset) >= document.body.offsetHeight - 100) {
+                scrollDownBtn.style.opacity = '0.5';
+            } else {
+                scrollDownBtn.style.opacity = '1';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programming Process</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            overflow: hidden;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+	.slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .header {
+            padding: 40px 70px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .slide-header {
+            padding: 50px 70px 30px;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+	.content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: 0 70px 40px;
+            gap: 20px;
+        }
+        .slide-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 0 70px 50px;
+        }
+        .process-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            flex-grow: 1;
+        }
+        .process-flow {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .process-step {
+            flex: 1;
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .process-step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .process-step:nth-child(1) { border-left: 4px solid #d16969; }
+        .process-step:nth-child(2) { border-left: 4px solid #4ec9b0; }
+        .process-step:nth-child(3) { border-left: 4px solid #569cd6; }
+        .process-step:nth-child(4) { border-left: 4px solid #dcdcaa; }
+        .process-step:nth-child(5) { border-left: 4px solid #c586c0; }
+        
+        .step-icon {
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+        .process-step:nth-child(1) .step-icon { color: #d16969; }
+        .process-step:nth-child(2) .step-icon { color: #4ec9b0; }
+        .process-step:nth-child(3) .step-icon { color: #569cd6; }
+        .process-step:nth-child(4) .step-icon { color: #dcdcaa; }
+        .process-step:nth-child(5) .step-icon { color: #c586c0; }
+        
+        .step-number {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            width: 30px;
+            height: 30px;
+            background-color: #1e1e1e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            font-family: 'Source Code Pro', monospace;
+        }
+        .process-step:nth-child(1) .step-number { color: #d16969; }
+        .process-step:nth-child(2) .step-number { color: #4ec9b0; }
+        .process-step:nth-child(3) .step-number { color: #569cd6; }
+        .process-step:nth-child(4) .step-number { color: #dcdcaa; }
+        .process-step:nth-child(5) .step-number { color: #c586c0; }
+        
+        .step-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #d4d4d4;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .step-desc {
+            font-size: 18px;
+            line-height: 1.4;
+            color: #cccccc;
+            text-align: center;
+        }
+        .step-keywords {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+            justify-content: center;
+        }
+        .keyword-tag {
+            background-color: rgba(78, 201, 176, 0.2);
+            color: #4ec9b0;
+            font-size: 14px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: 'Source Code Pro', monospace;
+        }
+        .process-step:nth-child(1) .keyword-tag { background-color: rgba(209, 105, 105, 0.2); color: #d16969; }
+        .process-step:nth-child(2) .keyword-tag { background-color: rgba(78, 201, 176, 0.2); color: #4ec9b0; }
+        .process-step:nth-child(3) .keyword-tag { background-color: rgba(86, 156, 214, 0.2); color: #569cd6; }
+        .process-step:nth-child(4) .keyword-tag { background-color: rgba(220, 220, 170, 0.2); color: #dcdcaa; }
+        .process-step:nth-child(5) .keyword-tag { background-color: rgba(197, 134, 192, 0.2); color: #c586c0; }
+        
+        .process-visual {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .process-diagram {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .diagram-step {
+            width: 150px;
+            height: 80px;
+            background-color: rgba(86, 156, 214, 0.2);
+            border: 2px solid #569cd6;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 600;
+            color: #d4d4d4;
+            position: relative;
+            z-index: 2;
+        }
+        .diagram-arrow {
+            width: 50px;
+            height: 2px;
+            background-color: #569cd6;
+            position: relative;
+            z-index: 1;
+        }
+        .diagram-arrow::after {
+            content: "";
+            position: absolute;
+            right: 0;
+            top: -4px;
+            width: 0;
+            height: 0;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            border-left: 8px solid #569cd6;
+        }
+        .python-logo {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 10s linear infinite;
+        }
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .code-decoration {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            opacity: 0.6;
+            padding: 20px;
+            overflow: hidden;
+        }
+        .code-line {
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+        .highlight {
+            color: #dcdcaa;
+        }
+        .keyword {
+            color: #569cd6;
+        }
+        .string {
+            color: #ce9178;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="slide-header">
+            <div class="title">Programming Process</div>
+        </div>
+        <div class="slide-content">
+            <div class="process-container">
+                <div class="process-flow">
+                    <div class="process-step">
+                        <div class="step-number">1</div>
+                        <i class="material-icons step-icon">psychology</i>
+                        <div class="step-title">Problem Analysis</div>
+                        <div class="step-desc">Understanding requirements and constraints</div>
+                        <div class="step-keywords">
+                            <span class="keyword-tag">requirements</span>
+                            <span class="keyword-tag">constraints</span>
+                            <span class="keyword-tag">scope</span>
+                        </div>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">2</div>
+                        <i class="material-icons step-icon">account_tree</i>
+                        <div class="step-title">Algorithm Design</div>
+                        <div class="step-desc">Creating logical steps to solve the problem</div>
+                        <div class="step-keywords">
+                            <span class="keyword-tag">flowcharts</span>
+                            <span class="keyword-tag">pseudocode</span>
+                            <span class="keyword-tag">logic</span>
+                        </div>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">3</div>
+                        <i class="material-icons step-icon">code</i>
+                        <div class="step-title">Coding</div>
+                        <div class="step-desc">Translating algorithm into programming language</div>
+                        <div class="step-keywords">
+                            <span class="keyword-tag">syntax</span>
+                            <span class="keyword-tag">implementation</span>
+                            <span class="keyword-tag">Python</span>
+                        </div>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">4</div>
+                        <i class="material-icons step-icon">bug_report</i>
+                        <div class="step-title">Testing</div>
+                        <div class="step-desc">Verifying correctness and handling errors</div>
+                        <div class="step-keywords">
+                            <span class="keyword-tag">debugging</span>
+                            <span class="keyword-tag">validation</span>
+                            <span class="keyword-tag">unittest</span>
+                        </div>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">5</div>
+                        <i class="material-icons step-icon">settings</i>
+                        <div class="step-title">Maintenance</div>
+                        <div class="step-desc">Updating and improving the solution</div>
+                        <div class="step-keywords">
+                            <span class="keyword-tag">updates</span>
+                            <span class="keyword-tag">refactoring</span>
+                            <span class="keyword-tag">optimization</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="process-visual">
+                    <div class="process-diagram">
+                        <div class="diagram-step">Problem</div>
+                        <div class="diagram-arrow"></div>
+                        <div class="diagram-step">Algorithm</div>
+                        <div class="diagram-arrow"></div>
+                        <div class="diagram-step">Code</div>
+                        <div class="diagram-arrow"></div>
+                        <div class="diagram-step">Test</div>
+                        <div class="diagram-arrow"></div>
+                        <div class="diagram-step">Maintain</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="python-logo">
+            <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" style="width: 100%; height: 100%;">
+        </div>
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">def</span> <span class="highlight">programming_process</span>():</div>
+            <div class="code-line">    <span class="keyword">for</span> step <span class="keyword">in</span> [<span class="string">"analysis"</span>, <span class="string">"design"</span>, <span class="string">"coding"</span>, <span class="string">"testing"</span>, <span class="string">"maintenance"</span>]:</div>
+            <div class="code-line">        <span class="highlight">execute</span>(step)</div>
+            <div class="code-line">    <span class="keyword">return</span> <span class="string">"Solution Complete"</span></div>
+        </div>
+    </div>
+</body>
+</html>

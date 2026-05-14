@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solution Design in Python</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            overflow-x: auto;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 100vh;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: visible;
+            display: flex;
+            flex-direction: column;
+        }
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .slide-header {
+            padding: 30px 70px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #FF9800, #FF5722);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+        .slide-content {
+            flex-grow: 1;
+            display: flex;
+            padding: 0 70px 50px;
+            gap: 25px;
+            position: relative;
+            z-index: 1;
+        }
+        .exercises-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            flex-grow: 1;
+        }
+        .exercise-card {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            backdrop-filter: blur(5px);
+        }
+        .exercise-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            background-color: rgba(50, 55, 65, 0.8);
+        }
+        
+        /* New Card Styles for Solution Design */
+        .algo-card {
+            border-left: 4px solid #FF9800;
+        }
+        .struct-card {
+            border-left: 4px solid #00E676;
+        }
+        .complex-card {
+            border-left: 4px solid #E040FB;
+        }
+        .class-card {
+            border-left: 4px solid #2979FF;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-icon {
+            font-size: 28px;
+        }
+        .algo-card .card-icon { color: #FF9800; }
+        .struct-card .card-icon { color: #00E676; }
+        .complex-card .card-icon { color: #E040FB; }
+        .class-card .card-icon { color: #2979FF; }
+        
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #d4d4d4;
+        }
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+        }
+        .exercise-desc {
+            font-size: 18px;
+            line-height: 1.4;
+            color: #cccccc;
+        }
+        .code-example {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 15px;
+            color: #cccccc;
+            line-height: 1.5;
+            overflow: auto;
+            flex-grow: 1;
+            max-height: 320px;
+        }
+        .key-concepts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: auto;
+        }
+        .concept-tag {
+            background-color: rgba(255, 152, 0, 0.2);
+            color: #FF9800;
+            font-size: 14px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: 'Source Code Pro', monospace;
+        }
+        .struct-card .concept-tag {
+            background-color: rgba(0, 230, 118, 0.2);
+            color: #00E676;
+        }
+        .complex-card .concept-tag {
+            background-color: rgba(224, 64, 251, 0.2);
+            color: #E040FB;
+        }
+        .class-card .concept-tag {
+            background-color: rgba(41, 121, 255, 0.2);
+            color: #2979FF;
+        }
+        
+        /* Syntax Highlighting */
+        .keyword { color: #569cd6; }
+        .function { color: #dcdcaa; }
+        .string { color: #ce9178; }
+        .comment { color: #6a9955; }
+        .number { color: #b5cea8; }
+        .operator { color: #d4d4d4; }
+        .class-name { color: #4ec9b0; }
+        
+        .python-logo {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 10s linear infinite;
+            z-index: 1;
+            filter: drop-shadow(0 0 10px rgba(255, 152, 0, 0.3));
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .code-decoration {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            opacity: 0.6;
+            padding: 20px;
+            overflow: hidden;
+            z-index: 1;
+        }
+        .code-line {
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="slide-header">
+            <div class="title">Solution Design in Python</div>
+        </div>
+        
+        <div class="slide-content">
+            <div class="exercises-grid">
+                
+                <!-- Card 1: Algorithm Selection -->
+                <div class="exercise-card algo-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">sort</i>
+                        <div class="card-title">Algorithm Selection</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="exercise-desc">
+                            Choose the right algorithm for the task. Optimize for speed or memory based on dataset size.
+                        </div>
+                        <div class="code-example">
+                            <span class="comment"># Binary Search: O(log n) - Efficient for sorted data</span><br>
+                            <span class="keyword">def</span> <span class="function">binary_search</span>(arr, target):<br>
+                            &nbsp;&nbsp;left, right = <span class="number">0</span>, <span class="function">len</span>(arr) - <span class="number">1</span><br>
+                            &nbsp;&nbsp;<span class="keyword">while</span> left <= right:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;mid = (left + right) // <span class="number">2</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> arr[mid] == target:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> mid<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">elif</span> arr[mid] < target:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;left = mid + <span class="number">1</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">else</span>:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;right = mid - <span class="number">1</span><br>
+                            &nbsp;&nbsp;<span class="keyword">return</span> -<span class="number">1</span>
+                        </div>
+                        <div class="key-concepts">
+                            <div class="concept-tag">binary search</div>
+                            <div class="concept-tag">sorting</div>
+                            <div class="concept-tag">efficiency</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Data Structure Choice -->
+                <div class="exercise-card struct-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">storage</i>
+                        <div class="card-title">Data Structures</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="exercise-desc">
+                            Select structures based on access patterns. Use Sets for O(1) lookups, Lists for order.
+                        </div>
+                        <div class="code-example">
+                            <span class="comment"># List Lookup: O(n) - Slow for large lists</span><br>
+                            users_list = [<span class="string">"alice"</span>, <span class="string">"bob"</span>, <span class="string">"charlie"</span>]<br>
+                            <span class="keyword">if</span> <span class="string">"dave"</span> <span class="keyword">in</span> users_list:  <span class="comment"># Scans whole list</span><br>
+                            &nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Found"</span>)<br><br>
+                            
+                            <span class="comment"># Set Lookup: O(1) - Instant</span><br>
+                            users_set = {<span class="string">"alice"</span>, <span class="string">"bob"</span>, <span class="string">"charlie"</span>}<br>
+                            <span class="keyword">if</span> <span class="string">"dave"</span> <span class="keyword">in</span> users_set:  <span class="comment"># Hash map access</span><br>
+                            &nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Found"</span>)<br><br>
+                            
+                            <span class="comment"># Queue Implementation</span><br>
+                            <span class="keyword">from</span> collections <span class="keyword">import</span> deque<br>
+                            queue = <span class="function">deque</span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])<br>
+                            queue.<span class="function">append</span>(<span class="number">4</span>)  <span class="comment"># Efficient O(1)</span>
+                        </div>
+                        <div class="key-concepts">
+                            <div class="concept-tag">sets vs lists</div>
+                            <div class="concept-tag">deque</div>
+                            <div class="concept-tag">hash maps</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Time Complexity -->
+                <div class="exercise-card complex-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">speed</i>
+                        <div class="card-title">Time Complexity</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="exercise-desc">
+                            Analyze how runtime scales with input size. Avoid nested loops when possible.
+                        </div>
+                        <div class="code-example">
+                            <span class="comment"># O(n^2) - Quadratic Time (Slow)</span><br>
+                            <span class="keyword">def</span> <span class="function">find_duplicates_slow</span>(arr):<br>
+                            &nbsp;&nbsp;<span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(<span class="function">len</span>(arr)):<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">for</span> j <span class="keyword">in</span> <span class="function">range</span>(i + <span class="number">1</span>, <span class="function">len</span>(arr)):<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> arr[i] == arr[j]:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="keyword">True</span><br><br>
+                            
+                            <span class="comment"># O(n) - Linear Time (Fast)</span><br>
+                            <span class="keyword">def</span> <span class="function">find_duplicates_fast</span>(arr):<br>
+                            &nbsp;&nbsp;seen = <span class="function">set</span>()<br>
+                            &nbsp;&nbsp;<span class="keyword">for</span> num <span class="keyword">in</span> arr:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> num <span class="keyword">in</span> seen:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="keyword">True</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;seen.<span class="function">add</span>(num)<br>
+                            &nbsp;&nbsp;<span class="keyword">return</span> <span class="keyword">False</span>
+                        </div>
+                        <div class="key-concepts">
+                            <div class="concept-tag">Big O</div>
+                            <div class="concept-tag">optimization</div>
+                            <div class="concept-tag">scalability</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Object Oriented Design -->
+                <div class="exercise-card class-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">class</i>
+                        <div class="card-title">Object-Oriented Design</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="exercise-desc">
+                            Encapsulate data and behavior. Use Classes to model real-world entities and state.
+                        </div>
+                        <div class="code-example">
+                            <span class="keyword">class</span> <span class="class-name">BankAccount</span>:<br>
+                            &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">__init__</span>(self, owner, balance=<span class="number">0</span>):<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;self.owner = owner<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;self.balance = balance<br><br>
+                            
+                            &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">deposit</span>(self, amount):<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> amount > <span class="number">0</span>:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.balance += amount<br><br>
+                            
+                            &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">__str__</span>(self):<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="string">f"{self.owner}: ${self.balance}"</span><br><br>
+                            
+                            <span class="comment"># Usage</span><br>
+                            acc = <span class="class-name">BankAccount</span>(<span class="string">"Alice"</span>, <span class="number">100</span>)<br>
+                            acc.<span class="function">deposit</span>(<span class="number">50</span>)<br>
+                            <span class="function">print</span>(acc)  <span class="comment"># Alice: $150</span>
+                        </div>
+                        <div class="key-concepts">
+                            <div class="concept-tag">classes</div>
+                            <div class="concept-tag">encapsulation</div>
+                            <div class="concept-tag">state management</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        
+        <div class="python-logo">
+            <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" style="width: 100%; height: 100%;">
+        </div>
+        
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">def</span> <span class="function">design_solution</span>(requirements):</div>
+            <div class="code-line">    <span class="comment"># Select optimal algorithm</span></div>
+            <div class="code-line">    algo = <span class="function">select_algorithm</span>(requirements)</div>
+            <div class="code-line">    </div>
+            <div class="code-line">    <span class="comment"># Choose data structure</span></div>
+            <div class="code-line">    structure = <span class="function">choose_structure</span>(algo)</div>
+            <div class="code-line">    </div>
+            <div class="code-line">    <span class="comment"># Check complexity (Big O)</span></div>
+            <div class="code-line">    <span class="function">ensure_efficiency</span>(structure)</div>
+            <div class="code-line">    </div>
+            <div class="code-line">    <span class="keyword">return</span> <span class="class-name">Solution</span>(algo, structure)</div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Problem Decomposition and Analysis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            overflow: hidden;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+	.slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .header {
+            padding: 40px 70px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .slide-header {
+            padding: 50px 70px 30px;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+	.content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: 0 70px 40px;
+            gap: 20px;
+        }
+
+        .slide-content {
+            flex-grow: 1;
+            display: flex;
+            padding: 0 70px 50px;
+            gap: 30px;
+        }
+        .content-container {
+            display: flex;
+            width: 100%;
+            gap: 30px;
+        }
+        .left-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .right-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .info-card {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+        }
+        .decomposition-card {
+            border-left: 4px solid #4ec9b0;
+        }
+        .analysis-card {
+            border-left: 4px solid #dcdcaa;
+        }
+        .example-card {
+            border-left: 4px solid #c586c0;
+        }
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .decomposition-card .card-title {
+            color: #4ec9b0;
+        }
+        .analysis-card .card-title {
+            color: #dcdcaa;
+        }
+        .example-card .card-title {
+            color: #c586c0;
+        }
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+        }
+        .step-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .step-icon {
+            font-size: 20px;
+            margin-top: 3px;
+        }
+        .decomposition-card .step-icon {
+            color: #4ec9b0;
+        }
+        .analysis-card .step-icon {
+            color: #dcdcaa;
+        }
+        .example-card .step-icon {
+            color: #c586c0;
+        }
+        .step-text {
+            font-size: 20px;
+            line-height: 1.4;
+            color: #cccccc;
+        }
+        .key-concept {
+            display: inline-block;
+            background-color: rgba(78, 201, 176, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin: 0 2px;
+            color: #4ec9b0;
+            font-weight: 500;
+        }
+        .analysis-card .key-concept {
+            background-color: rgba(220, 220, 170, 0.2);
+            color: #dcdcaa;
+        }
+        .example-card .key-concept {
+            background-color: rgba(197, 134, 192, 0.2);
+            color: #c586c0;
+        }
+        .example-code {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 18px;
+            color: #cccccc;
+            line-height: 1.5;
+            overflow: auto;
+        }
+        .keyword {
+            color: #569cd6;
+        }
+        .function {
+            color: #dcdcaa;
+        }
+        .comment {
+            color: #608b4e;
+        }
+        .python-logo {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 10s linear infinite;
+        }
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .code-decoration {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            opacity: 0.6;
+            padding: 20px;
+            overflow: hidden;
+        }
+        .code-line {
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="slide-header">
+            <div class="title">Problem Decomposition and Analysis</div>
+        </div>
+        <div class="slide-content">
+            <div class="content-container">
+                <div class="left-column">
+                    <div class="info-card decomposition-card">
+                        <div class="card-title">
+                            <i class="material-icons">call_split</i>
+                            Problem Decomposition
+                        </div>
+                        <div class="card-content">
+                            <div class="step-list">
+                                <div class="step-item">
+                                    <i class="material-icons step-icon">arrow_right</i>
+                                    <div class="step-text">Break <span class="key-concept">complex problems</span> into smaller parts</div>
+                                </div>
+                                <div class="step-item">
+                                    <i class="material-icons step-icon">arrow_right</i>
+                                    <div class="step-text">Identify <span class="key-concept">independent components</span></div>
+                                </div>
+                                <div class="step-item">
+                                    <i class="material-icons step-icon">arrow_right</i>
+                                    <div class="step-text">Define <span class="key-concept">clear interfaces</span> between components</div>
+                                </div>
+                                <div class="step-item">
+                                    <i class="material-icons step-icon">arrow_right</i>
+                                    <div class="step-text">Establish <span class="key-concept">hierarchical structure</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-card analysis-card">
+                        <div class="card-title">
+                            <i class="material-icons">psychology</i>
+                            Problem Analysis
+                        </div>
+                        <div class="card-content">
+                            <div class="step-list">
+                                <div class="step-item">
+                                    <i class="material-icons step-icon">arrow_right</i>
+                                    <div class="step-text">Identify <span class="key-concept">requirements</span> and constraints</div>
+                                </div>
+                                <div class="step-item">
+                                    <i class="material-icons step-icon">arrow_right</i>
+                                    <div class="step-text">Define <span class="key-concept">inputs</span> and <span class="key-concept">outputs</span></div>
+                                </div>
+                                <div class="step-item">
+                                    <i class="material-icons step-icon">arrow_right</i>
+                                    <div class="step-text">Consider <span class="key-concept">edge cases</span> and error handling</div>
+                                </div>
+                                <div class="step-item">
+                                    <i class="material-icons step-icon">arrow_right</i>
+                                    <div class="step-text">Evaluate <span class="key-concept">performance requirements</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="right-column">
+                    <div class="info-card example-card">
+                        <div class="card-title">
+                            <i class="material-icons">code</i>
+                            Programming Example
+                        </div>
+                        <div class="card-content">
+                            <div class="example-code">
+                                <span class="comment"># Building a Calculator Application</span><br><br>
+                                <span class="comment"># Step 1: Decompose the problem</span><br>
+                                <span class="keyword">def</span> <span class="function">calculator_app</span>():<br>
+                                &nbsp;&nbsp;<span class="function">user_interface</span>()<br>
+                                &nbsp;&nbsp;<span class="function">input_processing</span>()<br>
+                                &nbsp;&nbsp;<span class="function">calculation_engine</span>()<br>
+                                &nbsp;&nbsp;<span class="function">result_display</span>()<br><br>
+                                
+                                <span class="comment"># Step 2: Analyze requirements</span><br>
+                                <span class="keyword">def</span> <span class="function">calculation_engine</span>():<br>
+                                &nbsp;&nbsp;<span class="comment"># Handle basic operations</span><br>
+                                &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">add</span>(a, b): <span class="keyword">return</span> a + b<br>
+                                &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">subtract</span>(a, b): <span class="keyword">return</span> a - b<br>
+                                &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">multiply</span>(a, b): <span class="keyword">return</span> a * b<br>
+                                &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">divide</span>(a, b): <span class="keyword">return</span> a / b <span class="keyword">if</span> b != 0 <span class="keyword">else</span> <span class="string">"Error"</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="python-logo">
+            <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" style="width: 100%; height: 100%;">
+        </div>
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">def</span> <span class="function">problem_decomposition</span>():</div>
+            <div class="code-line">    <span class="keyword">return</span> {</div>
+            <div class="code-line">        <span class="string">"identify"</span>: <span class="string">"components"</span>,</div>
+            <div class="code-line">        <span class="string">"define"</span>: <span class="string">"interfaces"</span>,</div>
+            <div class="code-line">        <span class="string">"establish"</span>: <span class="string">"hierarchy"</span></div>
+            <div class="code-line">    }</div>
+        </div>
+    </div>
+</body>
+</html>

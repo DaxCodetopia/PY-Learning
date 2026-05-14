@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Stack Masterclass & Clothing Shop Simulation</title>
+    <style>
+        /* --- CSS Variables for Theming --- */
+        :root {
+            /* Python Brand Colors (Constant) */
+            --py-blue: #3776ab;
+            --py-yellow: #ffd343;
+            
+            /* Light Theme Defaults */
+            --bg-body: #f8f9fa;
+            --bg-card: #ffffff;
+            --bg-section: #ffffff;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --border-color: #e0e0e0;
+            --input-bg: #ffffff;
+            --header-gradient: linear-gradient(135deg, var(--py-blue), #26547c);
+            
+            /* Code Block Light */
+            --code-bg: #282c34; 
+            --code-text: #abb2bf;
+            
+            /* Pros/Cons Light */
+            --pro-bg: #f0fff4;
+            --con-bg: #fff5f5;
+            
+            /* UI Accents */
+            --shadow: 0 4px 15px rgba(0,0,0,0.08);
+            --stack-container-bg: #fff;
+            --stack-border: #ccc;
+            --log-bg: #222;
+            --log-text: #0f0;
+        }
+
+        /* Dark Mode (Dark Blue Theme) */
+        body.dark-mode {
+            --bg-body: #0b1121; /* Very Dark Blue */
+            --bg-card: #152038; /* Lighter Dark Blue */
+            --bg-section: #152038;
+            --text-main: #e2e8f0; /* Off-white */
+            --text-muted: #94a3b8; /* Slate gray */
+            --border-color: #2d3b55;
+            --input-bg: #0f172a;
+            --header-gradient: linear-gradient(135deg, #1e3a8a, #0f172a);
+            
+            /* Code Block Dark (Slightly lighter than bg) */
+            --code-bg: #0f172a; 
+            --code-text: #a5b4fc;
+
+            /* Pros/Cons Dark (Muted versions) */
+            --pro-bg: rgba(34, 197, 94, 0.1);
+            --con-bg: rgba(239, 68, 68, 0.1);
+
+            /* UI Accents */
+            --shadow: 0 4px 15px rgba(0,0,0,0.3);
+            --stack-container-bg: #1e293b;
+            --stack-border: #475569;
+            --log-bg: #000000;
+            --log-text: #4ade80;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-main);
+            background-color: var(--bg-body);
+            padding-bottom: 4rem;
+        }
+
+        /* --- Layout & Typography --- */
+        header {
+            background: var(--header-gradient);
+            color: white;
+            padding: 2rem 1rem;
+            margin-bottom: 2rem;
+            /* Grid Layout for Centering */
+            display: grid;
+            grid-template-columns: 1fr auto 1fr; 
+            align-items: center;
+            position: relative;
+        }
+
+        /* Center Column: Title */
+        .header-content {
+            grid-column: 2 / 3; 
+            text-align: center;
+        }
+
+        /* Right Column: Toggle & Logo */
+        .header-right-group {
+            grid-column: 3 / 4; 
+            justify-self: end; /* Push to the right edge */
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end; 
+            gap: 15px;
+            padding-right: 10px;
+            z-index: 10;
+        }
+
+        /* Theme Toggle Container */
+        .theme-toggle-wrapper {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .theme-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .theme-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Rotating Python Logo Styles */
+        .python-logo {
+            width: 50px;
+            height: 50px;
+            animation: spin 10s linear infinite;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+        }
+
+        @keyframes spin { 
+            100% { transform: rotate(360deg); } 
+        }
+
+        header h1 { font-size: 2.2rem; margin-bottom: 0.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        header p { font-size: 1.1rem; opacity: 0.9; }
+
+        main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        section {
+            background: var(--bg-section);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        h2 { 
+            color: var(--py-blue); 
+            margin-top: 1rem; 
+            margin-bottom: 1rem; 
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        h3 { color: var(--text-main); margin-top: 1.5rem; margin-bottom: 0.8rem; font-size: 1.2rem; }
+        h4 { color: var(--py-blue); margin-top: 1rem; margin-bottom: 0.5rem; font-size: 1.05rem; }
+        p { margin-bottom: 1rem; color: var(--text-main); }
+        ul, ol { margin-left: 1.5rem; margin-bottom: 1rem; color: var(--text-main); }
+        li { margin-bottom: 0.5rem; }
+
+        /* --- Feature Boxes (Pros/Cons) --- */
+        .pros-cons-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        .pro-con-box {
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 5px solid #ccc;
+        }
+        .pros { 
+            border-left-color: var(--py-blue); 
+            background-color: var(--pro-bg); 
+        }
+        .cons { 
+            border-left-color: var(--py-yellow); 
+            background-color: var(--con-bg); 
+        }
+
+        /* --- Image Grid for Diagrams --- */
+        .diagram-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin: 1.5rem 0;
+        }
+        .diagram-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        .diagram-card:hover {
+            transform: translateY(-5px);
+        }
+        .diagram-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+            background-color: var(--bg-body);
+        }
+        .diagram-caption {
+            padding: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-align: center;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            font-weight: 500;
+        }
+
+        /* --- Code Blocks --- */
+        pre {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Syntax Highlighting */
+        .kw { color: #c678dd; font-weight: bold; } /* Keyword */
+        .str { color: #98c379; } /* String */
+        .func { color: #61afef; } /* Function */
+        .cmt { color: #5c6370; font-style: italic; } /* Comment */
+        .num { color: #d19a66; } /* Number */
+        .cls { color: #e5c07b; } /* Class */
+
+        /* --- Concept Visualizer --- */
+        .concept-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .stack-diagram {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background: var(--bg-section);
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .clothing-stack-img {
+            width: 100%;
+            max-width: 350px;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .diagram-label {
+            position: absolute;
+            right: -80px;
+            top: 20%;
+            transform: translateY(-50%);
+            background: var(--py-yellow);
+            color: #333; /* Always dark text on yellow */
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+        
+        .diagram-label::after {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            margin-top: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: transparent var(--py-yellow) transparent transparent;
+        }
+
+        /* --- Interactive Shop Styles --- */
+        .shop-interface {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .control-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .form-group { margin-bottom: 1rem; }
+
+        label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-main);
+        }
+
+        input {
+            width: 100%;
+            padding: 0.7rem;
+            background-color: var(--input-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        input:focus {
+            border-color: var(--py-blue);
+            outline: none;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-top: 1.5rem;
+        }
+
+        button {
+            width: 100%;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+
+        button:active { transform: scale(0.98); }
+
+        .btn-add { background-color: var(--py-blue); color: white; }
+        .btn-add:hover { background-color: #2b5b84; }
+
+        .btn-sell { background-color: #dc3545; color: white; }
+        .btn-sell:hover { background-color: #c82333; }
+
+        .btn-view { background-color: var(--py-yellow); color: #333; }
+        .btn-view:hover { background-color: #e6c235; }
+
+        /* Visual Stack Container */
+        .visual-stack-container {
+            background: var(--stack-container-bg);
+            border: 2px dashed var(--stack-border);
+            border-radius: 12px;
+            min-height: 400px;
+            position: relative;
+            display: flex;
+            flex-direction: column-reverse;
+            padding: 1rem 0;
+            align-items: center;
+            overflow-y: auto;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        .clothing-card {
+            width: 85%;
+            background: var(--bg-card);
+            color: var(--text-main);
+            border-left: 6px solid var(--py-blue);
+            padding: 12px;
+            margin-bottom: 8px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: dropIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-top: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* Animation Classes */
+        @keyframes dropIn {
+            from { transform: translateY(-50px) scale(0.9); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .removing {
+            animation: dropOut 0.4s forwards;
+        }
+
+        @keyframes dropOut {
+            to { transform: translateX(100px); opacity: 0; height: 0; margin-bottom: 0; padding: 0; border: none;}
+        }
+
+        .card-info h4 { margin: 0; color: var(--py-blue); font-size: 1rem; }
+        .card-info span { font-size: 0.85rem; color: var(--text-muted); }
+        .card-price { font-weight: bold; color: #28a745; font-size: 1.1rem; }
+
+        .stack-labels {
+            text-align: center;
+            font-weight: bold;
+            color: var(--text-muted);
+            margin: 0.5rem 0;
+        }
+
+        /* Log Output */
+        .system-log {
+            margin-top: 1.5rem;
+            background: var(--log-bg);
+            color: var(--log-text);
+            font-family: monospace;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            border: 1px solid #444;
+        }
+
+        .empty-stack-msg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--text-muted);
+            font-style: italic;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                /* On mobile, stack everything vertically */
+                display: flex;
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+            .header-content {
+                position: static;
+                order: 2; /* Title below controls on mobile */
+                width: 100%;
+            }
+            .header-right-group {
+                position: static;
+                width: 100%;
+                align-items: center;
+                order:1; /* Controls first */
+                justify-self: center;
+            }
+            .theme-toggle-wrapper {
+                justify-content: center;
+            }
+            .concept-grid, .shop-interface, .pros-cons-grid {
+                grid-template-columns: 1fr;
+            }
+            .diagram-label {
+                position: relative;
+                right: auto;
+                top: auto;
+                transform: none;
+                margin-top: -20px;
+                margin-bottom: 20px;
+                display: inline-block;
+            }
+            .diagram-label::after {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <!-- Middle: Title -->
+    <div class="header-content">
+        <h1>Python Stacks: The Clothing Shop</h1>
+        <p>Understanding LIFO, Stack Operations, and Practical Simulation</p>
+    </div>
+
+    <!-- Right Side: Toggle & Logo -->
+    <div class="header-right-group">
+        <!-- Theme Toggle Button -->
+        <div class="theme-toggle-wrapper">
+            <button class="theme-btn" id="themeToggle" onclick="toggleTheme()">
+                <span id="themeIcon">☀️</span> <span id="themeText">Light Mode</span>
+            </button>
+        </div>
+        
+        <!-- Rotating Python Logo SVG -->
+        <svg class="python-logo" viewBox="0 0 256 255" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="a" x1="12.959%" x2="79.639%" y1="12.039%" y2="78.201%">
+                    <stop offset="0%" stop-color="#387EB8"/>
+                    <stop offset="100%" stop-color="#366994"/>
+                </linearGradient>
+                <linearGradient id="b" x1="19.128%" x2="90.742%" y1="20.579%" y2="88.429%">
+                    <stop offset="0%" stop-color="#FFE052"/>
+                    <stop offset="100%" stop-color="#FFC331"/>
+                </linearGradient>
+            </defs>
+            <path fill="url(#a)" d="M126.916.072c-64.832 0-60.784 28.115-60.784 28.115l.072 29.128h61.868v8.745H41.631S.145 61.355.145 126.77c0 65.417 36.21 63.097 36.21 63.097h21.61v-30.356s-1.165-36.21 35.632-36.21h61.362s34.475.557 34.475-33.319V33.97S194.67.072 126.916.072zM92.802 19.66a11.12 11.12 0 0 1 11.13 11.13 11.12 11.12 0 0 1-11.13 11.13 11.12 11.12 0 0 1-11.13-11.13 11.12 11.12 0 0 1 11.13-11.13z"/>
+            <path fill="url(#b)" d="M128.757 254.126c64.832 0 60.784-28.115 60.784-28.115l-.072-29.127H127.6v-8.745h86.241s41.486 4.705 41.486-60.712c0-65.416-36.21-63.096-36.21-63.096h-21.61v30.355s1.165 36.21-35.632 36.21h-61.362s-34.475-.557-34.475 33.32v56.013s-5.235 33.897 62.518 33.897zm34.114-19.586a11.12 11.12 0 0 1-11.13-11.13 11.12 11.12 0 0 1 11.13-11.131 11.12 11.12 0 0 1 11.13 11.13 11.12 11.12 0 0 1-11.13 11.13z"/>
+        </svg>
+    </div>
+</header>
+
+<main>
+    <!-- Section 1: Concept & Theory -->
+    <section>
+        <h2>What is a Stack?</h2>
+        <div class="concept-grid">
+            <div>
+                <p>A <strong>Stack</strong> is a linear data structure that holds a linear, ordered sequence of elements. It is an <strong>Abstract Data Type (ADT)</strong>.</p>
+                <p>A Stack works on <strong>LIFO process (Last In First Out)</strong>: element that was inserted last will be removed first.</p>
+                <p>To implement Stack, it is required to maintain a <strong>pointer to the top of the Stack</strong>, which is the last element to be inserted, because we can access elements only on the top of the Stack.</p>
+                <p>A Stack can be a fixed specific size, or it can be dynamic (size can be changed dynamically). It can be represented by means of Pointers, Arrays, Structures, and Linked Lists.</p>
+            </div>
+            <div class="stack-diagram">
+                <div class="diagram-label">TOP (Most Recent)</div>
+                <!-- Colorful Clothing Stack Image -->
+                <img src="https://z-cdn-media.chatglm.cn/files/e37b933f-7255-41cb-9ddb-a1b4097967d1.png?auth_key=1878412093-80405fccb61b4615b255e8e79b37bfce-0-0eea3c17dadfb05bbb962a9e462f3977" alt="Stack of colorful clothes" class="clothing-stack-img">
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: Visualizing Stack Operations -->
+    <section>
+        <h2>Visualizing Stack Operations Properly</h2>
+        <p>Refer to the diagrams below to understand the exact mechanics of Stack operations, pointer movement, and array representation.</p>
+        
+        <div class="diagram-gallery">
+            <!-- Image 1: LIFO/Pop/Push Demo -->
+            <div class="diagram-card">
+                <img src="https://z-cdn-media.chatglm.cn/files/f0254479-05a4-4124-97c2-e47a809f3ea8.png?auth_key=1878412323-81e91822cdbc480586fb82fdf4dab31e-0-6fad119e6d693d12e0d7c8c963cf0ba2" alt="Stack LIFO and Operations">
+                <div class="diagram-caption"><strong>Push & Pop Mechanics:</strong> Visualizing the Last-In-First-Out process, Top pointer movement, and data flow.</div>
+            </div>
+
+            <!-- Image 2: Algorithms -->
+            <div class="diagram-card">
+                <img src="https://z-cdn-media.chatglm.cn/files/85242d5d-8451-4890-b727-21d1e60649cb.png?auth_key=1878412323-786b389fc3f742beb0e541e502a42ecb-0-ad205c0f1ea9714af8dce4a5629f9cfc" alt="Stack Algorithms">
+                <div class="diagram-caption"><strong>Operational Algorithms:</strong> Detailed steps for PUSH (insert), POP (delete), and PEEK, including error handling.</div>
+            </div>
+
+            <!-- Image 3: Array Representation -->
+            <div class="diagram-card">
+                <img src="https://z-cdn-media.chatglm.cn/files/8209843c-1d0f-46e4-9ae8-f25293fbfcfc.png?auth_key=1878412323-88a15712c54a4d289a7dedaac558d0d2-0-9d641293e586223bf6e1f9ffc7d7831e" alt="Stack as Array">
+                <div class="diagram-caption"><strong>Array Representation:</strong> How Stack elements map to fixed array indices (0-9).</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Applications -->
+    <section>
+        <h2>Applications of Stack</h2>
+        <ul>
+            <li><strong>Expression Evaluation:</strong> Stacks can be used for evaluating expressions consisting of operands and operators.</li>
+            <li><strong>Backtracking:</strong> Stacks can be used for Backtracking, i.e., to check parenthesis matching in an expression.</li>
+            <li><strong>Conversion:</strong> It can also be used to convert one form of expression to another form (e.g., Infix to Postfix).</li>
+            <li><strong>Memory Management:</strong> It can be used for systematic Memory Management.</li>
+        </ul>
+
+        <h2>Advantages & Disadvantages</h2>
+        <div class="pros-cons-grid">
+            <div class="pro-con-box pros">
+                <h3>Advantages</h3>
+                <ul>
+                    <li>Helps manage data in the ‘Last In First Out’ method.</li>
+                    <li>Efficient when variables are not used outside of a function.</li>
+                    <li>Allows you to control memory allocation and deallocation.</li>
+                    <li>Helps to automatically clean up objects.</li>
+                </ul>
+            </div>
+            <div class="pro-con-box cons">
+                <h3>Disadvantages</h3>
+                <ul>
+                    <li>Difficult to create many objects; increases risk of Stack Overflow.</li>
+                    <li>Has very limited memory compared to Heap.</li>
+                    <li>Random access is not possible.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: Python List Implementation -->
+    <section>
+        <h2>Representation of Stack using Python List</h2>
+        <p>In Python, <code>list</code> is used to implement a stack dynamically. The <code>append()</code> method acts as <strong>Push</strong>, and <code>pop()</code> acts as <strong>Pop</strong>.</p>
+        <pre><code><span class="cmt"># Initialize an empty stack</span>
+stock = []
+
+<span class="cmt"># PUSH: Add item to the end of the list (Top)</span>
+stock.append("T-Shirt")
+
+<span class="cmt"># POP: Remove item from the end of the list (Top)</span>
+sold_item = stock.pop()
+
+<span class="cmt"># PEEK: Check the last item without removing it</span>
+top_item = stock[-1]</code></pre>
+    </section>
+
+    <!-- Section 5: The Task (Clothing Shop Program) -->
+    <section>
+        <h2>Task: Clothing Shop Simulator</h2>
+        <p><strong>Scenario:</strong> Write a small python program that simulates a clothing shop using a stack. This program allows you to add clothing items to the stock, sell items (which removes them from the stock), and display the current stock.</p>
+        <p><em>[Demonstrates how a stack can be used to manage inventory in a shop.]</em></p>
+
+        <h3>Python Code Solution</h3>
+        <pre><code><span class="cmt"># Clothing Shop Stack Program</span>
+
+<span class="cmt"># Stack to store clothing items</span>
+stock = []
+
+<span class="cmt"># Function to push (add) item to stack</span>
+<span class="kw">def</span> <span class="func">add_item</span>():
+    <span class="func">print</span>(<span class="str">"\n--- Add Clothing Item ---"</span>)
+    
+    item_type = <span class="func">input</span>(<span class="str">"Enter clothing type: "</span>)
+    size = <span class="func">input</span>(<span class="str">"Enter size: "</span>)
+    price = <span class="func">float</span>(<span class="func">input</span>(<span class="str">"Enter price: "</span>))
+
+    <span class="cmt"># Create clothing item as a dictionary</span>
+    item = {
+        <span class="str">"Type"</span>: item_type,
+        <span class="str">"Size"</span>: size,
+        <span class="str">"Price"</span>: price
+    }
+
+    <span class="cmt"># PUSH operation</span>
+    stock.append(item)
+
+    <span class="func">print</span>(<span class="str">"Item added to stock successfully!"</span>)
+    <span class="func">print</span>(<span class="str">"Push Operation Done!"</span>)
+
+<span class="cmt"># Function to pop (sell) item from stack</span>
+<span class="kw">def</span> <span class="func">sell_item</span>():
+    <span class="func">print</span>(<span class="str">"\n--- Sell Clothing Item ---"</span>)
+
+    <span class="kw">if</span> <span class="func">len</span>(stock) == <span class="num">0</span>:
+        <span class="func">print</span>(<span class="str">"Stock is empty!"</span>)
+    <span class="kw">else</span>:
+        <span class="cmt"># POP operation</span>
+        sold_item = stock.pop()
+
+        <span class="func">print</span>(<span class="str">"Item Sold Successfully!"</span>)
+        <span class="func">print</span>(<span class="str">"Pop Operation Done!"</span>)
+        <span class="func">print</span>(<span class="str">"Sold Item Details:"</span>)
+        <span class="func">print</span>(<span class="str">"Type :"</span>, sold_item[<span class="str">"Type"</span>])
+        <span class="func">print</span>(<span class="str">"Size :"</span>, sold_item[<span class="str">"Size"</span>])
+        <span class="func">print</span>(<span class="str">"Price:"</span>, sold_item[<span class="str">"Price"</span>])
+
+<span class="cmt"># Function to display stock</span>
+<span class="kw">def</span> <span class="func">display_stock</span>():
+    <span class="func">print</span>(<span class="str">"\n--- Current Stock ---"</span>)
+
+    <span class="kw">if</span> <span class="func">len</span>(stock) == <span class="num">0</span>:
+        <span class="func">print</span>(<span class="str">"No items in stock!"</span>)
+    <span class="kw">else</span>:
+        <span class="func">print</span>(<span class="str">"Items from Top to Bottom:\n"</span>)
+
+        <span class="cmt"># Display from top of stack to bottom</span>
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="func">range</span>(<span class="func">len</span>(stock)-<span class="num">1</span>, -<span class="num">1</span>, -<span class="num">1</span>):
+            item = stock[i]
+
+            <span class="func">print</span>(<span class="str">"Type :"</span>, item[<span class="str">"Type"</span>])
+            <span class="func">print</span>(<span class="str">"Size :"</span>, item[<span class="str">"Size"</span>])
+            <span class="func">print</span>(<span class="str">"Price:"</span>, item[<span class="str">"Price"</span>])
+            <span class="func">print</span>(<span class="str">"-------------------"</span>)
+
+<span class="cmt"># Main program loop</span>
+<span class="kw">while</span> <span class="kw">True</span>:
+    <span class="func">print</span>(<span class="str">"\n====== Clothing Shop Menu ======"</span>)
+    <span class="func">print</span>(<span class="str">"1. Add Item to Stock (Push)"</span>)
+    <span class="func">print</span>(<span class="str">"2. Sell Item (Pop)"</span>)
+    <span class="func">print</span>(<span class="str">"3. Display Stock"</span>)
+    <span class="func">print</span>(<span class="str">"4. Exit"</span>)
+
+    choice = <span class="func">input</span>(<span class="str">"Enter your choice: "</span>)
+
+    <span class="kw">if</span> choice == <span class="str">"1"</span>:
+        add_item()
+
+    <span class="kw">elif</span> choice == <span class="str">"2"</span>:
+        sell_item()
+
+    <span class="kw">elif</span> choice == <span class="str">"3"</span>:
+        display_stock()
+
+    <span class="kw">elif</span> choice == <span class="str">"4"</span>:
+        <span class="func">print</span>(<span class="str">"Exiting Program..."</span>)
+        <span class="kw">break</span>
+
+    <span class="kw">else</span>:
+        <span class="func">print</span>(<span class="str">"Invalid choice! Please try again."</span>)</code></pre>
+
+        <h3>Detailed Explanation</h3>
+
+        <h4>1. Clothing Item Structure</h4>
+        <p>Each clothing item stores specific details in a <strong>Dictionary</strong>:</p>
+        <ul>
+            <li>Clothing Type</li>
+            <li>Size</li>
+            <li>Price</li>
+        </ul>
+        <pre><code><span class="kw">item</span> = {
+    <span class="str">"Type"</span>: <span class="str">"T-Shirt"</span>,
+    <span class="str">"Size"</span>: <span class="str">"M"</span>,
+    <span class="str">"Price"</span>: <span class="num">2500</span>
+}</code></pre>
+
+        <h4>2. Stack for Stock Management</h4>
+        <p>The program uses a stack to manage stock:</p>
+        <pre><code><span class="kw">stock</span> = []</code></pre>
+        <p>A stack follows the rule: <strong>LIFO (Last In First Out)</strong>. This means the last item added is the first item sold.</p>
+
+        <h4>3. Push Operation (Adding Item)</h4>
+        <p>When new stock arrives, the program uses <code>append()</code>:</p>
+        <pre><code><span class="kw">stock</span>.append(item)</code></pre>
+        <p>This is called a <strong>Push Operation</strong>. The item is added to the top of the stack.</p>
+
+        <h4>4. Pop Operation (Selling Item)</h4>
+        <p>When an item is sold, the program uses <code>pop()</code>:</p>
+        <pre><code><span class="kw">sold_item</span> = <span class="kw">stock</span>.pop()</code></pre>
+        <p>This is called a <strong>Pop Operation</strong>. The most recently added item is removed from the stack.</p>
+
+        <h4>5. Displaying Current Stock</h4>
+        <p>The program shows items from <strong>Top → Bottom</strong> using a reversed loop:</p>
+        <pre><code><span class="kw">for</span> i <span class="kw">in</span> <span class="func">range</span>(<span class="func">len</span>(stock)-<span class="num">1</span>, -<span class="num">1</span>, -<span class="num">1</span>):</code></pre>
+
+        <h3>Example Run</h3>
+        <pre style="background: var(--code-bg); color: var(--text-main); border: 1px solid var(--border-color);">
+====== Clothing Shop Menu ======
+1. Add Item to Stock (Push)
+2. Sell Item (Pop)
+3. Display Stock
+4. Exit
+
+Enter your choice: 1
+
+--- Add Clothing Item ---
+Enter clothing type: T-Shirt
+Enter size: M
+Enter price: 2500
+
+Item added to stock successfully!
+Push Operation Done!
+
+Selling:
+
+Enter your choice: 2
+
+--- Sell Clothing Item ---
+
+Item Sold Successfully!
+Pop Operation Done!
+Sold Item Details:
+Type : T-Shirt
+Size : M
+Price: 2500
+        </pre>
+
+        <h3>Concepts Used</h3>
+        <ul>
+            <li><strong>Variables</strong></li>
+            <li><strong>Lists</strong> (as Stack)</li>
+            <li><strong>Functions</strong></li>
+            <li><strong>Dictionaries</strong></li>
+            <li><strong>Stack Data Structure</strong></li>
+            <li><strong>Push Operation</strong></li>
+            <li><strong>Pop Operation</strong></li>
+            <li><strong>Loops</strong></li>
+            <li><strong>if-elif-else</strong></li>
+            <li><strong>Menu-Driven Program</strong></li>
+        </ul>
+
+        <h3>How to Run</h3>
+        <ol>
+            <li>Copy the code above into a file named <code>shop.py</code>.</li>
+            <li>Open your terminal or command prompt.</li>
+            <li>Run the script using Python: <code>python shop.py</code>.</li>
+            <li>Use the menu to add, sell, and display items.</li>
+        </ol>
+    </section>
+
+    <!-- Section 6: Interactive Web Simulation -->
+    <section>
+        <h2>Interactive Web Simulation</h2>
+        <p>Try the logic right here! This tool mimics the Python script above using JavaScript.</p>
+        
+        <div class="shop-interface">
+            <!-- Controls -->
+            <div class="control-panel">
+                <h3>Add New Item (Push)</h3>
+                <div class="form-group">
+                    <label for="inpType">Type (e.g., Jeans)</label>
+                    <input type="text" id="inpType" placeholder="Shirt, Hat, Socks...">
+                </div>
+                <div class="form-group">
+                    <label for="inpSize">Size</label>
+                    <input type="text" id="inpSize" placeholder="S, M, L, XL">
+                </div>
+                <div class="form-group">
+                    <label for="inpPrice">Price ($)</label>
+                    <input type="number" id="inpPrice" placeholder="0.00" step="0.01">
+                </div>
+                
+                <div class="btn-group">
+                    <button class="btn-add" onclick="pushItem()">Add to Stock (Push)</button>
+                    <hr style="border: 0; border-top: 1px solid var(--border-color);">
+                    <button class="btn-sell" onclick="popItem()">Sell Top Item (Pop)</button>
+                    <button class="btn-view" onclick="displayStock()">Show All in Console</button>
+                </div>
+
+                <div class="system-log" id="sysLog">> System Ready.</div>
+            </div>
+
+            <!-- Visual Stack -->
+            <div>
+                <div class="stack-labels">TOP OF STACK (Most Recent)</div>
+                <div class="visual-stack-container" id="visualStack">
+                    <div class="empty-stack-msg">Stock is Empty</div>
+                </div>
+                <div class="stack-labels">BOTTOM OF STACK</div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <p>&copy; Python Learning Resources. 2D Interactive Web Module.</p>
+</footer>
+
+<script>
+    // --- Theme Management ---
+    const themeBtn = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const themeText = document.getElementById('themeText');
+    const body = document.body;
+
+    // Check local storage for theme preference
+    const savedTheme = localStorage.getItem('theme');
+    
+    // FIXED SYNTAX ERROR: Added the missing closing parenthesis )
+    if (savedTheme === 'dark') {
+        enableDarkMode();
+    }
+
+    function toggleTheme() {
+        if (body.classList.contains('dark-mode')) {
+            disableDarkMode();
+        } else {
+            enableDarkMode();
+        }
+    }
+
+    function enableDarkMode() {
+        body.classList.add('dark-mode');
+        themeIcon.textContent = '🌙';
+        themeText.textContent = 'Dark Mode';
+        localStorage.setItem('theme', 'dark');
+    }
+
+    function disableDarkMode() {
+        body.classList.remove('dark-mode');
+        themeIcon.textContent = '☀️';
+        themeText.textContent = 'Light Mode';
+        localStorage.setItem('theme', 'light');
+    }
+
+    // --- State Management ---
+    let stockStack = [];
+    
+    // --- DOM Elements ---
+    const visualStack = document.getElementById('visualStack');
+    const logEl = document.getElementById('sysLog');
+    const inputs = {
+        type: document.getElementById('inpType'),
+        size: document.getElementById('inpSize'),
+        price: document.getElementById('inpPrice')
+    };
+
+    // --- Helper: Update Log ---
+    function updateLog(msg, type = 'info') {
+        logEl.innerHTML = `> ${msg}`;
+        if(type === 'error') logEl.style.color = '#ff6b6b';
+        else if(type === 'success') logEl.style.color = '#51cf66';
+        else logEl.style.color = getComputedStyle(document.documentElement).getPropertyValue('--log-text').trim();
+    }
+
+    // --- Helper: Render Stack ---
+    function renderStack() {
+        visualStack.innerHTML = ''; // Clear current view
+
+        if (stockStack.length === 0) {
+            visualStack.innerHTML = '<div class="empty-stack-msg">Stock is Empty</div>';
+            return;
+        }
+
+        // Because the parent container is column-reverse, 
+        // the first element in the DOM appears at the bottom.
+        // We iterate the array from 0 to N, so 0 ends up at the bottom.
+        stockStack.forEach((item, index) => {
+            const card = document.createElement('div');
+            card.className = 'clothing-card';
+            
+            // Visual distinction for the top item
+            if (index === stockStack.length - 1) {
+                card.style.borderLeftColor = 'var(--py-yellow)';
+                // Note: Dynamic background colors for JS elements in dark mode 
+                // rely on the class and CSS variables set up in :root
+                card.style.backgroundColor = 'rgba(255, 211, 67, 0.1)'; 
+                
+                card.innerHTML += `<div style="position:absolute; right: -10px; top:-10px; background:var(--py-yellow); color:#333; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold;">TOP</div>`;
+            }
+
+            card.innerHTML = `
+                <div class="card-info">
+                    <h4>${item.type}</h4>
+                    <span>Size: ${item.size}</span>
+                </div>
+                <div class="card-price">$${item.price}</div>
+            `;
+            visualStack.appendChild(card);
+        });
+    }
+
+    // --- Operation: Push ---
+    function pushItem() {
+        const type = inputs.type.value.trim();
+        const size = inputs.size.value.trim();
+        const price = parseFloat(inputs.price.value);
+
+        // Validation
+        if (!type || !size || isNaN(price)) {
+            updateLog("Error: Please fill in all fields correctly.", "error");
+            return;
+        }
+
+        // Push Logic
+        stockStack.push({ type, size, price });
+        
+        // UI Updates
+        updateLog(`Success: Added ${type} ($${price}) to stock.`, "success");
+        renderStack();
+        
+        // Reset Inputs
+        inputs.type.value = '';
+        inputs.size.value = '';
+        inputs.price.value = '';
+        inputs.type.focus();
+    }
+
+    // --- Operation: Pop ---
+    function popItem() {
+        if (stockStack.length === 0) {
+            updateLog("Error: Cannot sell, stock is empty!", "error");
+            return;
+        }
+
+        // Get reference to the visual element for animation
+        const topCardVisual = visualStack.lastElementChild;
+        
+        if(topCardVisual) {
+            topCardVisual.classList.add('removing');
+            // Wait for animation to finish before removing data
+            setTimeout(() => {
+                performPop();
+            }, 350); // Matches CSS animation duration
+        } else {
+            performPop();
+        }
+    }
+
+    function performPop() {
+        const soldItem = stockStack.pop();
+        updateLog(`Sold: ${soldItem.type} (Size: ${soldItem.size}) for $${soldItem.price}`, "success");
+        renderStack();
+    }
+
+    // --- Operation: Display (Console) ---
+    function displayStock() {
+        if (stockStack.length === 0) {
+            console.log("Stock is empty.");
+            updateLog("Logged to console: Stock is empty.");
+            return;
+        }
+
+        console.log("--- Current Stock (Top to Bottom) ---");
+        // Iterate backwards to show Top to Bottom
+        const displayList = [...stockStack].reverse();
+        displayList.forEach((item, idx) => {
+            console.log(`${idx + 1}. ${item.type} [${item.size}] - $${item.price}`);
+        });
+        updateLog(`Logged ${stockStack.length} items to Browser Console (F12).`);
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Queue Masterclass & Bank Simulation</title>
+    <!-- Fonts from Slide Code -->
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        /* --- CSS Variables for Theming (From Queue Code) --- */
+        :root {
+            /* Python Brand Colors */
+            --py-blue: #3776ab;
+            --py-yellow: #ffd343;
+            
+            /* Light Theme Defaults */
+            --bg-body: #f8f9fa;
+            --bg-card: #ffffff;
+            --bg-section: #ffffff;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --border-color: #e0e0e0;
+            --input-bg: #ffffff;
+            --header-gradient: linear-gradient(135deg, var(--py-blue), #26547c);
+            
+            /* Code Block Light */
+            --code-bg: #282c34; 
+            --code-text: #abb2bf;
+            
+            /* Pros/Cons Light */
+            --pro-bg: #f0fff4;
+            --con-bg: #fff5f5;
+            
+            /* UI Accents */
+            --shadow: 0 4px 15px rgba(0,0,0,0.08);
+            --queue-container-bg: #fff;
+            --queue-border: #ccc;
+            --log-bg: #222;
+            --log-text: #0f0;
+        }
+
+        /* Dark Mode (Dark Blue Theme) */
+        body.dark-mode {
+            --bg-body: #0f172a; 
+            --bg-card: #1e293b; 
+            --bg-section: #1e293b;
+            --text-main: #e2e8f0; 
+            --text-muted: #94a3b8; 
+            --border-color: #334155;
+            --input-bg: #0f172a;
+            --header-gradient: linear-gradient(135deg, #1e3a8a, #0f172a);
+            
+            /* Code Block Dark */
+            --code-bg: #0f172a; 
+            --code-text: #a5b4fc;
+
+            /* Pros/Cons Dark */
+            --pro-bg: rgba(34, 197, 94, 0.1);
+            --con-bg: rgba(239, 68, 68, 0.1);
+
+            /* UI Accents */
+            --shadow: 0 4px 15px rgba(0,0,0,0.3);
+            --queue-container-bg: #1e293b;
+            --queue-border: #475569;
+            --log-bg: #000000;
+            --log-text: #4ade80;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        /* --- Body Styling (Merged with Slide Code Background) --- */
+        body {
+            font-family: 'Roboto', sans-serif; /* From Slide Code */
+            line-height: 1.6;
+            color: var(--text-main);
+            background-color: var(--bg-body);
+            padding-bottom: 4rem;
+            overflow-x: hidden; /* From Slide Code */
+            min-height: 100vh; /* From Slide Code */
+            /* Gradient from Slide Code applied to var, defaults to Dark style */
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); 
+        }
+
+        /* Texture Overlay from Slide Code */
+        body::before {
+            content: '';
+            position: fixed; /* Changed to fixed to cover full scroll */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png'); /* From Slide Code */
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* --- Layout & Typography --- */
+        header {
+            background: var(--header-gradient);
+            color: white;
+            padding: 3rem 1rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        /* Theme Toggle Container */
+        .theme-toggle-wrapper {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .theme-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(5px);
+            margin-bottom: 10px; 
+        }
+        
+        .theme-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Rotating Python Logo (Merged Style) */
+        .rotating-logo {
+            width: 80px; /* Size from Slide Code */
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.9); /* From Slide Code */
+            padding: 5px;
+            animation: rotate 10s linear infinite; /* From Slide Code */
+            box-shadow: 0 0 10px rgba(213, 0, 249, 0.3); /* From Slide Code */
+        }
+
+        @keyframes rotate { /* From Slide Code */
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        header p { font-size: 1.2rem; opacity: 0.9; }
+
+        main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        section {
+            background: var(--bg-section);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(5px); /* Adding blur for texture readability */
+        }
+
+        h2 { 
+            color: var(--py-blue); 
+            margin-top: 1rem; 
+            margin-bottom: 1rem; 
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        h3 { color: var(--text-main); margin-top: 1.5rem; margin-bottom: 0.8rem; font-size: 1.2rem; }
+        h4 { color: var(--py-blue); margin-top: 1rem; margin-bottom: 0.5rem; font-size: 1.05rem; }
+        p { margin-bottom: 1rem; color: var(--text-main); }
+        ul, ol { margin-left: 1.5rem; margin-bottom: 1rem; color: var(--text-main); }
+        li { margin-bottom: 0.5rem; }
+
+        /* --- Feature Boxes (Pros/Cons) --- */
+        .pros-cons-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        .pro-con-box {
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 5px solid #ccc;
+        }
+        .pros { 
+            border-left-color: #28a745; 
+            background-color: var(--pro-bg); 
+        }
+        .cons { 
+            border-left-color: #dc3545; 
+            background-color: var(--con-bg); 
+        }
+
+        /* --- Image Grid for Diagrams --- */
+        .diagram-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 1.5rem 0;
+        }
+        .diagram-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s;
+        }
+        .diagram-card:hover {
+            transform: translateY(-5px);
+        }
+        .diagram-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+            background-color: var(--bg-body);
+        }
+        .diagram-caption {
+            padding: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-align: center;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            font-weight: 500;
+        }
+
+        /* --- Code Blocks --- */
+        pre {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Source Code Pro', monospace; /* From Slide Code */
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Syntax Highlighting */
+        .kw { color: #c678dd; font-weight: bold; } /* Keyword */
+        .str { color: #98c379; } /* String */
+        .func { color: #61afef; } /* Function */
+        .cmt { color: #5c6370; font-style: italic; } /* Comment */
+        .num { color: #d19a66; } /* Number */
+        .cls { color: #e5c07b; } /* Class */
+
+        /* --- Concept Visualizer (Image) --- */
+        .concept-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .queue-diagram {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background: var(--bg-section);
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .atm-img {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .queue-label {
+            position: absolute;
+            bottom: 10px;
+            background: var(--py-yellow);
+            color: #333;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+
+        /* --- Interactive Bank Styles --- */
+        .bank-interface {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .control-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .form-group { margin-bottom: 1rem; }
+
+        label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-main);
+        }
+
+        input {
+            width: 100%;
+            padding: 0.7rem;
+            background-color: var(--input-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        input:focus {
+            border-color: var(--py-blue);
+            outline: none;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-top: 1.5rem;
+        }
+
+        button {
+            width: 100%;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+
+        button:active { transform: scale(0.98); }
+
+        .btn-add { background-color: var(--py-blue); color: white; }
+        .btn-add:hover { background-color: #2b5b84; }
+
+        .btn-sell { background-color: #dc3545; color: white; }
+        .btn-sell:hover { background-color: #c82333; }
+
+        .btn-view { background-color: var(--py-yellow); color: #333; }
+        .btn-view:hover { background-color: #e6c235; }
+
+        /* Visual Queue Container */
+        .visual-queue-container {
+            background: var(--queue-container-bg);
+            border: 2px dashed var(--queue-border);
+            border-radius: 12px;
+            min-height: 400px;
+            position: relative;
+            display: flex;
+            flex-direction: row; /* Queue grows horizontally */
+            align-items: center;
+            padding: 2rem 1rem;
+            overflow-x: auto;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        .customer-card {
+            min-width: 200px;
+            max-width: 200px;
+            background: var(--bg-card);
+            color: var(--text-main);
+            border-top: 6px solid var(--py-blue);
+            padding: 12px;
+            margin-right: 12px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            animation: slideInRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-left: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* Animation Classes */
+        @keyframes slideInRight {
+            from { transform: translateX(50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .removing {
+            animation: slideOutLeft 0.4s forwards;
+        }
+
+        @keyframes slideOutLeft {
+            to { transform: translateX(-100px); opacity: 0; width: 0; min-width: 0; margin-right: 0; padding: 0; border: none;}
+        }
+
+        .card-info h4 { margin: 0; color: var(--py-blue); font-size: 1.1rem; }
+        .card-info span { font-size: 0.85rem; color: var(--text-muted); display: block; }
+        .card-service { font-weight: bold; color: #28a745; font-size: 0.9rem; margin-top: 4px; }
+
+        .queue-labels {
+            text-align: center;
+            font-weight: bold;
+            color: var(--text-muted);
+            margin: 0.5rem 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 10px;
+        }
+
+        /* Log Output */
+        .system-log {
+            margin-top: 1.5rem;
+            background: var(--log-bg);
+            color: var(--log-text);
+            font-family: monospace;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            border: 1px solid #444;
+        }
+
+        .empty-queue-msg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--text-muted);
+            font-style: italic;
+            pointer-events: none;
+            text-align: center;
+            opacity: 0.6;
+        }
+
+        /* --- Code Decoration (From Slide Code) --- */
+        .code-decoration {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            opacity: 0.6;
+            padding: 20px;
+            overflow: hidden;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .code-line {
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .concept-grid, .bank-interface, .pros-cons-grid {
+                grid-template-columns: 1fr;
+            }
+            .visual-queue-container {
+                flex-direction: column;
+                min-height: 300px;
+                overflow-y: auto;
+            }
+            .customer-card {
+                width: 100%;
+                max-width: 100%;
+                margin-right: 0;
+                margin-bottom: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <!-- Theme Toggle Container -->
+    <div class="theme-toggle-wrapper">
+        <button class="theme-btn" id="themeToggle" onclick="toggleTheme()">
+            <span id="themeIcon">☀️</span> <span id="themeText">Light Mode</span>
+        </button>
+        <!-- Rotating Python Logo (Updated Source from Slide Code) -->
+        <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" class="rotating-logo">
+    </div>
+
+    <h1>Python Queues: The Bank Service</h1>
+    <p>Understanding FIFO, Queue Operations, and Practical Simulation</p>
+</header>
+
+<main>
+    <!-- Section 1: Concept & Theory -->
+    <section>
+        <h2>What is a Queue?</h2>
+        <div class="concept-grid">
+            <div>
+                <p>A <strong>Queue</strong> is a linear data structure that holds a linear, ordered sequence of elements. It is an <strong>Abstract Data Type (ADT)</strong>.</p>
+                <p>A Queue works on <strong>FIFO process (First In First Out)</strong>: element that was inserted first will be removed first.</p>
+                <p>To implement Queue, it is required to maintain two pointers: <strong>FRONT</strong> (points to first element) and <strong>REAR</strong> (points to last element). Elements are added at Rear and removed from Front.</p>
+                <p>A Queue can be represented by means of Arrays, Linked Lists, or Pointers. Python's <code>list</code> or <code>queue</code> module are common implementations.</p>
+            </div>
+            <div class="queue-diagram">
+                <div class="queue-label">Queue (Line of People)</div>
+                <!-- Cartoon ATM/Queue Image -->
+                <img src="https://z-cdn-media.chatglm.cn/files/f7c23996-fede-4ae3-a9cd-9d107ffc4192.png?auth_key=1878414612-d5d3b97698294b2c90d18a884a493182-0-f45ec1bf3b629b5658b3123c19d58257" alt="Queue of people at ATM" class="atm-img">
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: Visualizing Queue Operations -->
+    <section>
+        <h2>Visualizing Queue Operations Properly</h2>
+        <p>Refer to the diagrams below to understand the exact mechanics of Queue operations, pointer movement, and flow.</p>
+        
+        <div class="diagram-gallery">
+            <!-- Image 1: Basic FIFO -->
+            <div class="diagram-card">
+                <img src="https://z-cdn-media.chatglm.cn/files/d88dc7c6-f2b3-45ac-bdf9-2d910c381244.png?auth_key=1878414612-757e07cfb5a24198b68e5d98ce5d627b-0-74700d92c84a0769052c7e1c511121a8" alt="FIFO Visualization">
+                <div class="diagram-caption"><strong>FIFO Principle:</strong> The Cinema Queue analogy. The first person in line (Enqueue first) is the first to get a ticket (Dequeue first).</div>
+            </div>
+
+            <!-- Image 2: Basic Operations -->
+            <div class="diagram-card">
+                <img src="https://z-cdn-media.chatglm.cn/files/68aae309-edc7-4e8e-97ab-af5a2744184d.png?auth_key=1878414612-185e3671924b4864ba8485b3442251d6-0-6bb94a09ed5f7dfc4c949c5adbb66e15" alt="Queue Operations">
+                <div class="diagram-caption"><strong>Basic Operations:</strong> Demonstrating FRONT and REAR pointers, and the logic behind Enqueue (insert) and Dequeue (remove).</div>
+            </div>
+
+            <!-- Image 3: Double Ended Queue -->
+            <div class="diagram-card">
+                <img src="https://z-cdn-media.chatglm.cn/files/8e48cf0a-9b2f-4d3f-8cd1-99854805a9e8.png?auth_key=1878414612-381653b7327242a5872a869d50862261-0-bb574f49c4826c339457f57808c2b09f" alt="Deque Operations">
+                <div class="diagram-caption"><strong>Deque (Double Ended Queue):</strong> Advanced operations allowing insertion and deletion from both Front and Rear.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Applications -->
+    <section>
+        <h2>Applications of the Queue</h2>
+        <ul>
+            <li><strong>CPU Scheduling:</strong> Operating systems use queues to manage processes. Tasks waiting for CPU time are lined up to ensure fair execution.</li>
+            <li><strong>Disk Scheduling:</strong> Requests to read from or write to a hard disk are queued to optimize data access.</li>
+            <li><strong>Asynchronous Data Transfer:</strong> Used for synchronization when data is transferred between processes (e.g., IO Buffers, pipes, file IO).</li>
+            <li><strong>Interrupt Handling:</strong> Real-time systems handle interrupts as they arrive, storing them in a queue to be processed sequentially.</li>
+            <li><strong>Call Center Systems:</strong> Phone systems place callers in a queue to be served "First Come, First Served".</li>
+        </ul>
+
+        <h2>Advantages & Disadvantages</h2>
+        <div class="pros-cons-grid">
+            <div class="pro-con-box pros">
+                <h3>Advantages</h3>
+                <ul>
+                    <li><strong>FIFO Order:</strong> Maintains data order, ensuring fairness in scheduling and serving.</li>
+                    <li><strong>Efficient Operations:</strong> Enqueue and Dequeue are generally O(1) time complexity.</li>
+                    <li><strong>Memory Usage:</strong> Dynamic queues don't waste memory like fixed arrays.</li>
+                    <li><strong>Data Synchronization:</strong> Ideal for handling asynchronous data transfer.</li>
+                </ul>
+            </div>
+            <div class="pro-con-box cons">
+                <h3>Disadvantages</h3>
+                <ul>
+                    <li><strong>Restricted Access:</strong> You cannot access random elements in the middle.</li>
+                    <li><strong>Searching:</strong> Searching for a specific element is slow (O(n)).</li>
+                    <li><strong>Fixed Size Issues:</strong> Array-based queues have a limit unless circular.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: Python List Implementation -->
+    <section>
+        <h2>Representation of Queue using Python List</h2>
+        <p>In Python, <code>list</code> is commonly used. The <code>append()</code> method acts as <strong>Enqueue</strong> (adds to Rear), and <code>pop(0)</code> acts as <strong>Dequeue</strong> (removes from Front).</p>
+        <pre><code><span class="cmt"># Initialize an empty queue</span>
+bank_queue = []
+
+<span class="cmt"># ENQUEUE: Add item to the end of the list (Rear)</span>
+bank_queue.append("Customer A")
+
+<span class="cmt"># DEQUEUE: Remove item from the start of the list (Front)</span>
+served_customer = bank_queue.pop(0)</code></pre>
+    </section>
+
+    <!-- Section 5: The Task (Bank Queue Program) -->
+    <section>
+        <h2>Task: Bank Queue Simulator</h2>
+        <p><strong>Scenario:</strong> Write a small python program that simulates a bank queue. This program allows you to add customers to the queue (Enqueue), serve them (Dequeue), and display the current queue status.</p>
+        <p><em>[Demonstrates how a queue manages customers in order.]</em></p>
+
+        <h3>Python Code Solution</h3>
+        <pre><code><span class="cmt"># Bank Queue Simulation Program</span>
+
+<span class="cmt"># Queue to store customers</span>
+bank_queue = []
+
+<span class="cmt"># Function to enqueue (add) customer</span>
+<span class="kw">def</span> <span class="func">add_customer</span>():
+    <span class="func">print</span>(<span class="str">"\n--- Add Customer to Queue ---"</span>)
+
+    name = <span class="func">input</span>(<span class="str">"Enter customer name: "</span>)
+    account_no = <span class="func">input</span>(<span class="str">"Enter account number: "</span>)
+    service = <span class="func">input</span>(<span class="str">"Enter service needed: "</span>)
+
+    <span class="cmt"># Create customer record</span>
+    customer = {
+        <span class="str">"Name"</span>: name,
+        <span class="str">"Account"</span>: account_no,
+        <span class="str">"Service"</span>: service
+    }
+
+    <span class="cmt"># ENQUEUE operation</span>
+    bank_queue.<span class="func">append</span>(customer)
+
+    <span class="func">print</span>(<span class="str">"Customer added to queue successfully!"</span>)
+    <span class="func">print</span>(<span class="str">"Enqueue Operation Done!"</span>)
+
+<span class="cmt"># Function to dequeue (serve) customer</span>
+<span class="kw">def</span> <span class="func">serve_customer</span>():
+    <span class="func">print</span>(<span class="str">"\n--- Serve Customer ---"</span>)
+
+    <span class="kw">if</span> <span class="func">len</span>(bank_queue) == <span class="num">0</span>:
+        <span class="func">print</span>(<span class="str">"Queue is empty!"</span>)
+    <span class="kw">else</span>:
+        <span class="cmt"># DEQUEUE operation</span>
+        served_customer = bank_queue.<span class="func">pop</span>(<span class="num">0</span>)
+
+        <span class="func">print</span>(<span class="str">"Customer Served Successfully!"</span>)
+        <span class="func">print</span>(<span class="str">"Dequeue Operation Done!"</span>)
+
+        <span class="func">print</span>(<span class="str">"\nServed Customer Details:"</span>)
+        <span class="func">print</span>(<span class="str">"Name    :"</span>, served_customer[<span class="str">"Name"</span>])
+        <span class="func">print</span>(<span class="str">"Account :"</span>, served_customer[<span class="str">"Account"</span>])
+        <span class="func">print</span>(<span class="str">"Service :"</span>, served_customer[<span class="str">"Service"</span>])
+
+<span class="cmt"># Function to display queue</span>
+<span class="kw">def</span> <span class="func">display_queue</span>():
+    <span class="func">print</span>(<span class="str">"\n--- Current Bank Queue ---"</span>)
+
+    <span class="kw">if</span> <span class="func">len</span>(bank_queue) == <span class="num">0</span>:
+        <span class="func">print</span>(<span class="str">"No customers in queue!"</span>)
+    <span class="kw">else</span>:
+        <span class="func">print</span>(<span class="str">"Customers from Front to Rear:\n"</span>)
+
+        <span class="kw">for</span> customer <span class="kw">in</span> bank_queue:
+            <span class="func">print</span>(<span class="str">"Name    :"</span>, customer[<span class="str">"Name"</span>])
+            <span class="func">print</span>(<span class="str">"Account :"</span>, customer[<span class="str">"Account"</span>])
+            <span class="func">print</span>(<span class="str">"Service :"</span>, customer[<span class="str">"Service"</span>])
+            <span class="func">print</span>(<span class="str">"----------------------"</span>)
+
+<span class="cmt"># Main program loop</span>
+<span class="kw">while</span> <span class="kw">True</span>:
+    <span class="func">print</span>(<span class="str">"\n====== Bank Queue Menu ======"</span>)
+    <span class="func">print</span>(<span class="str">"1. Add Customer (Enqueue)"</span>)
+    <span class="func">print</span>(<span class="str">"2. Serve Customer (Dequeue)"</span>)
+    <span class="func">print</span>(<span class="str">"3. Display Queue"</span>)
+    <span class="func">print</span>(<span class="str">"4. Exit"</span>)
+
+    choice = <span class="func">input</span>(<span class="str">"Enter your choice: "</span>)
+
+    <span class="kw">if</span> choice == <span class="str">"1"</span>:
+        <span class="func">add_customer</span>()
+
+    <span class="kw">elif</span> choice == <span class="str">"2"</span>:
+        <span class="func">serve_customer</span>()
+
+    <span class="kw">elif</span> choice == <span class="str">"3"</span>:
+        <span class="func">display_queue</span>()
+
+    <span class="kw">elif</span> choice == <span class="str">"4"</span>:
+        <span class="func">print</span>(<span class="str">"Exiting Program..."</span>)
+        <span class="kw">break</span>
+
+    <span class="kw">else</span>:
+        <span class="func">print</span>(<span class="str">"Invalid choice! Please try again."</span>)</code></pre>
+
+        <h3>Detailed Explanation</h3>
+
+        <h4>1. Customer Structure</h4>
+        <p>Each customer is stored as a dictionary:</p>
+        <ul>
+            <li>Customer Name</li>
+            <li>Account Number</li>
+            <li>Service Needed</li>
+        </ul>
+        <pre><code><span class="kw">customer</span> = {
+    <span class="str">"Name"</span>: <span class="str">"Kamal"</span>,
+    <span class="str">"Account"</span>: <span class="str">"10045"</span>,
+    <span class="str">"Service"</span>: <span class="str">"Deposit"</span>
+}</code></pre>
+
+        <h4>2. Queue for Bank Customers</h4>
+        <p>The program uses a stack to manage customers:</p>
+        <pre><code><span class="kw">bank_queue</span> = []</code></pre>
+        <p>A queue follows the rule: <strong>FIFO (First In First Out)</strong>. This means the first customer who enters the queue is served first.</p>
+
+        <h4>3. Enqueue Operation (Adding Customer)</h4>
+        <p>When a customer arrives:</p>
+        <pre><code><span class="kw">bank_queue</span>.<span class="func">append</span>(customer)</code></pre>
+        <p>This is called an Enqueue Operation. The customer is added to the rear of the queue.</p>
+
+        <h4>4. Dequeue Operation (Serving Customer)</h4>
+        <p>When a customer is served:</p>
+        <pre><code><span class="kw">served_customer</span> = <span class="kw">bank_queue</span>.<span class="func">pop</span>(<span class="num">0</span>)</code></pre>
+        <p>This is called a Dequeue Operation. The first customer in the queue is removed.</p>
+
+        <h4>5. Displaying Current Queue</h4>
+        <p>The program displays customers from <strong>Front → Rear</strong>:</p>
+        <pre><code><span class="kw">for</span> customer <span class="kw">in</span> <span class="kw">bank_queue</span>:</code></pre>
+
+        <h3>Example Run</h3>
+        <pre style="background: var(--code-bg); color: var(--text-main); border: 1px solid var(--border-color);">
+====== Bank Queue Menu ======
+1. Add Customer (Enqueue)
+2. Serve Customer (Dequeue)
+3. Display Queue
+4. Exit
+
+Enter your choice: 1
+
+--- Add Customer to Queue ---
+
+Enter customer name: Amal
+Enter account number: 30045
+Enter service needed: Deposit
+
+Customer added to queue successfully!
+Enqueue Operation Done!
+
+Serving customer:
+
+Enter your choice: 2
+
+--- Serve Customer ---
+
+Customer Served Successfully!
+Dequeue Operation Done!
+
+Served Customer Details:
+Name    : Amal
+Account : 30045
+Service : Deposit
+        </pre>
+
+        <h3>Concepts Used</h3>
+        <ul>
+            <li><strong>Variables</strong></li>
+            <li><strong>Lists</strong> (as Queue)</li>
+            <li><strong>Functions</strong></li>
+            <li><strong>Dictionaries</strong></li>
+            <li><strong>Queue Data Structure</strong></li>
+            <li><strong>Enqueue Operation</strong></li>
+            <li><strong>Dequeue Operation</strong></li>
+            <li><strong>Loops</strong></li>
+            <li><strong>if-elif-else</strong></li>
+            <li><strong>Menu-Driven Program</strong></li>
+        </ul>
+    </section>
+
+    <!-- Section 6: Interactive Web Simulation -->
+    <section>
+        <h2>Interactive Web Simulation</h2>
+        <p>Try to logic right here! This tool mimics the Python script above using JavaScript.</p>
+        
+        <div class="bank-interface">
+            <!-- Controls -->
+            <div class="control-panel">
+                <h3>Add New Customer (Enqueue)</h3>
+                <div class="form-group">
+                    <label for="inpName">Name (e.g., Amal)</label>
+                    <input type="text" id="inpName" placeholder="Customer Name">
+                </div>
+                <div class="form-group">
+                    <label for="inpAccount">Account Number</label>
+                    <input type="text" id="inpAccount" placeholder="12345">
+                </div>
+                <div class="form-group">
+                    <label for="inpService">Service Needed</label>
+                    <input type="text" id="inpService" placeholder="Deposit, Withdraw...">
+                </div>
+                
+                <div class="btn-group">
+                    <button class="btn-add" onclick="enqueueCustomer()">Add to Queue (Enqueue)</button>
+                    <hr style="border: 0; border-top: 1px solid var(--border-color);">
+                    <button class="btn-sell" onclick="dequeueCustomer()">Serve Customer (Dequeue)</button>
+                    <button class="btn-view" onclick="displayQueue()">Show All in Console</button>
+                </div>
+
+                <div class="system-log" id="sysLog">> System Ready.</div>
+            </div>
+
+            <!-- Visual Queue -->
+            <div>
+                <div class="queue-labels">
+                    <span>FRONT (Service Here)</span>
+                    <span>REAR (Join Here)</span>
+                </div>
+                <div class="visual-queue-container" id="visualQueue">
+                    <div class="empty-queue-msg">Queue is Empty</div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Code Decoration Footer from Slide Code -->
+<div class="code-decoration">
+    <div class="code-line"><span class="kw">def</span> <span class="func">implement_solution</span>(design):</div>
+    <div class="code-line">    <span class="cmt"># Write clean, PEP 8 compliant code</span></div>
+    <div class="code-line">    code = <span class="func">write_code</span>(design)</div>
+    <div class="code-line">    </div>
+    <div class="code-line">    <span class="cmt"># Debug and verify behavior</span></div>
+    <div class="code-line">    <span class="func">debug_errors</span>(code)</div>
+    <div class="code-line">    </div>
+    <div class="code-line">    <span class="cmt"># Add documentation</span></div>
+    <div class="code-line">    <span class="func">document</span>(code)</div>
+    <div class="code-line">    </div>
+    <div class="code-line">    <span class="kw">return</span> <span class="func">deploy</span>(code)</div>
+</div>
+
+<script>
+    // --- Theme Management ---
+    const themeBtn = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const themeText = document.getElementById('themeText');
+    const body = document.body;
+
+    // Check local storage for theme preference
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        enableDarkMode();
+    }
+
+    function toggleTheme() {
+        if (body.classList.contains('dark-mode')) {
+            disableDarkMode();
+        } else {
+            enableDarkMode();
+        }
+    }
+
+    function enableDarkMode() {
+        body.classList.add('dark-mode');
+        themeIcon.textContent = '🌙';
+        themeText.textContent = 'Dark Mode';
+        localStorage.setItem('theme', 'dark');
+    }
+
+    function disableDarkMode() {
+        body.classList.remove('dark-mode');
+        themeIcon.textContent = '☀️';
+        themeText.textContent = 'Light Mode';
+        localStorage.setItem('theme', 'light');
+    }
+
+    // --- State Management ---
+    let bankQueue = [];
+    
+    // --- DOM Elements ---
+    const visualQueue = document.getElementById('visualQueue');
+    const logEl = document.getElementById('sysLog');
+    const inputs = {
+        name: document.getElementById('inpName'),
+        account: document.getElementById('inpAccount'),
+        service: document.getElementById('inpService')
+    };
+
+    // --- Helper: Update Log ---
+    function updateLog(msg, type = 'info') {
+        logEl.innerHTML = `> ${msg}`;
+        if(type === 'error') logEl.style.color = '#ff6b6b';
+        else if(type === 'success') logEl.style.color = '#51cf66';
+        else logEl.style.color = getComputedStyle(document.documentElement).getPropertyValue('--log-text').trim();
+    }
+
+    // --- Helper: Render Queue ---
+    function renderQueue() {
+        visualQueue.innerHTML = ''; // Clear current view
+
+        if (bankQueue.length === 0) {
+            visualQueue.innerHTML = '<div class="empty-queue-msg">Queue is Empty</div>';
+            return;
+        }
+
+        // Iterate array. Index 0 is Front (Left), Index N is Rear (Right).
+        bankQueue.forEach((item, index) => {
+            const card = document.createElement('div');
+            card.className = 'customer-card';
+            
+            // Visual distinction for the front item (Next to be served)
+            if (index === 0) {
+                card.style.borderTopColor = 'var(--danger)'; // Red for "Next"
+                card.style.backgroundColor = 'rgba(220, 53, 69, 0.1)';
+                card.innerHTML += `<div style="position:absolute; left: -10px; top:-10px; background:var(--danger); font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; color:white;">NEXT</div>`;
+            }
+
+            card.innerHTML = `
+                <div class="card-info">
+                    <h4>${item.name}</h4>
+                    <span>Acc: ${item.account}</span>
+                </div>
+                <div class="card-service">${item.service}</div>
+            `;
+            visualQueue.appendChild(card);
+        });
+    }
+
+    // --- Operation: Enqueue ---
+    function enqueueCustomer() {
+        const name = inputs.name.value.trim();
+        const account = inputs.account.value.trim();
+        const service = inputs.service.value.trim();
+
+        // Validation
+        if (!name || !account || !service) {
+            updateLog("Error: Please fill in all fields correctly.", "error");
+            return;
+        }
+
+        // Enqueue Logic (Append to end)
+        bankQueue.push({ name, account, service });
+        
+        // UI Updates
+        updateLog(`Success: Added ${name} to the queue.`, "success");
+        renderQueue();
+        
+        // Reset Inputs
+        inputs.name.value = '';
+        inputs.account.value = '';
+        inputs.service.value = '';
+        inputs.name.focus();
+    }
+
+    // --- Operation: Dequeue ---
+    function dequeueCustomer() {
+        if (bankQueue.length === 0) {
+            updateLog("Error: Cannot serve, queue is empty!", "error");
+            return;
+        }
+
+        // Get reference to the visual element for animation
+        const frontCardVisual = visualQueue.firstElementChild;
+        
+        if(frontCardVisual) {
+            frontCardVisual.classList.add('removing');
+            // Wait for animation to finish before removing data
+            setTimeout(() => {
+                performDequeue();
+            }, 350); 
+        } else {
+            performDequeue();
+        }
+    }
+
+    function performDequeue() {
+        const servedCustomer = bankQueue.shift(); // Remove from Front (Index 0)
+        updateLog(`Served: ${servedCustomer.name} (${servedCustomer.service})`, "success");
+        renderQueue();
+    }
+
+    // --- Operation: Display (Console) ---
+    function displayQueue() {
+        if (bankQueue.length === 0) {
+            console.log("Queue is empty.");
+            updateLog("Logged to console: Queue is empty.");
+            return;
+        }
+
+        console.log("--- Current Bank Queue (Front to Rear) ---");
+        bankQueue.forEach((item, idx) => {
+            console.log(`${idx + 1}. ${item.name} [${item.account}] - ${item.service}`);
+        });
+        updateLog(`Logged ${bankQueue.length} customers to Browser Console (F12).`);
+    }
+</script>
+
+</body>
+</html>

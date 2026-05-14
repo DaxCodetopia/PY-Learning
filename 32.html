@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Defining and Calling Functions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: visible;
+            display: flex;
+            flex-direction: column;
+        }
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.1;
+            z-index: 0;
+        }
+        .slide-header {
+            position: relative;
+            z-index: 1;
+            padding: 30px 70px 10px;
+        }
+        .title {
+            font-size: 64px;
+            font-weight: 700;
+            text-align: center;
+            background: linear-gradient(90deg, #4CAF50, #2196F3, #9C27B0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0px 0px 30px rgba(76, 175, 80, 0.3);
+        }
+        .python-logo {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 10s linear infinite;
+            z-index: 2;
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .slide-content {
+            position: relative;
+            z-index: 1;
+            flex-grow: 1;
+            display: flex;
+            padding: 10px 70px 100px;
+            gap: 30px;
+        }
+        .content-container {
+            display: flex;
+            width: 100%;
+            gap: 30px;
+        }
+        .left-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .right-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .function-card {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .function-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .definition-card {
+            border-left: 4px solid #4ec9b0;
+        }
+        .calling-card {
+            border-left: 4px solid #dcdcaa;
+        }
+        .parameters-card {
+            border-left: 4px solid #c586c0;
+        }
+        .return-card {
+            border-left: 4px solid #9cdcfe;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-icon {
+            font-size: 28px;
+        }
+        .definition-card .card-icon {
+            color: #4ec9b0;
+        }
+        .calling-card .card-icon {
+            color: #dcdcaa;
+        }
+        .parameters-card .card-icon {
+            color: #c586c0;
+        }
+        .return-card .card-icon {
+            color: #9cdcfe;
+        }
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #d4d4d4;
+        }
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+        }
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .point-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .point-icon {
+            font-size: 20px;
+            margin-top: 3px;
+        }
+        .definition-card .point-icon {
+            color: #4ec9b0;
+        }
+        .calling-card .point-icon {
+            color: #dcdcaa;
+        }
+        .parameters-card .point-icon {
+            color: #c586c0;
+        }
+        .return-card .point-icon {
+            color: #9cdcfe;
+        }
+        .point-text {
+            font-size: 20px;
+            line-height: 1.4;
+            color: #cccccc;
+        }
+        .key-concept {
+            display: inline-block;
+            background-color: rgba(78, 201, 176, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin: 0 2px;
+            color: #4ec9b0;
+            font-weight: 500;
+        }
+        .calling-card .key-concept {
+            background-color: rgba(220, 220, 170, 0.2);
+            color: #dcdcaa;
+        }
+        .parameters-card .key-concept {
+            background-color: rgba(197, 134, 192, 0.2);
+            color: #c586c0;
+        }
+        .return-card .key-concept {
+            background-color: rgba(156, 220, 254, 0.2);
+            color: #9cdcfe;
+        }
+        .code-example {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 18px;
+            color: #cccccc;
+            line-height: 1.5;
+            overflow: auto;
+            flex-grow: 1;
+            max-height: 250px;
+        }
+        .keyword {
+            color: #569cd6;
+        }
+        .function {
+            color: #dcdcaa;
+        }
+        .string {
+            color: #ce9178;
+        }
+        .comment {
+            color: #608b4e;
+        }
+        .number {
+            color: #b5cea8;
+        }
+        .code-decoration {
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            opacity: 0.6;
+            padding: 20px 70px;
+            height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .code-line {
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="slide-header">
+            <div class="title">Defining and Calling Functions</div>
+        </div>
+        <div class="slide-content">
+            <div class="content-container">
+                <div class="left-column">
+                    <div class="function-card definition-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">code</i>
+                            <div class="card-title">Function Definition</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Use <span class="key-concept">def</span> keyword followed by function name</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Parameters in <span class="key-concept">parentheses</span></div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Colon after parameters</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Indented <span class="key-concept">function body</span></div>
+                                </div>
+                            </div>
+                            <div class="code-example">
+                                <span class="comment"># Basic function definition</span><br>
+                                <span class="keyword">def</span> <span class="function">greet</span>(name):<br>
+                                  <span class="function">print</span>(<span class="string">f"Hello, {name}!"</span>)<br><br>
+                                
+                                <span class="comment"># Function with default parameter</span><br>
+                                <span class="keyword">def</span> <span class="function">power</span>(base, exponent=<span class="number">2</span>):<br>
+                                  <span class="keyword">return</span> base ** exponent
+                            </div>
+                        </div>
+                    </div>
+                    <div class="function-card calling-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">call</i>
+                            <div class="card-title">Calling Functions</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Use <span class="key-concept">function name</span> followed by arguments</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Arguments can be <span class="key-concept">positional</span> or <span class="key-concept">keyword</span></div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Functions can be <span class="key-concept">nested</span> inside other functions</div>
+                                </div>
+                            </div>
+                            <div class="code-example">
+                                <span class="comment"># Calling functions</span><br>
+                                <span class="function">greet</span>(<span class="string">"Alice"</span>)<br>
+                                <span class="function">greet</span>(name=<span class="string">"Bob"</span>)<br><br>
+                                
+                                <span class="comment"># Using return values</span><br>
+                                result = <span class="function">power</span>(<span class="number">3</span>, <span class="number">3</span>)<br>
+                                <span class="function">print</span>(result)  <span class="comment"># 27</span><br><br>
+                                
+                                <span class="comment"># Function as argument</span><br>
+                                <span class="keyword">def</span> <span class="function">calculate</span>(operation, a, b):<br>
+                                  <span class="keyword">return</span> operation(a, b)<br><br>
+                                
+                                <span class="function">print</span>(<span class="function">calculate</span>(<span class="function">power</span>, <span class="number">2</span>, <span class="number">5</span>))
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="right-column">
+                    <div class="function-card parameters-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">input</i>
+                            <div class="card-title">Function Parameters</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">Positional</span> - Order matters</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">Keyword</span> - Named parameters</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">Default</span> - Fallback values</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">*args</span> - Variable number of arguments</div>
+                                </div>
+                            </div>
+                            <div class="code-example">
+                                <span class="comment"># Positional and keyword arguments</span><br>
+                                <span class="keyword">def</span> <span class="function">describe_person</span>(name, age, city=<span class="string">"Unknown"</span>):<br>
+                                  <span class="function">print</span>(<span class="string">f"{name} is {age} years old from {city}"</span>)<br><br>
+                                
+                                <span class="comment"># Calling with positional arguments</span><br>
+                                <span class="function">describe_person</span>(<span class="string">"Alice"</span>, <span class="number">30</span>)<br><br>
+                                
+                                <span class="comment"># Calling with keyword arguments</span><br>
+                                <span class="function">describe_person</span>(age=<span class="number">25</span>, name=<span class="string">"Bob"</span>, city=<span class="string">"New York"</span>)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="function-card return-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">arrow_back</i>
+                            <div class="card-title">Return Values</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Use <span class="key-concept">return</span> statement to send back values</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Functions can return <span class="key-concept">multiple values</span> as tuples</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Functions without explicit return return <span class="key-concept">None</span></div>
+                                </div>
+                            </div>
+                            <div class="code-example">
+                                <span class="comment"># Single return value</span><br>
+                                <span class="keyword">def</span> <span class="function">add</span>(a, b):<br>
+                                  <span class="keyword">return</span> a + b<br><br>
+                                
+                                <span class="comment"># Multiple return values</span><br>
+                                <span class="keyword">def</span> <span class="function">calculate_stats</span>(numbers):<br>
+                                  <span class="keyword">return</span> <span class="function">sum</span>(numbers), <span class="function">len</span>(numbers), <span class="function">max</span>(numbers)<br><br>
+                                
+                                <span class="comment"># Using return values</span><br>
+                                result = <span class="function">add</span>(<span class="number">5</span>, <span class="number">3</span>)<br>
+                                total, count, maximum = <span class="function">calculate_stats</span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="python-logo">
+            <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" style="width: 100%; height: 100%;">
+        </div>
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">def</span> <span class="function">function_definition</span>(parameters):</div>
+            <div class="code-line">    <span class="comment"># Function body</span></div>
+            <div class="code-line">    <span class="keyword">return</span> result</div>
+        </div>
+    </div>
+</body>
+</html>

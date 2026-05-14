@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logical and Relational Operators</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            overflow: hidden;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+	.slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .header {
+            padding: 40px 70px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .slide-header {
+            padding: 50px 70px 30px;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+	.content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: 0 70px 40px;
+            gap: 20px;
+        }
+
+        .slide-content {
+            flex-grow: 1;
+            display: flex;
+            padding: 0 70px 50px;
+            gap: 30px;
+        }
+        .content-container {
+            display: flex;
+            width: 100%;
+            gap: 30px;
+        }
+        .left-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .right-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .operator-card {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .operator-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .relational-card {
+            border-left: 4px solid #4ec9b0;
+        }
+        .logical-card {
+            border-left: 4px solid #dcdcaa;
+        }
+        .precedence-card {
+            border-left: 4px solid #c586c0;
+        }
+        .example-card {
+            border-left: 4px solid #9cdcfe;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-icon {
+            font-size: 28px;
+        }
+        .relational-card .card-icon {
+            color: #4ec9b0;
+        }
+        .logical-card .card-icon {
+            color: #dcdcaa;
+        }
+        .precedence-card .card-icon {
+            color: #c586c0;
+        }
+        .example-card .card-icon {
+            color: #9cdcfe;
+        }
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #d4d4d4;
+        }
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+        }
+        .operator-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        .operator-item {
+            background-color: rgba(78, 201, 176, 0.1);
+            border-radius: 6px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        .operator-symbol {
+            font-family: 'Source Code Pro', monospace;
+            font-size: 24px;
+            font-weight: 700;
+            color: #4ec9b0;
+        }
+        .operator-desc {
+            font-size: 16px;
+            color: #cccccc;
+            text-align: center;
+        }
+        .logical-item {
+            background-color: rgba(220, 220, 170, 0.1);
+            border-radius: 6px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        .logical-symbol {
+            font-family: 'Source Code Pro', monospace;
+            font-size: 24px;
+            font-weight: 700;
+            color: #dcdcaa;
+        }
+        .truth-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .truth-table th, .truth-table td {
+            padding: 8px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .truth-table th {
+            background-color: rgba(220, 220, 170, 0.2);
+            color: #dcdcaa;
+        }
+        .precedence-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .precedence-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .precedence-level {
+            width: 30px;
+            height: 30px;
+            background-color: rgba(197, 134, 192, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #c586c0;
+        }
+        .precedence-operators {
+            font-family: 'Source Code Pro', monospace;
+            font-size: 18px;
+            color: #cccccc;
+        }
+        .code-example {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 18px;
+            color: #cccccc;
+            line-height: 1.5;
+            overflow: auto;
+            flex-grow: 1;
+        }
+        .keyword {
+            color: #569cd6;
+        }
+        .function {
+            color: #dcdcaa;
+        }
+        .string {
+            color: #ce9178;
+        }
+        .comment {
+            color: #608b4e;
+        }
+        .number {
+            color: #b5cea8;
+        }
+        .python-logo {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 10s linear infinite;
+        }
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .code-decoration {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            opacity: 0.6;
+            padding: 20px;
+            overflow: hidden;
+        }
+        .code-line {
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="slide-header">
+            <div class="title">Logical and Relational Operators</div>
+        </div>
+        <div class="slide-content">
+            <div class="content-container">
+                <div class="left-column">
+                    <div class="operator-card relational-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">compare_arrows</i>
+                            <div class="card-title">Relational Operators</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="operator-grid">
+                                <div class="operator-item">
+                                    <div class="operator-symbol">==</div>
+                                    <div class="operator-desc">Equal to</div>
+                                </div>
+                                <div class="operator-item">
+                                    <div class="operator-symbol">!=</div>
+                                    <div class="operator-desc">Not equal to</div>
+                                </div>
+                                <div class="operator-item">
+                                    <div class="operator-symbol">&lt;</div>
+                                    <div class="operator-desc">Less than</div>
+                                </div>
+                                <div class="operator-item">
+                                    <div class="operator-symbol">&gt;</div>
+                                    <div class="operator-desc">Greater than</div>
+                                </div>
+                                <div class="operator-item">
+                                    <div class="operator-symbol">&lt;=</div>
+                                    <div class="operator-desc">Less than or equal</div>
+                                </div>
+                                <div class="operator-item">
+                                    <div class="operator-symbol">&gt;=</div>
+                                    <div class="operator-desc">Greater than or equal</div>
+                                </div>
+                            </div>
+                            <div class="code-example">
+                                <span class="comment"># Relational operator examples</span><br>
+                                x = <span class="number">10</span><br>
+                                y = <span class="number">20</span><br><br>
+                                
+                                <span class="function">print</span>(x == y)  <span class="comment"># False</span><br>
+                                <span class="function">print</span>(x != y)  <span class="comment"># True</span><br>
+                                <span class="function">print</span>(x < y)   <span class="comment"># True</span><br>
+                                <span class="function">print</span>(x > y)   <span class="comment"># False</span><br>
+                                <span class="function">print</span>(x <= y)  <span class="comment"># True</span><br>
+                                <span class="function">print</span>(x >= y)  <span class="comment"># False</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="operator-card logical-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">all_inclusive</i>
+                            <div class="card-title">Logical Operators</div>
+                        </div>
+                        <div class="card-content">
+                            <div style="display: flex; gap: 15px;">
+                                <div class="logical-item" style="flex: 1;">
+                                    <div class="logical-symbol">and</div>
+                                    <div class="operator-desc">Returns True if both operands are True</div>
+                                </div>
+                                <div class="logical-item" style="flex: 1;">
+                                    <div class="logical-symbol">or</div>
+                                    <div class="operator-desc">Returns True if at least one operand is True</div>
+                                </div>
+                                <div class="logical-item" style="flex: 1;">
+                                    <div class="logical-symbol">not</div>
+                                    <div class="operator-desc">Reverses the boolean value</div>
+                                </div>
+                            </div>
+                            <table class="truth-table">
+                                <tr>
+                                    <th>A</th>
+                                    <th>B</th>
+                                    <th>A and B</th>
+                                    <th>A or B</th>
+                                    <th>not A</th>
+                                </tr>
+                                <tr>
+                                    <td>True</td>
+                                    <td>True</td>
+                                    <td>True</td>
+                                    <td>True</td>
+                                    <td>False</td>
+                                </tr>
+                                <tr>
+                                    <td>True</td>
+                                    <td>False</td>
+                                    <td>False</td>
+                                    <td>True</td>
+                                    <td>False</td>
+                                </tr>
+                                <tr>
+                                    <td>False</td>
+                                    <td>True</td>
+                                    <td>False</td>
+                                    <td>True</td>
+                                    <td>True</td>
+                                </tr>
+                                <tr>
+                                    <td>False</td>
+                                    <td>False</td>
+                                    <td>False</td>
+                                    <td>False</td>
+                                    <td>True</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="right-column">
+                    <div class="operator-card precedence-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">vertical_align_top</i>
+                            <div class="card-title">Operator Precedence</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="precedence-list">
+                                <div class="precedence-item">
+                                    <div class="precedence-level">1</div>
+                                    <div class="precedence-operators">** (Exponentiation)</div>
+                                </div>
+                                <div class="precedence-item">
+                                    <div class="precedence-level">2</div>
+                                    <div class="precedence-operators">*, /, //, % (Multiplication, Division)</div>
+                                </div>
+                                <div class="precedence-item">
+                                    <div class="precedence-level">3</div>
+                                    <div class="precedence-operators">+, - (Addition, Subtraction)</div>
+                                </div>
+                                <div class="precedence-item">
+                                    <div class="precedence-level">4</div>
+                                    <div class="precedence-operators"><, <=, >, >= (Relational)</div>
+                                </div>
+                                <div class="precedence-item">
+                                    <div class="precedence-level">5</div>
+                                    <div class="precedence-operators">==, != (Equality)</div>
+                                </div>
+                                <div class="precedence-item">
+                                    <div class="precedence-level">6</div>
+                                    <div class="precedence-operators">not (Logical NOT)</div>
+                                </div>
+                                <div class="precedence-item">
+                                    <div class="precedence-level">7</div>
+                                    <div class="precedence-operators">and (Logical AND)</div>
+                                </div>
+                                <div class="precedence-item">
+                                    <div class="precedence-level">8</div>
+                                    <div class="precedence-operators">or (Logical OR)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="operator-card example-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">code</i>
+                            <div class="card-title">Practical Examples</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="code-example">
+                                <span class="comment"># Combining operators</span><br>
+                                age = <span class="number">25</span><br>
+                                has_license = <span class="keyword">True</span><br>
+                                has_car = <span class="keyword">False</span><br><br>
+                                
+                                <span class="comment"># Complex conditions</span><br>
+                                can_drive = age >= <span class="number">18</span> <span class="keyword">and</span> has_license<br>
+                                <span class="function">print</span>(can_drive)  <span class="comment"># True</span><br><br>
+                                
+                                can_drive_own_car = can_drive <span class="keyword">and</span> has_car<br>
+                                <span class="function">print</span>(can_drive_own_car)  <span class="comment"># False</span><br><br>
+                                
+                                <span class="comment"># Using parentheses to override precedence</span><br>
+                                result = <span class="keyword">not</span> (age < <span class="number">18</span> <span class="keyword">or</span> <span class="keyword">not</span> has_license)<br>
+                                <span class="function">print</span>(result)  <span class="comment"># True</span><br><br>
+                                
+                                <span class="comment"># Chaining comparisons</span><br>
+                                <span class="function">print</span>(<span class="number">10</span> < age < <span class="number">30</span>)  <span class="comment"># True (10 < 25 and 25 < 30)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="python-logo">
+            <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" style="width: 100%; height: 100%;">
+        </div>
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">def</span> <span class="function">operators_demo</span>():</div>
+            <div class="code-line">    <span class="keyword">if</span> condition1 <span class="keyword">and</span> condition2:</div>
+            <div class="code-line">        <span class="function">execute</span>()</div>
+            <div class="code-line">    <span class="keyword">elif</span> condition1 <span class="keyword">or</span> condition2:</div>
+            <div class="code-line">        <span class="function">alternative</span>()</div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Match-Case Structures (Python 3.10+)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            /* Removed 'overflow: hidden' to allow the window scrollbar to function if needed, 
+               but we will handle scrolling inside the slide container */
+            height: 100vh; 
+        }
+        .slide {
+            width: 100%;
+            min-height: 100vh;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            /* Changed max-width to 1280px to keep the design integrity but allow it to shrink on smaller screens */
+            max-width: 1280px; 
+            margin: 0 auto; /* Centered horizontally */
+            
+            /* SCROLL MODIFICATION START */
+            overflow-y: auto; /* Enables vertical scrolling within the slide */
+            /* SCROLL MODIFICATION END */
+        }
+        
+        /* Custom Scrollbar Styling for Webkit Browsers (Chrome, Edge, Safari) */
+        .slide::-webkit-scrollbar {
+            width: 12px;
+        }
+        .slide::-webkit-scrollbar-track {
+            background: #1a1a2e; 
+        }
+        .slide::-webkit-scrollbar-thumb {
+            background: #4CAF50; 
+            border-radius: 6px;
+        }
+        .slide::-webkit-scrollbar-thumb:hover {
+            background: #2196F3; 
+        }
+
+    .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .header {
+            padding: 40px 70px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .slide-header {
+            padding: 50px 70px 30px;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+    .content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: 0 70px 40px;
+            gap: 20px;
+        }
+        .slide-content {
+            flex-grow: 1;
+            display: flex;
+            padding: 0 70px 50px;
+            gap: 30px;
+        }
+        .content-container {
+            display: flex;
+            width: 100%;
+            gap: 30px;
+            flex-wrap: wrap; /* Allows wrapping on very small screens */
+        }
+        .left-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-width: 500px; /* Ensures columns don't get too squashed */
+        }
+        .right-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-width: 500px;
+        }
+        .match-card {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .match-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .intro-card {
+            border-left: 4px solid #4ec9b0;
+        }
+        .syntax-card {
+            border-left: 4px solid #dcdcaa;
+        }
+        .patterns-card {
+            border-left: 4px solid #c586c0;
+        }
+        .example-card {
+            border-left: 4px solid #9cdcfe;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-icon {
+            font-size: 28px;
+        }
+        .intro-card .card-icon {
+            color: #4ec9b0;
+        }
+        .syntax-card .card-icon {
+            color: #dcdcaa;
+        }
+        .patterns-card .card-icon {
+            color: #c586c0;
+        }
+        .example-card .card-icon {
+            color: #9cdcfe;
+        }
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #d4d4d4;
+        }
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+        }
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .point-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .point-icon {
+            font-size: 20px;
+            margin-top: 3px;
+        }
+        .intro-card .point-icon {
+            color: #4ec9b0;
+        }
+        .syntax-card .point-icon {
+            color: #dcdcaa;
+        }
+        .patterns-card .point-icon {
+            color: #c586c0;
+        }
+        .example-card .point-icon {
+            color: #9cdcfe;
+        }
+        .point-text {
+            font-size: 20px;
+            line-height: 1.4;
+            color: #cccccc;
+        }
+        .key-concept {
+            display: inline-block;
+            background-color: rgba(78, 201, 176, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin: 0 2px;
+            color: #4ec9b0;
+            font-weight: 500;
+        }
+        .syntax-card .key-concept {
+            background-color: rgba(220, 220, 170, 0.2);
+            color: #dcdcaa;
+        }
+        .patterns-card .key-concept {
+            background-color: rgba(197, 134, 192, 0.2);
+            color: #c586c0;
+        }
+        .example-card .key-concept {
+            background-color: rgba(156, 220, 254, 0.2);
+            color: #9cdcfe;
+        }
+        .code-example {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 18px;
+            color: #cccccc;
+            line-height: 1.5;
+            overflow: auto;
+            flex-grow: 1;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .keyword {
+            color: #569cd6;
+        }
+        .function {
+            color: #dcdcaa;
+        }
+        .string {
+            color: #ce9178;
+        }
+        .comment {
+            color: #608b4e;
+        }
+        .number {
+            color: #b5cea8;
+        }
+        .pattern-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .pattern-item {
+            background-color: rgba(197, 134, 192, 0.1);
+            border-radius: 6px;
+            padding: 12px;
+            border: 1px solid rgba(197, 134, 192, 0.2);
+        }
+        .pattern-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #c586c0;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .pattern-desc {
+            font-size: 16px;
+            color: #cccccc;
+        }
+        .python-logo {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 10s linear infinite;
+            z-index: 10;
+        }
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .code-decoration {
+            position: sticky;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            opacity: 0.6;
+            padding: 20px;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 5;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .code-line {
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="slide-header">
+            <div class="title">Match-Case Structures (Python 3.10+)</div>
+        </div>
+        <div class="slide-content">
+            <div class="content-container">
+                <div class="left-column">
+                    <div class="match-card intro-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">new_releases</i>
+                            <div class="card-title">Introduction to Match-Case</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">New <span class="key-concept">structural pattern matching</span> in Python 3.10+</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">More <span class="key-concept">expressive</span> than if-elif-else chains</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Inspired by <span class="key-concept">pattern matching</span> in functional languages</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Similar to <span class="key-concept">switch-case</span> in other languages</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="match-card syntax-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">code</i>
+                            <div class="card-title">Basic Syntax</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="code-example">
+                                <span class="keyword">match</span> expression:<br>
+                                &nbsp;&nbsp;<span class="keyword">case</span> pattern1:<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Code for pattern1</span><br>
+                                &nbsp;&nbsp;<span class="keyword">case</span> pattern2 <span class="keyword">if</span> condition:<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Code for pattern2 with guard</span><br>
+                                &nbsp;&nbsp;<span class="keyword">case</span> _:<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Default case (wildcard)</span>
+                            </div>
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">match</span> keyword followed by expression</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">case</span> keyword with pattern to match</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">_</span> as wildcard for default case</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="right-column">
+                    <div class="match-card patterns-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">category</i>
+                            <div class="card-title">Pattern Matching Types</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="pattern-grid">
+                                <div class="pattern-item">
+                                    <div class="pattern-title">
+                                        <i class="material-icons">filter_1</i>
+                                        Literal Pattern
+                                    </div>
+                                    <div class="pattern-desc">
+                                        Matches exact values (strings, numbers, booleans)
+                                    </div>
+                                </div>
+                                <div class="pattern-item">
+                                    <div class="pattern-title">
+                                        <i class="material-icons">filter_2</i>
+                                        Sequence Pattern
+                                    </div>
+                                    <div class="pattern-desc">
+                                        Matches sequences like lists or tuples with patterns
+                                    </div>
+                                </div>
+                                <div class="pattern-item">
+                                    <div class="pattern-title">
+                                        <i class="material-icons">filter_3</i>
+                                        Mapping Pattern
+                                    </div>
+                                    <div class="pattern-desc">
+                                        Matches dictionaries with specific keys and values
+                                    </div>
+                                </div>
+                                <div class="pattern-item">
+                                    <div class="pattern-title">
+                                        <i class="material-icons">filter_4</i>
+                                        Class Pattern
+                                    </div>
+                                    <div class="pattern-desc">
+                                        Matches class instances with specific attributes
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="match-card example-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">code</i>
+                            <div class="card-title">Practical Example</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="code-example">
+                                <span class="comment"># HTTP response handler using match-case</span><br>
+                                <span class="keyword">def</span> <span class="function">handle_response</span>(response):<br>
+                                &nbsp;&nbsp;<span class="keyword">match</span> response:<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">case</span> {<span class="string">"status"</span>: <span class="number">200</span>, <span class="string">"data"</span>: data}:<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">f"Success: {data}"</span>)<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">case</span> {<span class="string">"status"</span>: <span class="number">404</span>}:<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Not found"</span>)<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">case</span> {<span class="string">"status"</span>: status} <span class="keyword">if</span> status >= <span class="number">400</span>:<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">f"Error: {status}"</span>)<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">case</span> _:<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Unknown response"</span>)<br><br>
+                                
+                                <span class="comment"># Example usage</span><br>
+                                <span class="function">handle_response</span>({<span class="string">"status"</span>: <span class="number">200</span>, <span class="string">"data"</span>: <span class="string">"User data"</span>})
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="python-logo">
+            <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" style="width: 100%; height: 100%;">
+        </div>
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">def</span> <span class="function">pattern_matching</span>():</div>
+            <div class="code-line">    <span class="keyword">match</span> value:</div>
+            <div class="code-line">        <span class="keyword">case</span> pattern:</div>
+            <div class="code-line">            <span class="function">execute</span>()</div>
+            <div class="code-line">        <span class="keyword">case</span> _:</div>
+            <div class="code-line">            <span class="function">default</span>()</div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PEP 8: Python Style Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .header {
+            padding: 40px 70px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .slide-header {
+            padding: 50px 70px 30px;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+        .content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: 0 70px 40px;
+            gap: 20px;
+        }
+        .slide-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 0 70px 50px;
+            gap: 25px;
+        }
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: auto auto;
+            gap: 25px;
+            flex-grow: 1;
+        }
+        .content-card {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .what-is-card {
+            border-left: 4px solid #4ec9b0;
+        }
+        .why-use-card {
+            border-left: 4px solid #dcdcaa;
+        }
+        .rules-card {
+            border-left: 4px solid #c586c0;
+        }
+        .examples-card {
+            border-left: 4px solid #9cdcfe;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-icon {
+            font-size: 28px;
+        }
+        .what-is-card .card-icon {
+            color: #4ec9b0;
+        }
+        .why-use-card .card-icon {
+            color: #dcdcaa;
+        }
+        .rules-card .card-icon {
+            color: #c586c0;
+        }
+        .examples-card .card-icon {
+            color: #9cdcfe;
+        }
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #d4d4d4;
+        }
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex-grow: 1;
+        }
+        .description {
+            font-size: 16px;
+            line-height: 1.5;
+            color: #cccccc;
+        }
+        .benefit-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .benefit-icon {
+            color: #dcdcaa;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        .benefit-text {
+            font-size: 16px;
+            line-height: 1.4;
+            color: #cccccc;
+        }
+        .rule-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .rule-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .rule-icon {
+            color: #c586c0;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        .rule-text {
+            font-size: 16px;
+            line-height: 1.4;
+            color: #cccccc;
+        }
+        .code-example {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 12px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #cccccc;
+            line-height: 1.5;
+            overflow-x: auto;
+        }
+        .code-section {
+            margin-bottom: 15px;
+        }
+        .code-label {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #9cdcfe;
+        }
+        .keyword {
+            color: #569cd6;
+        }
+        .function {
+            color: #dcdcaa;
+        }
+        .string {
+            color: #ce9178;
+        }
+        .comment {
+            color: #608b4e;
+        }
+        .number {
+            color: #b5cea8;
+        }
+        .python-logo {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 10s linear infinite;
+        }
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .code-decoration {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            opacity: 0.6;
+            padding: 20px;
+            overflow: hidden;
+        }
+        .code-line {
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+        .highlight {
+            background-color: rgba(78, 201, 176, 0.2);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="slide-header">
+            <div class="title">PEP 8: Python Style Guide</div>
+        </div>
+        <div class="slide-content">
+            <div class="content-grid">
+                <div class="content-card what-is-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">info</i>
+                        <div class="card-title">What is PEP 8?</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="description">
+                            PEP 8 is Python's official style guide that provides conventions for writing readable and consistent Python code.
+                        </div>
+                        <div class="description">
+                            Created by Guido van Rossum, Barry Warsaw, and Nick Coghlan in 2001, it aims to improve code readability and make Python code consistent across projects.
+                        </div>
+                        <div class="description">
+                            While not mandatory, following PEP 8 is considered a best practice in the Python community.
+                        </div>
+                    </div>
+                </div>
+                <div class="content-card why-use-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">lightbulb</i>
+                        <div class="card-title">Why Use PEP 8?</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="benefit-list">
+                            <div class="benefit-item">
+                                <i class="material-icons benefit-icon">check_circle</i>
+                                <div class="benefit-text"><strong>Readability:</strong> Code is read more often than it's written</div>
+                            </div>
+                            <div class="benefit-item">
+                                <i class="material-icons benefit-icon">check_circle</i>
+                                <div class="benefit-text"><strong>Consistency:</strong> Uniform style across projects and teams</div>
+                            </div>
+                            <div class="benefit-item">
+                                <i class="material-icons benefit-icon">check_circle</i>
+                                <div class="benefit-text"><strong>Maintainability:</strong> Easier to debug and modify code</div>
+                            </div>
+                            <div class="benefit-item">
+                                <i class="material-icons benefit-icon">check_circle</i>
+                                <div class="benefit-text"><strong>Collaboration:</strong> Reduces cognitive load when switching between projects</div>
+                            </div>
+                            <div class="benefit-item">
+                                <i class="material-icons benefit-icon">check_circle</i>
+                                <div class="benefit-text"><strong>Professionalism:</strong> Shows attention to detail and care for code quality</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-card rules-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">rule</i>
+                        <div class="card-title">Key PEP 8 Rules</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="rule-list">
+                            <div class="rule-item">
+                                <i class="material-icons rule-icon">format_align_left</i>
+                                <div class="rule-text"><strong>Indentation:</strong> Use 4 spaces per indentation level</div>
+                            </div>
+                            <div class="rule-item">
+                                <i class="material-icons rule-icon">format_align_left</i>
+                                <div class="rule-text"><strong>Line Length:</strong> Limit lines to 79 characters</div>
+                            </div>
+                            <div class="rule-item">
+                                <i class="material-icons rule-icon">format_align_left</i>
+                                <div class="rule-text"><strong>Naming:</strong> snake_case for variables/functions, PascalCase for classes</div>
+                            </div>
+                            <div class="rule-item">
+                                <i class="material-icons rule-icon">format_align_left</i>
+                                <div class="rule-text"><strong>Imports:</strong> At the top of the file, grouped by standard library, third-party, and local</div>
+                            </div>
+                            <div class="rule-item">
+                                <i class="material-icons rule-icon">format_align_left</i>
+                                <div class="rule-text"><strong>Whitespace:</strong> Avoid extraneous whitespace around operators</div>
+                            </div>
+                            <div class="rule-item">
+                                <i class="material-icons rule-icon">format_align_left</i>
+                                <div class="rule-text"><strong>Comments:</strong> Complete sentences that start with a capital letter</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-card examples-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">code</i>
+                        <div class="card-title">PEP 8 Examples</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="code-section">
+                            <div class="code-label">Naming Conventions:</div>
+                            <div class="code-example">
+                                <span class="comment"># Class names should use PascalCase</span><br>
+                                <span class="keyword">class</span> <span class="function">MyClass</span>:<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">pass</span><br><br>
+                                
+                                <span class="comment"># Function and variable names should use snake_case</span><br>
+                                <span class="keyword">def</span> <span class="function">calculate_average</span>(numbers_list):<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;total = <span class="number">0</span><br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">for</span> num <span class="keyword">in</span> numbers_list:<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;total += num<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> total / len(numbers_list)
+                            </div>
+                        </div>
+                        <div class="code-section">
+                            <div class="code-label">Line Length and Spacing:</div>
+                            <div class="code-example">
+                                <span class="comment"># Keep lines under 79 characters</span><br>
+                                <span class="keyword">def</span> <span class="function">long_function_name</span>(<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;var_one, var_two, var_three,<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;var_four, var_five):<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">print</span>(var_one)<br><br>
+                                
+                                <span class="comment"># Use spaces around operators</span><br>
+                                x = <span class="number">5</span> + <span class="number">3</span>  <span class="comment"># Good</span><br>
+                                y = <span class="number">10</span> * <span class="number">2</span>  <span class="comment"># Good</span><br>
+                                z = <span class="number">20</span> - <span class="number">5</span>  <span class="comment"># Good</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="python-logo">
+            <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" style="width: 100%; height: 100%;">
+        </div>
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">def</span> <span class="function">pep8_benefits</span>():</div>
+            <div class="code-line">    benefits = [<span class="string">"readability"</span>, <span class="string">"consistency"</span>, <span class="string">"maintainability"</span>]</div>
+            <div class="code-line">    <span class="keyword">for</span> benefit <span class="keyword">in</span> benefits:</div>
+            <div class="code-line">        <span class="keyword">print</span>(<span class="string">f"PEP 8 improves {benefit}"</span>)</div>
+        </div>
+    </div>
+</body>
+</html>

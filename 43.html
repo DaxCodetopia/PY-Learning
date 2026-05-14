@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Lists (Arrays) Masterclass</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        /* CORE STYLES FROM PROVIDED CODE */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        .slide {
+            width: 100%;
+            max-width: 1400px;
+            min-height: 100vh;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: visible;
+            display: flex;
+            flex-direction: column;
+            margin: 0 auto;
+        }
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .slide-header {
+            padding: 40px 60px 20px;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .title {
+            font-size: 48px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #4ec9b0, #2196F3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+        .slide-content {
+            flex-grow: 1;
+            display: flex;
+            flex-wrap: wrap;
+            padding: 0 60px 60px;
+            gap: 30px;
+            position: relative;
+            z-index: 1;
+        }
+        .content-container {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+            gap: 30px;
+        }
+        
+        /* CARD STYLING (Modified for Arrays theme) */
+        .datastructure-card {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            flex: 1 1 500px; /* Flex grow, shrink, basis */
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(255,255,255,0.05);
+            backdrop-filter: blur(5px);
+        }
+        .datastructure-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(78, 201, 176, 0.15);
+            border-color: rgba(78, 201, 176, 0.3);
+        }
+        
+        /* Theme Color: Lists (Teal) */
+        .lists-card {
+            border-left: 4px solid #4ec9b0;
+        }
+        .lists-card .card-icon { color: #4ec9b0; }
+        .lists-card .point-icon { color: #4ec9b0; }
+        .lists-card .key-concept {
+            background-color: rgba(78, 201, 176, 0.2);
+            color: #4ec9b0;
+            font-weight: 500;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin: 0 2px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .card-icon {
+            font-size: 32px;
+        }
+        .card-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #d4d4d4;
+        }
+        
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .point-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .point-text {
+            font-size: 18px;
+            line-height: 1.5;
+            color: #cccccc;
+        }
+
+        /* CODE BLOCK STYLING */
+        .code-example {
+            background-color: rgba(0, 0, 0, 0.4);
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 15px;
+            color: #cccccc;
+            line-height: 1.6;
+            overflow-x: auto;
+            flex-grow: 1;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        /* Syntax Highlighting Colors */
+        .keyword { color: #569cd6; }
+        .function { color: #dcdcaa; }
+        .string { color: #ce9178; }
+        .comment { color: #6a9955; font-style: italic; }
+        .number { color: #b5cea8; }
+        .operator { color: #d4d4d4; }
+
+        /* ROTATING LOGO */
+        .python-logo {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            z-index: 2;
+            pointer-events: none; /* Let clicks pass through */
+        }
+        .python-logo img {
+            width: 100%;
+            height: 100%;
+            animation: rotate 20s linear infinite;
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* --- CUSTOM VISUALIZATIONS FOR ARRAYS (Dark Mode Adapted) --- */
+
+        /* Muffin Tray (Dark Mode) */
+        .muffin-tray {
+            display: flex;
+            gap: 15px;
+            background-color: #2c2c3e;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+            border: 1px solid #4ec9b0;
+        }
+
+        .muffin {
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle at 30% 30%, #ffb74d, #ef6c00);
+            border-radius: 50% 50% 10% 10%;
+            position: relative;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .muffin::after {
+            content: '🍦';
+            font-size: 24px;
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+        }
+
+        /* Interactive Array Viz */
+        .array-viz {
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        .array-cell {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .box {
+            width: 60px;
+            height: 60px;
+            border: 2px solid #4ec9b0;
+            background-color: rgba(78, 201, 176, 0.1);
+            color: #4ec9b0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 4px;
+            transition: all 0.3s;
+            font-family: 'Source Code Pro', monospace;
+        }
+        .box.highlight {
+            background-color: #4ec9b0;
+            color: #1a1a2e;
+            transform: scale(1.1);
+            box-shadow: 0 0 15px #4ec9b0;
+            z-index: 10;
+        }
+        .index {
+            margin-top: 8px;
+            font-size: 0.8rem;
+            color: #888;
+            font-family: 'Source Code Pro', monospace;
+        }
+
+        /* Playground Controls */
+        .playground {
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 1px dashed #4ec9b0;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        input[type="number"] {
+            padding: 10px;
+            border: 1px solid #555;
+            background-color: #2d2d2d;
+            color: white;
+            border-radius: 4px;
+            font-family: 'Roboto', sans-serif;
+            width: 80px;
+        }
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #4ec9b0;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4ec9b0;
+            color: #1a1a2e;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        button:hover {
+            background-color: #3db89d;
+            box-shadow: 0 0 10px rgba(78, 201, 176, 0.4);
+        }
+        #resultOutput {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #ffffff;
+            min-height: 1.5em;
+            font-family: 'Source Code Pro', monospace;
+        }
+
+        /* Code Decoration Footer */
+        .code-decoration {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            opacity: 0.4;
+            padding: 20px;
+            overflow: hidden;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .code-line { margin-bottom: 5px; white-space: nowrap; }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <!-- Header -->
+        <div class="slide-header">
+            <div>
+                <div class="title">Python Lists (Arrays)</div>
+                <div style="color: #888; font-size: 1.1rem;">Linear Data Structures & Indexing</div>
+            </div>
+        </div>
+
+        <!-- Python Logo (Rotating) -->
+        <div class="python-logo">
+            <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo">
+        </div>
+
+        <!-- Content Area -->
+        <div class="slide-content">
+            <div class="content-container">
+                
+                <!-- Card 1: Concept & Analogy -->
+                <div class="datastructure-card lists-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">lightbulb</i>
+                        <div class="card-title">Concept & Analogy</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="key-points">
+                            <div class="point-item">
+                                <i class="material-icons point-icon">check_circle</i>
+                                <div class="point-text">An <strong>Array</strong> (List in Python) is a collection of elements stored in <span class="key-concept">contiguous memory</span>.</div>
+                            </div>
+                            <div class="point-item">
+                                <i class="material-icons point-icon">check_circle</i>
+                                <div class="point-text">Think of it like a <strong>Muffin Tray</strong>: items are held in order, one after another.</div>
+                            </div>
+                            <div class="point-item">
+                                <i class="material-icons point-icon">check_circle</i>
+                                <div class="point-text">In Python, lists are <span class="key-concept">Mutable</span> and <span class="key-concept">Dynamic</span>.</div>
+                            </div>
+                        </div>
+
+                        <div class="muffin-tray">
+                            <div class="muffin" title="Index 0"></div>
+                            <div class="muffin" title="Index 1"></div>
+                            <div class="muffin" title="Index 2"></div>
+                            <div class="muffin" title="Index 3"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Syntax & Declaration -->
+                <div class="datastructure-card lists-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">code</i>
+                        <div class="card-title">Declaration Syntax</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="point-text" style="margin-bottom: 10px;">Python lists use square brackets <code>[]</code> and can hold mixed types.</div>
+                        <div class="code-example">
+<span class="comment"># Initializing a list (Array)</span>
+<span class="keyword">empty_list</span> = []
+
+<span class="comment"># List of integers</span>
+<span class="keyword">my_numbers</span> = [<span class="number">10</span>, <span class="number">20</span>, <span class="number">30</span>, <span class="number">40</span>, <span class="number">50</span>]
+
+<span class="comment"># List of strings</span>
+<span class="keyword">cars</span> = [<span class="string">"Volvo"</span>, <span class="string">"BMW"</span>, <span class="string">"Ford"</span>, <span class="string">"Mazda"</span>]
+
+<span class="comment"># Modifying elements</span>
+cars[<span class="number">0</span>] = <span class="string">"Tesla"</span>  <span class="comment"># Allowed because lists are mutable</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Accessing & Interactive -->
+                <div class="datastructure-card lists-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">touch_app</i>
+                        <div class="card-title">Accessing Elements</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="point-text">Python uses <span class="key-concept">Zero-Based Indexing</span>. The first element is at index 0.</div>
+                        
+                        <div class="array-viz">
+                            <div class="array-cell"><div class="box" id="box-0">10</div><div class="index">0</div></div>
+                            <div class="array-cell"><div class="box" id="box-1">20</div><div class="index">1</div></div>
+                            <div class="array-cell"><div class="box" id="box-2">30</div><div class="index">2</div></div>
+                            <div class="array-cell"><div class="box" id="box-3">40</div><div class="index">3</div></div>
+                            <div class="array-cell"><div class="box" id="box-4">50</div><div class="index">4</div></div>
+                        </div>
+
+                        <div class="playground">
+                            <div class="code-example" style="margin-bottom: 10px; padding: 10px;">
+                                <span class="keyword">print</span>(my_numbers[<span class="number">index</span>])
+                            </div>
+                            <div class="controls">
+                                <label style="color:#aaa;">Index (0-4):</label>
+                                <input type="number" id="indexInput" min="0" max="4" value="0">
+                                <button onclick="accessElement()">Access Value</button>
+                            </div>
+                            <div id="resultOutput">Ready...</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Footer Decoration -->
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">def</span> <span class="function">understand_arrays</span>():</div>
+            <div class="code-line">    data = [<span class="string">"Python"</span>, <span class="string">"Lists"</span>, <span class="string">"Arrays"</span>]</div>
+            <div class="code-line">    <span class="keyword">return</span> data[<span class="number">0</span>]  <span class="comment"># Returns 'Python'</span></div>
+        </div>
+    </div>
+
+    <script>
+        // Logic for Interactive Demo
+        const demoData = [10, 20, 30, 40, 50];
+        const output = document.getElementById('resultOutput');
+        
+        function accessElement() {
+            const input = document.getElementById('indexInput');
+            const index = parseInt(input.value);
+
+            // Remove all highlights
+            document.querySelectorAll('.box').forEach(box => {
+                box.classList.remove('highlight');
+                box.style.backgroundColor = 'rgba(78, 201, 176, 0.1)';
+                box.style.color = '#4ec9b0';
+            });
+
+            if (isNaN(index)) {
+                output.innerText = "Error: Enter a valid number.";
+                output.style.color = "#ff6b6b";
+                return;
+            }
+
+            if (index >= 0 && index < demoData.length) {
+                // Valid index
+                const value = demoData[index];
+                output.innerHTML = `Value at index <span style="color:#4ec9b0">[${index}]</span> is <strong style="color:white">${value}</strong>`;
+                
+                // Highlight visual box
+                const boxId = `box-${index}`;
+                const boxElement = document.getElementById(boxId);
+                if(boxElement) {
+                    boxElement.classList.add('highlight');
+                }
+            } else {
+                // Out of bounds
+                output.innerText = `Error: Index ${index} out of bounds.`;
+                output.style.color = "#ff6b6b";
+            }
+        }
+    </script>
+</body>
+</html>

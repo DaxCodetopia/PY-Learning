@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introducing Python Data Structures: Lists, Tuples, Dictionaries</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            overflow: auto;
+            min-height: 100vh;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 100vh;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: visible;
+            display: flex;
+            flex-direction: column;
+        }
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .slide-header {
+            padding: 30px 70px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+        .slide-content {
+            flex-grow: 1;
+            display: flex;
+            padding: 0 70px 50px;
+            gap: 30px;
+            position: relative;
+            z-index: 1;
+        }
+        .content-container {
+            display: flex;
+            width: 100%;
+            gap: 30px;
+        }
+        .datastructure-card {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .datastructure-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .lists-card {
+            border-left: 4px solid #4ec9b0;
+        }
+        .tuples-card {
+            border-left: 4px solid #dcdcaa;
+        }
+        .dictionaries-card {
+            border-left: 4px solid #c586c0;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-icon {
+            font-size: 28px;
+        }
+        .lists-card .card-icon {
+            color: #4ec9b0;
+        }
+        .tuples-card .card-icon {
+            color: #dcdcaa;
+        }
+        .dictionaries-card .card-icon {
+            color: #c586c0;
+        }
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #d4d4d4;
+        }
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+        }
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .point-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .point-icon {
+            font-size: 20px;
+            margin-top: 3px;
+            flex-shrink: 0;
+        }
+        .lists-card .point-icon {
+            color: #4ec9b0;
+        }
+        .tuples-card .point-icon {
+            color: #dcdcaa;
+        }
+        .dictionaries-card .point-icon {
+            color: #c586c0;
+        }
+        .point-text {
+            font-size: 18px;
+            line-height: 1.4;
+            color: #cccccc;
+        }
+        .key-concept {
+            display: inline-block;
+            background-color: rgba(78, 201, 176, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin: 0 2px;
+            color: #4ec9b0;
+            font-weight: 500;
+        }
+        .tuples-card .key-concept {
+            background-color: rgba(220, 220, 170, 0.2);
+            color: #dcdcaa;
+        }
+        .dictionaries-card .key-concept {
+            background-color: rgba(197, 134, 192, 0.2);
+            color: #c586c0;
+        }
+        .code-example {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 16px;
+            color: #cccccc;
+            line-height: 1.5;
+            overflow: auto;
+            flex-grow: 1;
+            max-height: 300px;
+        }
+        .keyword {
+            color: #569cd6;
+        }
+        .function {
+            color: #dcdcaa;
+        }
+        .string {
+            color: #ce9178;
+        }
+        .comment {
+            color: #608b4e;
+        }
+        .number {
+            color: #b5cea8;
+        }
+        .python-logo {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 10s linear infinite;
+            z-index: 1;
+        }
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .code-decoration {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            opacity: 0.6;
+            padding: 20px;
+            overflow: hidden;
+            z-index: 1;
+        }
+        .code-line {
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="slide-header">
+            <div class="title">Introducing Python Data Structures: Lists, Tuples, Dictionaries</div>
+        </div>
+        <div class="slide-content">
+            <div class="content-container">
+                <div class="datastructure-card lists-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">format_list_numbered</i>
+                        <div class="card-title">Lists</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="key-points">
+                            <div class="point-item">
+                                <i class="material-icons point-icon">check_circle</i>
+                                <div class="point-text"><span class="key-concept">Ordered</span> collection of elements</div>
+                            </div>
+                            <div class="point-item">
+                                <i class="material-icons point-icon">check_circle</i>
+                                <div class="point-text"><span class="key-concept">Mutable</span> - can be modified</div>
+                            </div>
+                            <div class="point-item">
+                                <i class="material-icons point-icon">check_circle</i>
+                                <div class="point-text">Can contain <span class="key-concept">mixed types</span></div>
+                            </div>
+                            <div class="point-item">
+                                <i class="material-icons point-icon">check_circle</i>
+                                <div class="point-text">Indexed by <span class="key-concept">position</span> (0-based)</div>
+                            </div>
+                        </div>
+                        <div class="code-example">
+                            <span class="comment"># Creating lists</span><br>
+                            <span class="comment"># Empty list</span><br>
+                            empty_list = []<br><br>
+                            
+                            <span class="comment"># List with initial values</span><br>
+                            fruits = [<span class="string">"apple"</span>, <span class="string">"banana"</span>, <span class="string">"cherry"</span>]<br><br>
+                            
+                            <span class="comment"># List comprehension</span><br>
+                            squares = [x**<span class="number">2</span> <span class="keyword">for</span> x <span class="keyword">in</span> <span class="function">range</span>(<span class="number">5</span>)]<br><br>
+                            
+                            <span class="comment"># Common operations</span><br>
+                            fruits.<span class="function">append</span>(<span class="string">"orange"</span>)<br>
+                            fruits.<span class="function">insert</span>(<span class="number">1</span>, <span class="string">"grape"</span>)<br>
+                            fruits.<span class="function">remove</span>(<span class="string">"banana"</span>)<br>
+                            <span class="function">print</span>(fruits)  <span class="comment"># ['apple', 'grape', 'cherry', 'orange']</span><br>
+                            <span class="function">print</span>(fruits[<span class="number">2</span>])  <span class="comment"># 'grape'</span><br>
+                            <span class="function">print</span>(<span class="function">len</span>(fruits))  <span class="comment"># 4</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="datastructure-card tuples-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">filter_1</i>
+                        <div class="card-title">Tuples</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="key-points">
+                            <div class="point-item">
+                                <i class="material-icons point-icon">check_circle</i>
+                                <div class="point-text"><span class="key-concept">Ordered</span> collection of elements</div>
+                            </div>
+                            <div class="point-item">
+                                <i class="material-icons point-icon">check_circle</i>
+                                <div class="point-text"><span class="key-concept">Immutable</span> - cannot be modified</div>
+                            </div>
+                            <div class="point-item">
+                                <i class="material-icons point-icon">check_circle</i>
+                                <div class="point-text">Can contain <span class="key-concept">mixed types</span></div>
+                            </div>
+                            <div class="point-item">
+                                <i class="material-icons point-icon">check_circle</i>
+                                <div class="point-text">Created with <span class="key-concept">parentheses</span></div>
+                            </div>
+                        </div>
+                        <div class="code-example">
+                            <span class="comment"># Creating tuples</span><br>
+                            <span class="comment"># Empty tuple</span><br>
+                            empty_tuple = ()<br><br>
+                            
+                            <span class="comment"># Tuple with initial values</span><br>
+                            coordinates = (<span class="number">10</span>, <span class="number">20</span>)<br>
+                            person = (<span class="string">"Alice"</span>, <span class="number">25</span>, <span class="keyword">True</span>)<br><br>
+                            
+                            <span class="comment"># Tuple packing/unpacking</span><br>
+                            point = (<span class="number">5</span>, <span class="number">10</span>)<br>
+                            x, y = point  <span class="comment"># Unpack into variables</span><br>
+                            <span class="function">print</span>(x, y)  <span class="comment"># 5 10</span><br><br>
+                            
+                            <span class="comment"># Common operations</span><br>
+                            <span class="function">print</span>(coordinates[<span class="number">0</span>])  <span class="comment"># 10</span><br>
+                            <span class="function">print</span>(coordinates[<span class="number">1</span>])  <span class="comment"># 20</span><br>
+                            <span class="function">print</span>(coordinates[<span class="number">2</span>])  <span class="comment"># 25</span><br>
+                            <span class="function">print</span>(<span class="function">len</span>(coordinates))  <span class="comment"># 3</span><br><br>
+                            
+                            <span class="comment"># Tuple concatenation</span><br>
+                            tuple1 = (<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)<br>
+                            tuple2 = (<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>)<br>
+                            combined = tuple1 + tuple2  <span class="comment"># (1, 2, 3, 4, 5, 6)</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="datastructure-card dictionaries-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">account_tree</i>
+                        <div class="card-title">Dictionaries</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="key-points">
+                            <div class="point-item">
+                                <i class="material-icons point-icon">check_circle</i>
+                                <div class="point-text"><span class="key-concept">Key-value</span> pairs</div>
+                            </div>
+                            <div class="point-item">
+                                <i class="material-icons point-icon">check_circle</i>
+                                <div class="point-text"><span class="key-concept">Unordered</span> collection</div>
+                            </div>
+                            <div class="point-item">
+                                <i class="material-icons point-icon">check_circle</i>
+                                <div class="point-text"><span class="key-concept">Mutable</span> - can be modified</div>
+                            </div>
+                            <div class="point-item">
+                                <i class="material-icons point-icon">check_circle</i>
+                                <div class="point-text">Keys must be <span class="key-concept">hashable</span> types</div>
+                            </div>
+                        </div>
+                        <div class="code-example">
+                            <span class="comment"># Creating dictionaries</span><br>
+                            <span class="comment"># Empty dictionary</span><br>
+                            empty_dict = {}<br><br>
+                            
+                            <span class="comment"># Dictionary with initial values</span><br>
+                            student = {<br>
+                              <span class="string">"name"</span>: <span class="string">"Alice"</span>,<br>
+                              <span class="string">"age"</span>: <span class="number">20</span>,<br>
+                              <span class="string">"courses"</span>: [<span class="string">"Math"</span>, <span class="string">"Physics"</span>]<br>
+                            }<br><br>
+                            
+                            <span class="comment"># Accessing values</span><br>
+                            <span class="function">print</span>(student[<span class="string">"name"</span>])  <span class="comment"># Alice</span><br>
+                            <span class="function">print</span>(student[<span class="string">"age"</span>])  <span class="comment"># 20</span><br>
+                            <span class="function">print</span>(student[<span class="string">"courses"</span>][<span class="number">0</span>])  <span class="comment"># Math</span><br><br>
+                            
+                            <span class="comment"># Common operations</span><br>
+                            student[<span class="string">"gpa"</span>] = <span class="number">3.8</span><br>
+                            student[<span class="string">"is_enrolled"</span>] = <span class="keyword">True</span><br>
+                            <span class="function">print</span>(student.<span class="function">keys</span>())  <span class="comment"># ['name', 'age', 'courses', 'gpa', 'is_enrolled']</span><br>
+                            <span class="function">print</span>(<span class="string">"name"</span> <span class="keyword">in</span> student)  <span class="comment"># True</span><br>
+                            <span class="function">del</span> student[<span class="string">"gpa"</span>]<br>
+                            <span class="function">print</span>(<span class="string">"gpa"</span> <span class="keyword">in</span> student)  <span class="comment"># False</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="python-logo">
+            <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" style="width: 100%; height: 100%;">
+        </div>
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">def</span> <span class="function">data_structures</span>():</div>
+            <div class="code-line">    lists = [<span class="string">"item1"</span>, <span class="string">"item2"</span>]</div>
+            <div class="code-line">    tuples = (<span class="string">"item1"</span>, <span class="string">"item2"</span>)</div>
+            <div class="code-line">    dictionaries = {<span class="string">"key1"</span>: <span class="string">"value1"</span>}</div>
+            <div class="code-line">    <span class="keyword">return</span> lists, tuples, dictionaries</div>
+        </div>
+    </div>
+</body>
+</html>

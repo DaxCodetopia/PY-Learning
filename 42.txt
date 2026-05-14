@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Program Implementation in Python</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            overflow-x: auto;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 100vh;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: visible;
+            display: flex;
+            flex-direction: column;
+        }
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .slide-header {
+            padding: 30px 70px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #00E5FF, #D500F9);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+        .slide-content {
+            flex-grow: 1;
+            display: flex;
+            padding: 0 70px 50px;
+            gap: 25px;
+            position: relative;
+            z-index: 1;
+        }
+        .exercises-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            flex-grow: 1;
+        }
+        .exercise-card {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            backdrop-filter: blur(5px);
+        }
+        .exercise-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            background-color: rgba(50, 55, 65, 0.8);
+        }
+        
+        /* New Card Styles for Implementation */
+        .style-card {
+            border-left: 4px solid #00E5FF;
+        }
+        .debug-card {
+            border-left: 4px solid #FF4081;
+        }
+        .docs-card {
+            border-left: 4px solid #FFD740;
+        }
+        .modules-card {
+            border-left: 4px solid #69F0AE;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-icon {
+            font-size: 28px;
+        }
+        .style-card .card-icon { color: #00E5FF; }
+        .debug-card .card-icon { color: #FF4081; }
+        .docs-card .card-icon { color: #FFD740; }
+        .modules-card .card-icon { color: #69F0AE; }
+        
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #d4d4d4;
+        }
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+        }
+        .exercise-desc {
+            font-size: 18px;
+            line-height: 1.4;
+            color: #cccccc;
+        }
+        .code-example {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 15px;
+            color: #cccccc;
+            line-height: 1.5;
+            overflow: auto;
+            flex-grow: 1;
+            max-height: 320px;
+        }
+        .key-concepts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: auto;
+        }
+        .concept-tag {
+            background-color: rgba(0, 229, 255, 0.2);
+            color: #00E5FF;
+            font-size: 14px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: 'Source Code Pro', monospace;
+        }
+        .debug-card .concept-tag {
+            background-color: rgba(255, 64, 129, 0.2);
+            color: #FF4081;
+        }
+        .docs-card .concept-tag {
+            background-color: rgba(255, 215, 64, 0.2);
+            color: #FFD740;
+        }
+        .modules-card .concept-tag {
+            background-color: rgba(105, 240, 174, 0.2);
+            color: #69F0AE;
+        }
+        
+        /* Syntax Highlighting */
+        .keyword { color: #569cd6; }
+        .function { color: #dcdcaa; }
+        .string { color: #ce9178; }
+        .comment { color: #6a9955; }
+        .number { color: #b5cea8; }
+        .operator { color: #d4d4d4; }
+        .class-name { color: #4ec9b0; }
+        
+        .python-logo {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 10s linear infinite;
+            z-index: 1;
+            filter: drop-shadow(0 0 10px rgba(213, 0, 249, 0.3));
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .code-decoration {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            opacity: 0.6;
+            padding: 20px;
+            overflow: hidden;
+            z-index: 1;
+        }
+        .code-line {
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="slide-header">
+            <div class="title">Program Implementation</div>
+        </div>
+        
+        <div class="slide-content">
+            <div class="exercises-grid">
+                
+                <!-- Card 1: Code Style & PEP 8 -->
+                <div class="exercise-card style-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">format_shapes</i>
+                        <div class="card-title">Code Style (PEP 8)</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="exercise-desc">
+                            Write readable code. Use descriptive variable names, consistent indentation, and follow Python style guides.
+                        </div>
+                        <div class="code-example">
+                            <span class="comment"># Avoid: Unclear naming</span><br>
+                            d = <span class="number">10</span><br>
+                            <span class="keyword">def</span> <span class="function">x</span>(a, b):<br>
+                            &nbsp;&nbsp;<span class="keyword">return</span> a + b<br><br>
+                            
+                            <span class="comment"># Prefer: Descriptive (PEP 8)</span><br>
+                            discount_rate = <span class="number">0.10</span><br>
+                            <span class="keyword">def</span> <span class="function">calculate_total</span>(price, tax):<br>
+                            &nbsp;&nbsp;<span class="string">"""Calculate final cost."""</span><br>
+                            &nbsp;&nbsp;<span class="keyword">return</span> price + tax<br><br>
+                            
+                            <span class="comment"># Constants use UPPER_CASE</span><br>
+                            MAX_RETRIES = <span class="number">3</span><br>
+                            connection_string = <span class="string">"localhost:8080"</span>
+                        </div>
+                        <div class="key-concepts">
+                            <div class="concept-tag">readability</div>
+                            <div class="concept-tag">naming conventions</div>
+                            <div class="concept-tag">whitespace</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Debugging Techniques -->
+                <div class="exercise-card debug-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">bug_report</i>
+                        <div class="card-title">Debugging</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="exercise-desc">
+                            Identify and fix errors. Use assertions for preconditions and trace execution flow.
+                        </div>
+                        <div class="code-example">
+                            <span class="keyword">def</span> <span class="function">calculate_division</span>(numerator, denominator):<br>
+                            &nbsp;&nbsp;<span class="comment"># Check for invalid input early</span><br>
+                            &nbsp;&nbsp;<span class="keyword">assert</span> denominator != <span class="number">0</span>, <span class="string">"Divide by zero error"</span><br>
+                            &nbsp;&nbsp;<span class="keyword">assert</span> <span class="function">isinstance</span>(numerator, <span class="class-name">int</span>), <span class="string">"Numerator must be int"</span><br><br>
+                            
+                            &nbsp;&nbsp;<span class="comment"># Trace execution</span><br>
+                            &nbsp;&nbsp;<span class="function">print</span>(<span class="string">f"Calculating {numerator} / {denominator}"</span>)<br><br>
+                            
+                            &nbsp;&nbsp;result = numerator / denominator<br>
+                            &nbsp;&nbsp;<span class="keyword">return</span> result<br><br>
+                            
+                            <span class="comment"># Safe execution block</span><br>
+                            <span class="keyword">try</span>:<br>
+                            &nbsp;&nbsp;ans = <span class="function">calculate_division</span>(<span class="number">10</span>, <span class="number">0</span>)<br>
+                            <span class="keyword">except</span> <span class="class-name">AssertionError</span> <span class="keyword">as</span> e:<br>
+                            &nbsp;&nbsp;<span class="function">print</span>(<span class="string">f"Debug: {e}"</span>)
+                        </div>
+                        <div class="key-concepts">
+                            <div class="concept-tag">assert</div>
+                            <div class="concept-tag">try/except</div>
+                            <div class="concept-tag">traceback</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Documentation -->
+                <div class="exercise-card docs-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">description</i>
+                        <div class="card-title">Documentation</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="exercise-desc">
+                            Explain what code does and why. Use Docstrings for functions and comments for complex logic.
+                        </div>
+                        <div class="code-example">
+                            <span class="keyword">def</span> <span class="function">send_email</span>(recipient, subject, body):<br>
+                            &nbsp;&nbsp;<span class="string">"""</span><br>
+                            <span class="string">    Sends an email to the recipient.</span><br><br>
+                            <span class="string">    Args:</span><br>
+                            <span class="string">        recipient (str): Email address.</span><br>
+                            <span class="string">        subject (str): Subject line.</span><br>
+                            <span class="string">        body (str): Email content.</span><br><br>
+                            <span class="string">    Returns:</span><br>
+                            <span class="string">        bool: True if sent, False otherwise.</span><br>
+                            <span class="string">    """</span><br>
+                            &nbsp;&nbsp;<span class="comment"># Implementation details...</span><br>
+                            &nbsp;&nbsp;<span class="keyword">return</span> <span class="keyword">True</span>
+                        </div>
+                        <div class="key-concepts">
+                            <div class="concept-tag">docstrings</div>
+                            <div class="concept-tag">comments</div>
+                            <div class="concept-tag">type hints</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Modules & Imports -->
+                <div class="exercise-card modules-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">view_module</i>
+                        <div class="card-title">Modules & Imports</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="exercise-desc">
+                            Organize code into reusable files (modules) and packages. Import standard libraries to avoid reinventing the wheel.
+                        </div>
+                        <div class="code-example">
+                            <span class="comment"># Importing standard modules</span><br>
+                            <span class="keyword">import</span> math<br>
+                            <span class="keyword">import</span> random<br>
+                            <span class="keyword">from</span> datetime <span class="keyword">import</span> datetime<br><br>
+                            
+                            <span class="comment"># Using module functions</span><br>
+                            radius = <span class="number">5</span><br>
+                            area = math.pi * (radius ** <span class="number">2</span>)<br>
+                            lucky_num = random.<span class="function">randint</span>(<span class="number">1</span>, <span class="number">100</span>)<br><br>
+                            
+                            <span class="comment"># Custom module (assuming my_utils.py exists)</span><br>
+                            <span class="comment"># from my_utils import format_date</span><br><br>
+                            
+                            <span class="function">print</span>(<span class="string">f"Area: {area:.2f}"</span>)
+                        </div>
+                        <div class="key-concepts">
+                            <div class="concept-tag">import</div>
+                            <div class="concept-tag">standard library</div>
+                            <div class="concept-tag">reusability</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        
+        <div class="python-logo">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/1024px-Python-logo-notext.svg.png" alt="Python Logo" style="width: 100%; height: 100%;">
+        </div>
+        
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">def</span> <span class="function">implement_solution</span>(design):</div>
+            <div class="code-line">    <span class="comment"># Write clean, PEP 8 compliant code</span></div>
+            <div class="code-line">    code = <span class="function">write_code</span>(design)</div>
+            <div class="code-line">    </div>
+            <div class="code-line">    <span class="comment"># Debug and verify behavior</span></div>
+            <div class="code-line">    <span class="function">debug_errors</span>(code)</div>
+            <div class="code-line">    </div>
+            <div class="code-line">    <span class="comment"># Add documentation</span></div>
+            <div class="code-line">    <span class="function">document</span>(code)</div>
+            <div class="code-line">    </div>
+            <div class="code-line">    <span class="keyword">return</span> <span class="function">deploy</span>(code)</div>
+        </div>
+    </div>
+</body>
+</html>

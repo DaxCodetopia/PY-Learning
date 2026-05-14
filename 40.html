@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Problem Analysis in Python</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            overflow-x: auto;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 100vh;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: visible;
+            display: flex;
+            flex-direction: column;
+        }
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .slide-header {
+            padding: 30px 70px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+        .slide-content {
+            flex-grow: 1;
+            display: flex;
+            padding: 0 70px 50px;
+            gap: 25px;
+            position: relative;
+            z-index: 1;
+        }
+        .exercises-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            flex-grow: 1;
+        }
+        .exercise-card {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s;
+            backdrop-filter: blur(5px);
+        }
+        .exercise-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            background-color: rgba(50, 55, 65, 0.8);
+        }
+        
+        /* Theme Colors for Cards */
+        .decomp-card {
+            border-left: 4px solid #4ec9b0;
+        }
+        .io-card {
+            border-left: 4px solid #dcdcaa;
+        }
+        .algo-card {
+            border-left: 4px solid #c586c0;
+        }
+        .testing-card {
+            border-left: 4px solid #9cdcfe;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-icon {
+            font-size: 28px;
+        }
+        .decomp-card .card-icon { color: #4ec9b0; }
+        .io-card .card-icon { color: #dcdcaa; }
+        .algo-card .card-icon { color: #c586c0; }
+        .testing-card .card-icon { color: #9cdcfe; }
+        
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #d4d4d4;
+        }
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+        }
+        .exercise-desc {
+            font-size: 18px;
+            line-height: 1.4;
+            color: #cccccc;
+        }
+        .code-example {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 15px;
+            color: #cccccc;
+            line-height: 1.5;
+            overflow: auto;
+            flex-grow: 1;
+            max-height: 320px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .key-concepts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: auto;
+        }
+        .concept-tag {
+            background-color: rgba(78, 201, 176, 0.15);
+            color: #4ec9b0;
+            font-size: 13px;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-family: 'Source Code Pro', monospace;
+            border: 1px solid rgba(78, 201, 176, 0.3);
+        }
+        .io-card .concept-tag {
+            background-color: rgba(220, 220, 170, 0.15);
+            color: #dcdcaa;
+            border-color: rgba(220, 220, 170, 0.3);
+        }
+        .algo-card .concept-tag {
+            background-color: rgba(197, 134, 192, 0.15);
+            color: #c586c0;
+            border-color: rgba(197, 134, 192, 0.3);
+        }
+        .testing-card .concept-tag {
+            background-color: rgba(156, 220, 254, 0.15);
+            color: #9cdcfe;
+            border-color: rgba(156, 220, 254, 0.3);
+        }
+        
+        /* Syntax Highlighting */
+        .keyword { color: #569cd6; }
+        .function { color: #dcdcaa; }
+        .string { color: #ce9178; }
+        .comment { color: #6a9955; font-style: italic; }
+        .number { color: #b5cea8; }
+        .class-name { color: #4ec9b0; }
+        .operator { color: #d4d4d4; }
+        
+        .python-logo {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 10s linear infinite;
+            z-index: 2;
+            filter: drop-shadow(0 0 10px rgba(100, 200, 255, 0.2));
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .code-decoration {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 90px;
+            background: linear-gradient(to top, rgba(18, 18, 18, 1), transparent);
+            font-family: 'Source Code Pro', monospace;
+            font-size: 13px;
+            color: #6a9955;
+            padding: 25px 70px;
+            overflow: hidden;
+            z-index: 1;
+            pointer-events: none;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .code-line {
+            margin-bottom: 4px;
+            white-space: nowrap;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="slide-header">
+            <div class="title">Problem Analysis in Python</div>
+        </div>
+        
+        <div class="slide-content">
+            <div class="exercises-grid">
+                
+                <!-- Card 1: Problem Decomposition -->
+                <div class="exercise-card decomp-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">call_split</i>
+                        <div class="card-title">Problem Decomposition</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="exercise-desc">
+                            Break complex tasks into smaller, manageable functions. This simplifies debugging and improves readability.
+                        </div>
+                        <div class="code-example">
+                            <span class="comment"># Main Task: Process User Report</span><br>
+                            <span class="keyword">def</span> <span class="function">generate_report</span>(user_id):<br>
+                            &nbsp;&nbsp;data = <span class="function">fetch_user_data</span>(user_id)<br>
+                            &nbsp;&nbsp;<span class="keyword">if not</span> data:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="string">"Error: User not found"</span><br><br>
+                            
+                            &nbsp;&nbsp;<span class="comment"># Step 2: Process Logic</span><br>
+                            &nbsp;&nbsp;stats = <span class="function">calculate_stats</span>(data)<br><br>
+                            
+                            &nbsp;&nbsp;<span class="comment"># Step 3: Formatting</span><br>
+                            &nbsp;&nbsp;formatted = <span class="function">format_output</span>(stats)<br>
+                            &nbsp;&nbsp;<span class="keyword">return</span> formatted<br><br>
+                            
+                            <span class="keyword">def</span> <span class="function">calculate_stats</span>(data):<br>
+                            &nbsp;&nbsp;<span class="keyword">return</span> {<span class="string">"total"</span>: <span class="function">sum</span>(data)}
+                        </div>
+                        <div class="key-concepts">
+                            <div class="concept-tag">divide and conquer</div>
+                            <div class="concept-tag">modularity</div>
+                            <div class="concept-tag">abstraction</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: I/O Analysis -->
+                <div class="exercise-card io-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">input</i>
+                        <div class="card-title">Input / Output Mapping</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="exercise-desc">
+                            Clearly define expected input types (List, Dict, Int) and output formats before writing logic. Use Type Hints.
+                        </div>
+                        <div class="code-example">
+                            <span class="keyword">from</span> typing <span class="keyword">import</span> List, Dict, Optional<br><br>
+                            
+                            <span class="keyword">def</span> <span class="function">analyze_scores</span>(<br>
+                            &nbsp;&nbsp;scores: List[<span class="class-name">int</span>]<br>
+                            ) -> Dict[str, Optional[<span class="class-name">float</span>]]:<br>
+                            <span class="comment">"""</span><br>
+                            <span class="comment">Input: List of integer scores</span><br>
+                            <span class="comment">Output: Dictionary with average (float)</span><br>
+                            <span class="comment">"""</span><br>
+                            result: Dict[str, Optional[<span class="class-name">float</span>]] = {}<br><br>
+                            
+                            &nbsp;&nbsp;<span class="keyword">if</span> <span class="function">len</span>(scores) == <span class="number">0</span>:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;result[<span class="string">"average"</span>] = <span class="keyword">None</span><br>
+                            &nbsp;&nbsp;<span class="keyword">else</span>:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;result[<span class="string">"average"</span>] = <span class="function">sum</span>(scores) / <span class="function">len</span>(scores)<br><br>
+                            
+                            &nbsp;&nbsp;<span class="keyword">return</span> result
+                        </div>
+                        <div class="key-concepts">
+                            <div class="concept-tag">type hints</div>
+                            <div class="concept-tag">docstrings</div>
+                            <div class="concept-tag">constraints</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Algorithm Design -->
+                <div class="exercise-card algo-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">account_tree</i>
+                        <div class="card-title">Algorithm Design</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="exercise-desc">
+                            Plan the logic flow. Visualize decisions and loops to ensure correctness before implementation.
+                        </div>
+                        <div class="code-example">
+                            <span class="comment"># Logic Flow: Find valid item</span><br>
+                            <span class="keyword">def</span> <span class="function">find_valid_target</span>(items, threshold):<br>
+                            &nbsp;&nbsp;<span class="comment"># Iterate through dataset</span><br>
+                            &nbsp;&nbsp;<span class="keyword">for</span> item <span class="keyword">in</span> items:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Check Condition 1</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> item[<span class="string">"active"</span>]:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Check Condition 2</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> item[<span class="string">"score"</span>] > threshold:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> item<br><br>
+                            
+                            &nbsp;&nbsp;<span class="comment"># Fallback if loop finishes</span><br>
+                            &nbsp;&nbsp;<span class="keyword">return</span> <span class="keyword">None</span>
+                        </div>
+                        <div class="key-concepts">
+                            <div class="concept-tag">logic flow</div>
+                            <div class="concept-tag">control structures</div>
+                            <div class="concept-tag">pseudocode</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Testing & Edge Cases -->
+                <div class="exercise-card testing-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">bug_report</i>
+                        <div class="card-title">Testing & Edge Cases</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="exercise-desc">
+                            Anticipate errors (empty inputs, wrong types) and handle them gracefully using try/except blocks.
+                        </div>
+                        <div class="code-example">
+                            <span class="keyword">def</span> <span class="function">safe_divide</span>(a, b):<br>
+                            &nbsp;&nbsp;result = <span class="number">0</span><br>
+                            &nbsp;&nbsp;<span class="keyword">try</span>:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Attempt operation</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;result = a / b<br>
+                            &nbsp;&nbsp;<span class="keyword">except</span> <span class="class-name">ZeroDivisionError</span>:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Cannot divide by zero"</span>)<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;result = <span class="keyword">None</span><br>
+                            &nbsp;&nbsp;<span class="keyword">except</span> <span class="class-name">TypeError</span>:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="function">print</span>(<span class="string">"Inputs must be numbers"</span>)<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;result = <span class="keyword">None</span><br>
+                            &nbsp;&nbsp;<span class="keyword">finally</span>:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> result<br><br>
+                            
+                            <span class="comment"># Test cases</span><br>
+                            <span class="function">print</span>(<span class="function">safe_divide</span>(<span class="number">10</span>, <span class="number">2</span>))  <span class="comment"># 5.0</span><br>
+                            <span class="function">print</span>(<span class="function">safe_divide</span>(<span class="number">5</span>, <span class="number">0</span>))   <span class="comment"># None</span>
+                        </div>
+                        <div class="key-concepts">
+                            <div class="concept-tag">error handling</div>
+                            <div class="concept-tag">try/except</div>
+                            <div class="concept-tag">validation</div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+        <div class="python-logo">
+            <!-- Using a reliable high-res python logo URL -->
+            <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" style="width: 100%; height: 100%;">
+        </div>
+        
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">def</span> <span class="function">solve_problem</span>(requirements):</div>
+            <div class="code-line">    <span class="comment"># 1. Analyze inputs and constraints</span></div>
+            <div class="code-line">    inputs = <span class="function">map_types</span>(requirements)</div>
+            <div class="code-line">    </div>
+            <div class="code-line">    <span class="comment"># 2. Decompose into sub-tasks</span></div>
+            <div class="code-line">    tasks = <span class="function">break_down</span>(inputs)</div>
+            <div class="code-line">    </div>
+            <div class="code-line">    <span class="comment"># 3. Design algorithm logic</span></div>
+            <div class="code-line">    <span class="keyword">for</span> task <span class="keyword">in</span> tasks:</div>
+            <div class="code-line">        <span class="function">execute</span>(task)</div>
+            <div class="code-line">    </div>
+            <div class="code-line">    <span class="comment"># 4. Verify edge cases</span></div>
+            <div class="code-line">    <span class="keyword">return</span> <span class="function">validate_output</span>()</div>
+        </div>
+    </div>
+</body>
+</html>

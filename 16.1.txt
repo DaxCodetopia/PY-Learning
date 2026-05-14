@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Variable Scopes and Data Mutability</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .header {
+            padding: 40px 70px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .slide-header {
+            padding: 50px 70px 30px;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+        .content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: 0 70px 40px;
+            gap: 20px;
+        }
+        .slide-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 0 70px 50px;
+            gap: 25px;
+        }
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: auto auto;
+            gap: 25px;
+            flex-grow: 1;
+        }
+        .content-card {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .global-card {
+            border-left: 4px solid #4ec9b0;
+        }
+        .local-card {
+            border-left: 4px solid #dcdcaa;
+        }
+        .global-keyword-card {
+            border-left: 4px solid #c586c0;
+        }
+        .mutable-card {
+            border-left: 4px solid #9cdcfe;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-icon {
+            font-size: 28px;
+        }
+        .global-card .card-icon {
+            color: #4ec9b0;
+        }
+        .local-card .card-icon {
+            color: #dcdcaa;
+        }
+        .global-keyword-card .card-icon {
+            color: #c586c0;
+        }
+        .mutable-card .card-icon {
+            color: #9cdcfe;
+        }
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #d4d4d4;
+        }
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex-grow: 1;
+        }
+        .variable-example {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 12px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 16px;
+            color: #cccccc;
+            line-height: 1.5;
+        }
+        .diagram {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .diagram-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #d4d4d4;
+            margin-bottom: 5px;
+        }
+        .diagram-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 180px;
+            position: relative;
+        }
+        .scope-box {
+            position: absolute;
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .global-scope {
+            width: 90%;
+            height: 90%;
+            border: 2px dashed #4ec9b0;
+            background-color: rgba(78, 201, 176, 0.1);
+        }
+        .local-scope {
+            width: 60%;
+            height: 60%;
+            border: 2px dashed #dcdcaa;
+            background-color: rgba(220, 220, 170, 0.1);
+        }
+        .scope-label {
+            position: absolute;
+            font-weight: 600;
+        }
+        .global-label {
+            top: 10px;
+            left: 20px;
+            color: #4ec9b0;
+        }
+        .local-label {
+            top: 10px;
+            left: 20px;
+            color: #dcdcaa;
+        }
+        .mutable-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .mutable-column {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .column-title {
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+            padding: 8px;
+            border-radius: 6px;
+        }
+        .immutable-title {
+            background-color: rgba(197, 134, 192, 0.2);
+            color: #c586c0;
+        }
+        .mutable-title {
+            background-color: rgba(156, 220, 254, 0.2);
+            color: #9cdcfe;
+        }
+        .type-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .type-item {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .type-name {
+            font-weight: 600;
+            font-family: 'Source Code Pro', monospace;
+            min-width: 80px;
+        }
+        .immutable-name {
+            color: #c586c0;
+        }
+        .mutable-name {
+            color: #9cdcfe;
+        }
+        .type-desc {
+            font-size: 14px;
+            color: #cccccc;
+        }
+        .keyword {
+            color: #569cd6;
+        }
+        .function {
+            color: #dcdcaa;
+        }
+        .string {
+            color: #ce9178;
+        }
+        .comment {
+            color: #608b4e;
+        }
+        .number {
+            color: #b5cea8;
+        }
+        .python-logo {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 10s linear infinite;
+        }
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .code-decoration {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            opacity: 0.6;
+            padding: 20px;
+            overflow: hidden;
+        }
+        .code-line {
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+        .arrow {
+            position: absolute;
+            width: 80px;
+            height: 2px;
+            background-color: #ffffff;
+        }
+        .arrow::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: -4px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid #ffffff;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+        }
+        .arrow-1 {
+            top: 60px;
+            left: 40px;
+            transform: rotate(30deg);
+        }
+        .arrow-2 {
+            top: 80px;
+            left: 80px;
+            transform: rotate(-30deg);
+        }
+        .note {
+            font-size: 14px;
+            color: #cccccc;
+            font-style: italic;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="slide-header">
+            <div class="title">Python Variable Scopes and Data Mutability</div>
+        </div>
+        <div class="slide-content">
+            <div class="content-grid">
+                <div class="content-card global-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">public</i>
+                        <div class="card-title">Global Variables</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="variable-example">
+                            <span class="comment"># Global variable defined outside functions</span><br>
+                            x = <span class="number">10</span>  <span class="comment"># Global variable</span><br><br>
+                            
+                            <span class="keyword">def</span> <span class="function">my_function</span>():<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Can read global variable</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;print(<span class="string">"Inside function:"</span>, x)<br><br>
+                            
+                            <span class="function">my_function</span>()  <span class="comment"># Output: Inside function: 10</span><br>
+                            print(<span class="string">"Outside function:"</span>, x)  <span class="comment"># Output: Outside function: 10</span>
+                        </div>
+                        <div class="diagram">
+                            <div class="diagram-title">Variable Scope Visualization</div>
+                            <div class="diagram-content">
+                                <div class="scope-box global-scope">
+                                    <div class="scope-label global-label">Global Scope</div>
+                                    <div class="scope-box local-scope">
+                                        <div class="scope-label local-label">Local Scope</div>
+                                    </div>
+                                </div>
+                                <div class="arrow arrow-1"></div>
+                                <div class="arrow arrow-2"></div>
+                            </div>
+                            <div class="note">Global variables are accessible throughout the program</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-card local-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">settings</i>
+                        <div class="card-title">Local Variables</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="variable-example">
+                            <span class="keyword">def</span> <span class="function">my_function</span>():<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;y = <span class="number">20</span>  <span class="comment"># Local variable</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;print(<span class="string">"Inside function:"</span>, y)<br><br>
+                            
+                            <span class="function">my_function</span>()  <span class="comment"># Output: Inside function: 20</span><br><br>
+                            
+                            <span class="comment"># This will cause an error</span><br>
+                            <span class="comment"># print("Outside function:", y)  # NameError: name 'y' is not defined</span>
+                        </div>
+                        <div class="variable-example">
+                            <span class="comment"># Local and global variables with same name</span><br>
+                            x = <span class="number">10</span>  <span class="comment"># Global variable</span><br><br>
+                            
+                            <span class="keyword">def</span> <span class="function">my_function</span>():<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;x = <span class="number">30</span>  <span class="comment"># Creates a new local variable</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;print(<span class="string">"Inside function:"</span>, x)<br><br>
+                            
+                            <span class="function">my_function</span>()  <span class="comment"># Output: Inside function: 30</span><br>
+                            print(<span class="string">"Outside function:"</span>, x)  <span class="comment"># Output: Outside function: 10</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-card global-keyword-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">link</i>
+                        <div class="card-title">The 'global' Keyword</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="variable-example">
+                            <span class="comment"># Using global keyword to modify global variable</span><br>
+                            x = <span class="number">10</span>  <span class="comment"># Global variable</span><br><br>
+                            
+                            <span class="keyword">def</span> <span class="function">modify_global</span>():<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">global</span> x  <span class="comment"># Declare x as global</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;x = <span class="number">30</span>  <span class="comment"># Modify global variable</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;print(<span class="string">"Inside function:"</span>, x)<br><br>
+                            
+                            <span class="function">modify_global</span>()  <span class="comment"># Output: Inside function: 30</span><br>
+                            print(<span class="string">"Outside function:"</span>, x)  <span class="comment"># Output: Outside function: 30</span>
+                        </div>
+                        <div class="variable-example">
+                            <span class="comment"># Using global to create new global variable</span><br>
+                            <span class="keyword">def</span> <span class="function">create_global</span>():<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">global</span> z<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;z = <span class="number">50</span>  <span class="comment"># Creates new global variable</span><br><br>
+                            
+                            <span class="function">create_global</span>()<br>
+                            print(<span class="string">"New global variable:"</span>, z)  <span class="comment"># Output: New global variable: 50</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-card mutable-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">swap_horiz</i>
+                        <div class="card-title">Mutable vs Immutable Types</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="mutable-grid">
+                            <div class="mutable-column">
+                                <div class="column-title immutable-title">Immutable Types</div>
+                                <div class="type-list">
+                                    <div class="type-item">
+                                        <div class="type-name immutable-name">int</div>
+                                        <div class="type-desc">Cannot be modified after creation</div>
+                                    </div>
+                                    <div class="type-item">
+                                        <div class="type-name immutable-name">float</div>
+                                        <div class="type-desc">Cannot be modified after creation</div>
+                                    </div>
+                                    <div class="type-item">
+                                        <div class="type-name immutable-name">str</div>
+                                        <div class="type-desc">Cannot be modified after creation</div>
+                                    </div>
+                                    <div class="type-item">
+                                        <div class="type-name immutable-name">tuple</div>
+                                        <div class="type-desc">Cannot be modified after creation</div>
+                                    </div>
+                                    <div class="type-item">
+                                        <div class="type-name immutable-name">bool</div>
+                                        <div class="type-desc">Cannot be modified after creation</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mutable-column">
+                                <div class="column-title mutable-title">Mutable Types</div>
+                                <div class="type-list">
+                                    <div class="type-item">
+                                        <div class="type-name mutable-name">list</div>
+                                        <div class="type-desc">Can be modified after creation</div>
+                                    </div>
+                                    <div class="type-item">
+                                        <div class="type-name mutable-name">dict</div>
+                                        <div class="type-desc">Can be modified after creation</div>
+                                    </div>
+                                    <div class="type-item">
+                                        <div class="type-name mutable-name">set</div>
+                                        <div class="type-desc">Can be modified after creation</div>
+                                    </div>
+                                    <div class="type-item">
+                                        <div class="type-name mutable-name">bytearray</div>
+                                        <div class="type-desc">Can be modified after creation</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="variable-example">
+                            <span class="comment"># Immutable example</span><br>
+                            x = <span class="number">10</span><br>
+                            y = x  <span class="comment"># y points to same object as x</span><br>
+                            x = x + <span class="number">1</span>  <span class="comment"># Creates new integer object</span><br>
+                            print(x, y)  <span class="comment"># Output: 11 10</span><br><br>
+                            
+                            <span class="comment"># Mutable example</span><br>
+                            my_list = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]<br>
+                            new_list = my_list  <span class="comment"># new_list references same object</span><br>
+                            my_list.append(<span class="number">4</span>)  <span class="comment"># Modifies the object</span><br>
+                            print(my_list, new_list)  <span class="comment"># Both show [1, 2, 3, 4]</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="python-logo">
+            <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" style="width: 100%; height: 100%;">
+        </div>
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">def</span> <span class="function">python_scopes</span>():</div>
+            <div class="code-line">    <span class="keyword">global</span> global_var</div>
+            <div class="code-line">    local_var = <span class="string">"local"</span></div>
+            <div class="code-line">    mutable_list = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</div>
+            <div class="code-line">    <span class="keyword">return</span> local_var, mutable_list</div>
+        </div>
+    </div>
+</body>
+</html>

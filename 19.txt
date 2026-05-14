@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sequential Programming</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            overflow: hidden;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+	.slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .header {
+            padding: 40px 70px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .slide-header {
+            padding: 50px 70px 30px;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+	.content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: 0 70px 40px;
+            gap: 20px;
+        }
+        .slide-content {
+            flex-grow: 1;
+            display: flex;
+            padding: 0 70px 50px;
+            gap: 30px;
+        }
+        .content-container {
+            display: flex;
+            width: 100%;
+            gap: 30px;
+        }
+        .left-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .right-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .concept-card {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .concept-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .basics-card {
+            border-left: 4px solid #4ec9b0;
+        }
+        .execution-card {
+            border-left: 4px solid #dcdcaa;
+        }
+        .example-card {
+            border-left: 4px solid #c586c0;
+        }
+        .tips-card {
+            border-left: 4px solid #9cdcfe;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-icon {
+            font-size: 28px;
+        }
+        .basics-card .card-icon {
+            color: #4ec9b0;
+        }
+        .execution-card .card-icon {
+            color: #dcdcaa;
+        }
+        .example-card .card-icon {
+            color: #c586c0;
+        }
+        .tips-card .card-icon {
+            color: #9cdcfe;
+        }
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #d4d4d4;
+        }
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+        }
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .point-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .point-icon {
+            font-size: 20px;
+            margin-top: 3px;
+        }
+        .basics-card .point-icon {
+            color: #4ec9b0;
+        }
+        .execution-card .point-icon {
+            color: #dcdcaa;
+        }
+        .example-card .point-icon {
+            color: #c586c0;
+        }
+        .tips-card .point-icon {
+            color: #9cdcfe;
+        }
+        .point-text {
+            font-size: 20px;
+            line-height: 1.4;
+            color: #cccccc;
+        }
+        .key-concept {
+            display: inline-block;
+            background-color: rgba(78, 201, 176, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin: 0 2px;
+            color: #4ec9b0;
+            font-weight: 500;
+        }
+        .execution-card .key-concept {
+            background-color: rgba(220, 220, 170, 0.2);
+            color: #dcdcaa;
+        }
+        .example-card .key-concept {
+            background-color: rgba(197, 134, 192, 0.2);
+            color: #c586c0;
+        }
+        .tips-card .key-concept {
+            background-color: rgba(156, 220, 254, 0.2);
+            color: #9cdcfe;
+        }
+        .code-example {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 18px;
+            color: #cccccc;
+            line-height: 1.5;
+            overflow: auto;
+            flex-grow: 1;
+        }
+        .keyword {
+            color: #569cd6;
+        }
+        .function {
+            color: #dcdcaa;
+        }
+        .string {
+            color: #ce9178;
+        }
+        .comment {
+            color: #608b4e;
+        }
+        .number {
+            color: #b5cea8;
+        }
+        .python-logo {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 10s linear infinite;
+        }
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .code-decoration {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            opacity: 0.6;
+            padding: 20px;
+            overflow: hidden;
+        }
+        .code-line {
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+        .flow-visual {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+        .flow-step {
+            width: 100px;
+            height: 60px;
+            background-color: rgba(86, 156, 214, 0.2);
+            border: 2px solid #569cd6;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 600;
+            color: #d4d4d4;
+            position: relative;
+        }
+        .flow-step::after {
+            content: "→";
+            position: absolute;
+            right: -25px;
+            color: #569cd6;
+            font-size: 24px;
+        }
+        .flow-step:last-child::after {
+            content: "";
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="slide-header">
+            <div class="title">Sequential Programming</div>
+        </div>
+        <div class="slide-content">
+            <div class="content-container">
+                <div class="left-column">
+                    <div class="concept-card basics-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">code</i>
+                            <div class="card-title">What is Sequential Programming?</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Code executes <span class="key-concept">line by line</span> from top to bottom</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Each statement <span class="key-concept">completes</span> before the next begins</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">The <span class="key-concept">order</span> of statements matters</div>
+                                </div>
+                            </div>
+                            <div class="flow-visual">
+                                <div class="flow-step">Step 1</div>
+                                <div class="flow-step">Step 2</div>
+                                <div class="flow-step">Step 3</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="concept-card execution-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">play_arrow</i>
+                            <div class="card-title">Execution Flow</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Python <span class="key-concept">reads</span> the entire file first</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Then <span class="key-concept">executes</span> from top to bottom</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Control structures can <span class="key-concept">alter</span> this flow</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="right-column">
+                    <div class="concept-card example-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">code</i>
+                            <div class="card-title">Sequential Example</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="code-example">
+                                <span class="comment"># Simple sequential program</span><br>
+                                <span class="function">print</span>(<span class="string">"Starting the program..."</span>)<br><br>
+                                
+                                <span class="comment"># Step 1: Get user input</span><br>
+                                name = <span class="function">input</span>(<span class="string">"Enter your name: "</span>)<br><br>
+                                
+                                <span class="comment"># Step 2: Process the input</span><br>
+                                greeting = <span class="string">f"Hello, {name}!"</span><br><br>
+                                
+                                <span class="comment"># Step 3: Display output</span><br>
+                                <span class="function">print</span>(greeting)<br><br>
+                                
+                                <span class="comment"># Step 4: Calculate and display current year</span><br>
+                                current_year = <span class="number">2023</span><br>
+                                <span class="function">print</span>(<span class="string">f"Current year: {current_year}"</span>)<br><br>
+                                
+                                <span class="comment"># Step 5: End the program</span><br>
+                                <span class="function">print</span>(<span class="string">"Program completed."</span>)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="concept-card tips-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">tips_and_updates</i>
+                            <div class="card-title">Best Practices</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">Organize</span> code logically</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Use <span class="key-concept">comments</span> to explain the flow</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Break complex tasks into <span class="key-concept">smaller steps</span></div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Test each step <span class="key-concept">individually</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="python-logo">
+            <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" style="width: 100%; height: 100%;">
+        </div>
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">def</span> <span class="function">sequential_flow</span>():</div>
+            <div class="code-line">    <span class="function">step_one</span>()</div>
+            <div class="code-line">    <span class="function">step_two</span>()</div>
+            <div class="code-line">    <span class="function">step_three</span>()</div>
+            <div class="code-line">    <span class="keyword">return</span> <span class="string">"Complete"</span></div>
+        </div>
+    </div>
+</body>
+</html>

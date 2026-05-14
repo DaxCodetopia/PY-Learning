@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>High Level Language Translation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            overflow: hidden;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+	.slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .header {
+            padding: 40px 70px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .slide-header {
+            padding: 50px 70px 30px;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+	.content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: 0 70px 40px;
+            gap: 20px;
+        }
+        .slide-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 0 70px 50px;
+        }
+        .translation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            flex-grow: 1;
+        }
+        .translation-types {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+        .translation-card {
+            flex: 1;
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .translation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .translation-card:nth-child(1) { border-left: 4px solid #4ec9b0; }
+        .translation-card:nth-child(2) { border-left: 4px solid #dcdcaa; }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .card-icon {
+            font-size: 32px;
+        }
+        .translation-card:nth-child(1) .card-icon { color: #4ec9b0; }
+        .translation-card:nth-child(2) .card-icon { color: #dcdcaa; }
+        
+        .card-title {
+            font-size: 26px;
+            font-weight: 600;
+            color: #d4d4d4;
+        }
+        .card-content {
+            font-size: 20px;
+            line-height: 1.5;
+            color: #cccccc;
+        }
+        .key-feature {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .feature-icon {
+            font-size: 20px;
+            color: #569cd6;
+            margin-top: 3px;
+        }
+        .feature-text {
+            font-size: 20px;
+            line-height: 1.4;
+            color: #cccccc;
+        }
+        .translation-diagram {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            flex-grow: 1;
+        }
+        .diagram-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #569cd6;
+            text-align: center;
+        }
+        .diagram-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-grow: 1;
+        }
+        .diagram-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            width: 180px;
+        }
+        .step-box {
+            width: 100%;
+            height: 80px;
+            background-color: rgba(86, 156, 214, 0.2);
+            border: 2px solid #569cd6;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 600;
+            color: #d4d4d4;
+            text-align: center;
+            padding: 10px;
+        }
+        .step-desc {
+            font-size: 16px;
+            color: #9cdcfe;
+            text-align: center;
+        }
+        .arrow {
+            display: flex;
+            align-items: center;
+            color: #569cd6;
+            font-size: 30px;
+        }
+        .highlight {
+            color: #dcdcaa;
+            font-weight: 500;
+        }
+        .key-concept {
+            display: inline-block;
+            background-color: rgba(78, 201, 176, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin: 0 2px;
+            color: #4ec9b0;
+            font-weight: 500;
+        }
+        .python-logo {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 10s linear infinite;
+        }
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .code-decoration {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            opacity: 0.6;
+            padding: 20px;
+            overflow: hidden;
+        }
+        .code-line {
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+        .keyword {
+            color: #569cd6;
+        }
+        .string {
+            color: #ce9178;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="slide-header">
+            <div class="title">High Level Language Translation</div>
+        </div>
+        <div class="slide-content">
+            <div class="translation-container">
+                <div class="translation-types">
+                    <div class="translation-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">play_arrow</i>
+                            <div class="card-title">Interpreter</div>
+                        </div>
+                        <div class="card-content">
+                            Executes code line by line
+                        </div>
+                        <div class="key-feature">
+                            <i class="material-icons feature-icon">check_circle</i>
+                            <div class="feature-text">
+                                <span class="key-concept">Python</span> uses an interpreter
+                            </div>
+                        </div>
+                        <div class="key-feature">
+                            <i class="material-icons feature-icon">check_circle</i>
+                            <div class="feature-text">
+                                Immediate execution and feedback
+                            </div>
+                        </div>
+                        <div class="key-feature">
+                            <i class="material-icons feature-icon">check_circle</i>
+                            <div class="feature-text">
+                                Platform-independent bytecode
+                            </div>
+                        </div>
+                    </div>
+                    <div class="translation-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">build</i>
+                            <div class="card-title">Compiler</div>
+                        </div>
+                        <div class="card-content">
+                            Translates entire program before execution
+                        </div>
+                        <div class="key-feature">
+                            <i class="material-icons feature-icon">check_circle</i>
+                            <div class="feature-text">
+                                Creates <span class="key-concept">machine code</span> or executable
+                            </div>
+                        </div>
+                        <div class="key-feature">
+                            <i class="material-icons feature-icon">check_circle</i>
+                            <div class="feature-text">
+                                Faster execution
+                            </div>
+                        </div>
+                        <div class="key-feature">
+                            <i class="material-icons feature-icon">check_circle</i>
+                            <div class="feature-text">
+                                Platform-specific optimization
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="translation-diagram">
+                    <div class="diagram-title">Python Translation Process</div>
+                    <div class="diagram-content">
+                        <div class="diagram-step">
+                            <div class="step-box">Source Code</div>
+                            <div class="step-desc">.py files</div>
+                        </div>
+                        <div class="arrow">
+                            <i class="material-icons">arrow_forward</i>
+                        </div>
+                        <div class="diagram-step">
+                            <div class="step-box">Compiler</div>
+                            <div class="step-desc">to bytecode</div>
+                        </div>
+                        <div class="arrow">
+                            <i class="material-icons">arrow_forward</i>
+                        </div>
+                        <div class="diagram-step">
+                            <div class="step-box">Bytecode</div>
+                            <div class="step-desc">.pyc files</div>
+                        </div>
+                        <div class="arrow">
+                            <i class="material-icons">arrow_forward</i>
+                        </div>
+                        <div class="diagram-step">
+                            <div class="step-box">Interpreter</div>
+                            <div class="step-desc">PVM</div>
+                        </div>
+                        <div class="arrow">
+                            <i class="material-icons">arrow_forward</i>
+                        </div>
+                        <div class="diagram-step">
+                            <div class="step-box">Machine Code</div>
+                            <div class="step-desc">Execution</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="python-logo">
+            <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" style="width: 100%; height: 100%;">
+        </div>
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">def</span> <span class="highlight">python_execution</span>():</div>
+            <div class="code-line">    source_code = <span class="string">"program.py"</span></div>
+            <div class="code-line">    bytecode = <span class="highlight">compile</span>(source_code)</div>
+            <div class="code-line">    <span class="highlight">execute</span>(bytecode)</div>
+        </div>
+    </div>
+</body>
+</html>

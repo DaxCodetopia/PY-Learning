@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Outline</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            overflow: hidden;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+	.slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .header {
+            padding: 40px 70px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .slide-header {
+            padding: 50px 70px 30px;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+	.content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: 0 70px 40px;
+            gap: 20px;
+        }
+
+        .slide-header {
+            padding: 50px 70px 30px;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            color: #569cd6;
+            margin-bottom: 10px;
+            font-family: 'Source Code Pro', monospace;
+        }
+        .slide-content {
+            flex-grow: 1;
+            display: flex;
+            padding: 0 70px 50px;
+        }
+        .outline-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-gap: 30px;
+            width: 100%;
+        }
+        .outline-item {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 4px solid;
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        .outline-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .outline-item:nth-child(1) { border-color: #569cd6; }
+        .outline-item:nth-child(2) { border-color: #4ec9b0; }
+        .outline-item:nth-child(3) { border-color: #dcdcaa; }
+        .outline-item:nth-child(4) { border-color: #c586c0; }
+        .outline-item:nth-child(5) { border-color: #9cdcfe; }
+        .outline-item:nth-child(6) { border-color: #d16969; }
+        .outline-item:nth-child(7) { border-color: #ce9178; }
+        .outline-item:nth-child(8) { border-color: #b5cea8; }
+        .outline-item:nth-child(9) { border-color: #608b4e; }
+        
+        .outline-icon {
+            margin-right: 15px;
+            color: #569cd6;
+            font-size: 28px;
+        }
+        .outline-item:nth-child(2) .outline-icon { color: #4ec9b0; }
+        .outline-item:nth-child(3) .outline-icon { color: #dcdcaa; }
+        .outline-item:nth-child(4) .outline-icon { color: #c586c0; }
+        .outline-item:nth-child(5) .outline-icon { color: #9cdcfe; }
+        .outline-item:nth-child(6) .outline-icon { color: #d16969; }
+        .outline-item:nth-child(7) .outline-icon { color: #ce9178; }
+        .outline-item:nth-child(8) .outline-icon { color: #b5cea8; }
+        .outline-item:nth-child(9) .outline-icon { color: #608b4e; }
+        
+        .outline-text {
+            font-size: 20px;
+            font-weight: 500;
+        }
+        .python-logo {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 10s linear infinite;
+        }
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .code-decoration {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            opacity: 0.6;
+            padding: 20px;
+            overflow: hidden;
+        }
+        .code-line {
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+        .highlight {
+            color: #dcdcaa;
+        }
+        .keyword {
+            color: #569cd6;
+        }
+        .string {
+            color: #ce9178;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="slide-header">
+            <div class="title">Course Outline</div>
+        </div>
+        <div class="slide-content">
+            <div class="outline-container">
+                <div class="outline-item">
+                    <i class="material-icons outline-icon">code</i>
+                    <div class="outline-text">Introduction to Programming</div>
+                </div>
+                <div class="outline-item">
+                    <i class="material-icons outline-icon">account_tree</i>
+                    <div class="outline-text">Algorithm Design & Development</div>
+                </div>
+                <div class="outline-item">
+                    <i class="material-icons outline-icon">language</i>
+                    <div class="outline-text">Language Basics</div>
+                </div>
+                <div class="outline-item">
+                    <i class="material-icons outline-icon">call_split</i>
+                    <div class="outline-text">Selection & Looping</div>
+                </div>
+                <div class="outline-item">
+                    <i class="material-icons outline-icon">functions</i>
+                    <div class="outline-text">Functions & Modularization</div>
+                </div>
+                <div class="outline-item">
+                    <i class="material-icons outline-icon">storage</i>
+                    <div class="outline-text">Data Structures</div>
+                </div>
+                <div class="outline-item">
+                    <i class="material-icons outline-icon">search</i>
+                    <div class="outline-text">Searching & Sorting</div>
+                </div>
+                <div class="outline-item">
+                    <i class="material-icons outline-icon">integration_instructions</i>
+                    <div class="outline-text">Program Implementation</div>
+                </div>
+                <div class="outline-item">
+                    <i class="material-icons outline-icon">bug_report</i>
+                    <div class="outline-text">Testing & Documentation</div>
+                </div>
+            </div>
+        </div>
+        <div class="python-logo">
+            <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" style="width: 100%; height: 100%;">
+        </div>
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">def</span> <span class="highlight">course_outline</span>():</div>
+            <div class="code-line">    <span class="keyword">return</span> [<span class="string">"Programming"</span>, <span class="string">"Algorithms"</span>, <span class="string">"Data Structures"</span>, <span class="string">"Testing"</span>]</div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>In-Class Activity and Group Work</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+       body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            overflow: hidden;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+	.slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .header {
+            padding: 40px 70px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .slide-header {
+            padding: 50px 70px 30px;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+	.content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: 0 70px 40px;
+            gap: 20px;
+        }
+
+        .slide-content {
+            flex-grow: 1;
+            display: flex;
+            padding: 0 70px 50px;
+            gap: 30px;
+        }
+        .content-container {
+            display: flex;
+            width: 100%;
+            gap: 30px;
+        }
+        .activity-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .activity-card {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .activity-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .exercise-card {
+            border-left: 4px solid #4ec9b0;
+        }
+        .group-card {
+            border-left: 4px solid #dcdcaa;
+        }
+        .discussion-card {
+            border-left: 4px solid #c586c0;
+        }
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .exercise-card .card-title {
+            color: #4ec9b0;
+        }
+        .group-card .card-title {
+            color: #dcdcaa;
+        }
+        .discussion-card .card-title {
+            color: #c586c0;
+        }
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+        }
+        .exercise-list, .group-list, .discussion-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .list-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .item-icon {
+            font-size: 20px;
+            margin-top: 3px;
+        }
+        .exercise-card .item-icon {
+            color: #4ec9b0;
+        }
+        .group-card .item-icon {
+            color: #dcdcaa;
+        }
+        .discussion-card .item-icon {
+            color: #c586c0;
+        }
+        .item-text {
+            font-size: 20px;
+            line-height: 1.4;
+            color: #cccccc;
+        }
+        .key-concept {
+            display: inline-block;
+            background-color: rgba(78, 201, 176, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin: 0 2px;
+            color: #4ec9b0;
+            font-weight: 500;
+        }
+        .group-card .key-concept {
+            background-color: rgba(220, 220, 170, 0.2);
+            color: #dcdcaa;
+        }
+        .discussion-card .key-concept {
+            background-color: rgba(197, 134, 192, 0.2);
+            color: #c586c0;
+        }
+        .python-logo {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 10s linear infinite;
+        }
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .code-decoration {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            opacity: 0.6;
+            padding: 20px;
+            overflow: hidden;
+        }
+        .code-line {
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+        .keyword {
+            color: #569cd6;
+        }
+        .function {
+            color: #dcdcaa;
+        }
+        .string {
+            color: #ce9178;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="slide-header">
+            <div class="title">In-Class Activity and Group Work</div>
+        </div>
+        <div class="slide-content">
+            <div class="content-container">
+                <div class="activity-column">
+                    <div class="activity-card exercise-card">
+                        <div class="card-title">
+                            <i class="material-icons">code</i>
+                            Algorithm Design Exercises
+                        </div>
+                        <div class="card-content">
+                            <div class="exercise-list">
+                                <div class="list-item">
+                                    <i class="material-icons item-icon">assignment</i>
+                                    <div class="item-text">Design algorithm to <span class="key-concept">find prime numbers</span> in a range</div>
+                                </div>
+                                <div class="list-item">
+                                    <i class="material-icons item-icon">assignment</i>
+                                    <div class="item-text">Create <span class="key-concept">flowchart</span> for temperature conversion</div>
+                                </div>
+                                <div class="list-item">
+                                    <i class="material-icons item-icon">assignment</i>
+                                    <div class="item-text">Write <span class="key-concept">pseudocode</span> for sorting algorithm</div>
+                                </div>
+                                <div class="list-item">
+                                    <i class="material-icons item-icon">assignment</i>
+                                    <div class="item-text">Develop <span class="key-concept">step-by-step</span> solution for palindrome checker</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="activity-column">
+                    <div class="activity-card group-card">
+                        <div class="card-title">
+                            <i class="material-icons">groups</i>
+                            Group Activities
+                        </div>
+                        <div class="card-content">
+                            <div class="group-list">
+                                <div class="list-item">
+                                    <i class="material-icons item-icon">people</i>
+                                    <div class="item-text"><span class="key-concept">3-4 students</span> per group</div>
+                                </div>
+                                <div class="list-item">
+                                    <i class="material-icons item-icon">people</i>
+                                    <div class="item-text"><span class="key-concept">Code review</span> of peer solutions</div>
+                                </div>
+                                <div class="list-item">
+                                    <i class="material-icons item-icon">people</i>
+                                    <div class="item-text">Collaborative <span class="key-concept">problem decomposition</span></div>
+                                </div>
+                                <div class="list-item">
+                                    <i class="material-icons item-icon">people</i>
+                                    <div class="item-text"><span class="key-concept">Pair programming</span> for complex tasks</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="activity-card discussion-card">
+                        <div class="card-title">
+                            <i class="material-icons">forum</i>
+                            Discussion Points
+                        </div>
+                        <div class="card-content">
+                            <div class="discussion-list">
+                                <div class="list-item">
+                                    <i class="material-icons item-icon">chat</i>
+                                    <div class="item-text">Compare <span class="key-concept">efficiency</span> of different approaches</div>
+                                </div>
+                                <div class="list-item">
+                                    <i class="material-icons item-icon">chat</i>
+                                    <div class="item-text">Identify <span class="key-concept">trade-offs</span> in algorithm design</div>
+                                </div>
+                                <div class="list-item">
+                                    <i class="material-icons item-icon">chat</i>
+                                    <div class="item-text">Discuss <span class="key-concept">real-world applications</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="python-logo">
+            <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" style="width: 100%; height: 100%;">
+        </div>
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">def</span> <span class="function">group_activity</span>():</div>
+            <div class="code-line">    <span class="keyword">for</span> problem <span class="keyword">in</span> [<span class="string">"algorithm design"</span>, <span class="string">"problem solving"</span>]:</div>
+            <div class="code-line">        <span class="function">collaborate</span>(problem)</div>
+            <div class="code-line">        <span class="function">discuss</span>(problem)</div>
+            <div class="code-line">        <span class="function">implement</span>(problem)</div>
+        </div>
+    </div>
+</body>
+</html>

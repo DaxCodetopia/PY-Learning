@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practical Programming Exercises: Functions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            overflow: hidden;
+            background-color: #1e1e1e;
+            background-image: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(30,30,30,0.9) 100%);
+            display: flex;
+            flex-direction: column;
+        }
+        .slide-header {
+            padding: 40px 70px 20px;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            color: #569cd6;
+            margin-bottom: 20px;
+            font-family: 'Source Code Pro', monospace;
+        }
+        .slide-content {
+            flex-grow: 1;
+            display: flex;
+            padding: 0 70px 50px;
+            gap: 25px;
+        }
+        .exercises-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            flex-grow: 1;
+        }
+        .exercise-card {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .exercise-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .calculator-card {
+            border-left: 4px solid #4ec9b0;
+        }
+        .string-card {
+            border-left: 4px solid #dcdcaa;
+        }
+        .recursive-card {
+            border-left: 4px solid #c586c0;
+        }
+        .validation-card {
+            border-left: 4px solid #9cdcfe;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-icon {
+            font-size: 28px;
+        }
+        .calculator-card .card-icon {
+            color: #4ec9b0;
+        }
+        .string-card .card-icon {
+            color: #dcdcaa;
+        }
+        .recursive-card .card-icon {
+            color: #c586c0;
+        }
+        .validation-card .card-icon {
+            color: #9cdcfe;
+        }
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #d4d4d4;
+        }
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+        }
+        .exercise-desc {
+            font-size: 20px;
+            line-height: 1.4;
+            color: #cccccc;
+        }
+        .code-example {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 16px;
+            color: #cccccc;
+            line-height: 1.5;
+            overflow: auto;
+            flex-grow: 1;
+        }
+        .key-concepts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .concept-tag {
+            background-color: rgba(78, 201, 176, 0.2);
+            color: #4ec9b0;
+            font-size: 14px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: 'Source Code Pro', monospace;
+        }
+        .string-card .concept-tag {
+            background-color: rgba(220, 220, 170, 0.2);
+            color: #dcdcaa;
+        }
+        .recursive-card .concept-tag {
+            background-color: rgba(197, 134, 192, 0.2);
+            color: #c586c0;
+        }
+        .validation-card .concept-tag {
+            background-color: rgba(156, 220, 254, 0.2);
+            color: #9cdcfe;
+        }
+        .keyword {
+            color: #569cd6;
+        }
+        .function {
+            color: #dcdcaa;
+        }
+        .string {
+            color: #ce9178;
+        }
+        .comment {
+            color: #608b4e;
+        }
+        .number {
+            color: #b5cea8;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="slide-header">
+            <div class="title">Practical Programming Exercises: Functions</div>
+        </div>
+        <div class="slide-content">
+            <div class="exercises-grid">
+                <div class="exercise-card calculator-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">calculate</i>
+                        <div class="card-title">Calculator Functions</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="exercise-desc">
+                            Create functions to perform mathematical operations
+                        </div>
+                        <div class="code-example">
+                            <span class="comment"># Basic calculator functions</span><br>
+                            <span class="keyword">def</span> <span class="function">add</span>(a, b):<br>
+                              <span class="keyword">return</span> a + b<br><br>
+                            
+                            <span class="keyword">def</span> <span class="function">subtract</span>(a, b):<br>
+                              <span class="keyword">return</span> a - b<br><br>
+                            
+                            <span class="keyword">def</span> <span class="function">multiply</span>(a, b):<br>
+                              <span class="keyword">return</span> a * b<br><br>
+                            
+                            <span class="keyword">def</span> <span class="function">divide</span>(a, b):<br>
+                              <span class="keyword">if</span> b == <span class="number">0</span>:<br>
+                                <span class="keyword">return</span> <span class="string">"Cannot divide by zero"</span><br>
+                              <span class="keyword">return</span> a / b<br><br>
+                            
+                            <span class="comment"># Calculator menu</span><br>
+                            <span class="keyword">def</span> <span class="function">calculator_menu</span>():<br>
+                              <span class="keyword">while</span> <span class="keyword">True</span>:<br>
+                                <span class="function">print</span>(<span class="string">"1. Add"</span>)<br>
+                                <span class="function">print</span>(<span class="string">"2. Subtract"</span>)<br>
+                                <span class="function">print</span>(<span class="string">"3. Multiply"</span>)<br>
+                                <span class="function">print</span>(<span class="string">"4. Divide"</span>)<br>
+                                <span class="function">print</span>(<span class="string">"5. Exit"</span>)<br>
+                                choice = <span class="function">input</span>(<span class="string">"Enter choice (1-5): "</span>)<br>
+                                <span class="keyword">if</span> choice == <span class="string">"5"</span>:<br>
+                                    <span class="keyword">break</span><br>
+                                a = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">"Enter first number: "</span>))<br>
+                                b = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">"Enter second number: "</span>))<br>
+                                <span class="keyword">if</span> choice == <span class="string">"1"</span>:<br>
+                                    result = <span class="function">add</span>(a, b)<br>
+                                <span class="keyword">elif</span> choice == <span class="string">"2"</span>:<br>
+                                    result = <span class="function">subtract</span>(a, b)<br>
+                                <span class="keyword">elif</span> choice == <span class="string">"3"</span>:<br>
+                                    result = <span class="function">multiply</span>(a, b)<br>
+                                <span class="keyword">elif</span> choice == <span class="string">"4"</span>:<br>
+                                    result = <span class="function">divide</span>(a, b)<br>
+                                <span class="keyword">else</span>:<br>
+                                    result = <span class="string">"Invalid choice"</span><br>
+                                <span class="function">print</span>(<span class="string">f"Result: {result}"</span>)
+                        </div>
+                        <div class="key-concepts">
+                            <div class="concept-tag">functions</div>
+                            <div class="concept-tag">parameters</div>
+                            <div class="concept-tag">return values</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="exercise-card string-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">text_fields</i>
+                        <div class="card-title">String Manipulation</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="exercise-desc">
+                            Create functions to process and manipulate strings
+                        </div>
+                        <div class="code-example">
+                            <span class="comment"># String manipulation functions</span><br>
+                            <span class="keyword">def</span> <span class="function">reverse_string</span>(s):<br>
+                              <span class="keyword">return</span> s[::-<span class="number">1</span>]<br><br>
+                            
+                            <span class="keyword">def</span> <span class="function">count_vowels</span>(s):<br>
+                              vowels = <span class="string">"aeiouAEIOU"</span><br>
+                              count = <span class="number">0</span><br>
+                              <span class="keyword">for</span> char <span class="keyword">in</span> s:<br>
+                                <span class="keyword">if</span> char <span class="keyword">in</span> vowels:<br>
+                                    count += <span class="number">1</span><br>
+                              <span class="keyword">return</span> count<br><br>
+                            
+                            <span class="keyword">def</span> <span class="function">is_palindrome</span>(s):<br>
+                              <span class="comment"># Remove non-alphanumeric characters and convert to lowercase</span><br>
+                              clean_s = <span class="string">""</span>.<span class="function">join</span>(c <span class="keyword">for</span> c <span class="keyword">in</span> s <span class="keyword">if</span> c.<span class="function">isalnum</span>())<br>
+                              clean_s = clean_s.<span class="function">lower</span>()<br>
+                              <span class="keyword">return</span> clean_s == clean_s[::-<span class="number">1</span>]<br><br>
+                            
+                            <span class="comment"># Word processing</span><br>
+                            <span class="keyword">def</span> <span class="function">word_frequency</span>(text):<br>
+                              words = text.<span class="function">lower</span>().<span class="function">split</span>()<br>
+                              freq = {}<br>
+                              <span class="keyword">for</span> word <span class="keyword">in</span> words:<br>
+                                <span class="keyword">if</span> word <span class="keyword">in</span> freq:<br>
+                                    freq[word] += <span class="number">1</span><br>
+                                <span class="keyword">else</span>:<br>
+                                    freq[word] = <span class="number">1</span><br>
+                              <span class="keyword">return</span> freq
+                        </div>
+                        <div class="key-concepts">
+                            <div class="concept-tag">string methods</div>
+                            <div class="concept-tag">slicing</div>
+                            <div class="concept-tag">iteration</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="exercise-card recursive-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">repeat</i>
+                        <div class="card-title">Recursive Functions</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="exercise-desc">
+                            Create functions that call themselves to solve problems
+                        </div>
+                        <div class="code-example">
+                            <span class="comment"># Factorial using recursion</span><br>
+                            <span class="keyword">def</span> <span class="function">factorial</span>(n):<br>
+                              <span class="comment"># Base case</span><br>
+                              <span class="keyword">if</span> n <= <span class="number">1</span>:<br>
+                                <span class="keyword">return</span> <span class="number">1</span><br>
+                              <span class="comment"># Recursive case</span><br>
+                              <span class="keyword">return</span> n * <span class="function">factorial</span>(n-<span class="number">1</span>)<br><br>
+                            
+                            <span class="comment"># Fibonacci sequence</span><br>
+                            <span class="keyword">def</span> <span class="function">fibonacci</span>(n):<br>
+                              <span class="comment"># Return first n numbers in sequence</span><br>
+                              <span class="keyword">if</span> n <= <span class="number">0</span>:<br>
+                                <span class="keyword">return</span> []<br>
+                              <span class="keyword">elif</span> n == <span class="number">1</span>:<br>
+                                <span class="keyword">return</span> [<span class="number">0</span>]<br>
+                              <span class="keyword">else</span>:<br>
+                                seq = <span class="function">fibonacci</span>(n-<span class="number">1</span>)<br>
+                                seq.<span class="function">append</span>(seq[-<span class="number">1</span>] + seq[-<span class="number">2</span>])<br>
+                                <span class="keyword">return</span> seq<br><br>
+                            
+                            <span class="comment"># Binary search using recursion</span><br>
+                            <span class="keyword">def</span> <span class="function">binary_search</span>(arr, target, low=<span class="number">0</span>, high=<span class="keyword">None</span>):<br>
+                              <span class="keyword">if</span> high <span class="keyword">is</span> <span class="keyword">None</span>:<br>
+                                high = <span class="function">len</span>(arr) - <span class="number">1</span><br>
+                              mid = (low + high) // <span class="number">2</span><br>
+                              <span class="keyword">if</span> arr[mid] == target:<br>
+                                <span class="keyword">return</span> mid<br>
+                              <span class="keyword">elif</span> arr[mid] < target:<br>
+                                <span class="keyword">return</span> <span class="function">binary_search</span>(arr, target, mid+<span class="number">1</span>, high)<br>
+                              <span class="keyword">else</span>:<br>
+                                <span class="keyword">return</span> <span class="function">binary_search</span>(arr, target, low, mid-<span class="number">1</span>)
+                        </div>
+                        <div class="key-concepts">
+                            <div class="concept-tag">recursion</div>
+                            <div class="concept-tag">base case</div>
+                            <div class="concept-tag">divide and conquer</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="exercise-card validation-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">verified</i>
+                        <div class="card-title">Input Validation</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="exercise-desc">
+                            Create functions to validate user input
+                        </div>
+                        <div class="code-example">
+                            <span class="comment"># Input validation functions</span><br>
+                            <span class="keyword">def</span> <span class="function">validate_email</span>(email):<br>
+                              <span class="comment"># Basic email validation</span><br>
+                              <span class="keyword">if</span> <span class="string">"@"</span> <span class="keyword">not</span> <span class="keyword">in</span> email <span class="keyword">or</span> <span class="string">"."</span> <span class="keyword">not</span> <span class="keyword">in</span> email.split(<span class="string">"@"</span>)[<span class="number">1</span>]:<br>
+                                <span class="keyword">return</span> <span class="keyword">False</span>, <span class="string">"Invalid email format"</span><br>
+                              <span class="keyword">return</span> <span class="keyword">True</span>, <span class="string">"Valid email"</span><br><br>
+                            
+                            <span class="comment"># Password strength checker</span><br>
+                            <span class="keyword">def</span> <span class="function">check_password_strength</span>(password):<br>
+                              <span class="keyword">if</span> <span class="function">len</span>(password) < <span class="number">8</span>:<br>
+                                strength = <span class="string">"Weak"</span><br>
+                              <span class="keyword">elif</span> <span class="function">len</span>(password) < <span class="number">12</span>:<br>
+                                strength = <span class="string">"Medium"</span><br>
+                              <span class="keyword">elif</span> <span class="function">len</span>(password) >= <span class="number">12</span> <span class="keyword">and</span> <span class="function">any</span>(c.<span class="function">isupper</span>() <span class="keyword">for</span> c <span class="keyword">in</span> password) <span class="keyword">and</span> <span class="function">any</span>(c.<span class="function">islower</span>() <span class="keyword">for</span> c <span class="keyword">in</span> password) <span class="keyword">and</span> <span class="function">any</span>(c.<span class="function">isdigit</span>() <span class="keyword">for</span> c <span class="keyword">in</span> password):<br>
+                                strength = <span class="string">"Strong"</span><br>
+                              <span class="keyword">else</span>:<br>
+                                strength = <span class="string">"Very Weak"</span><br>
+                              <span class="keyword">return</span> strength
+                        </div>
+                        <div class="key-concepts">
+                            <div class="concept-tag">validation</div>
+                            <div class="concept-tag">error handling</div>
+                            <div class="concept-tag">user input</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

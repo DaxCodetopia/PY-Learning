@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practice with Element Access and Iteration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            overflow: auto;
+            min-height: 100vh;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 100vh;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: visible;
+            display: flex;
+            flex-direction: column;
+        }
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .slide-header {
+            padding: 30px 70px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+        .slide-content {
+            flex-grow: 1;
+            display: flex;
+            padding: 0 70px 50px;
+            gap: 25px;
+            position: relative;
+            z-index: 1;
+        }
+        .exercises-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            flex-grow: 1;
+        }
+        .exercise-card {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .exercise-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .listcomp-card {
+            border-left: 4px solid #4ec9b0;
+        }
+        .dict-card {
+            border-left: 4px solid #dcdcaa;
+        }
+        .nested-card {
+            border-left: 4px solid #c586c0;
+        }
+        .iteration-card {
+            border-left: 4px solid #9cdcfe;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-icon {
+            font-size: 28px;
+        }
+        .listcomp-card .card-icon {
+            color: #4ec9b0;
+        }
+        .dict-card .card-icon {
+            color: #dcdcaa;
+        }
+        .nested-card .card-icon {
+            color: #c586c0;
+        }
+        .iteration-card .card-icon {
+            color: #9cdcfe;
+        }
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #d4d4d4;
+        }
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+        }
+        .exercise-desc {
+            font-size: 18px;
+            line-height: 1.4;
+            color: #cccccc;
+        }
+        .code-example {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 16px;
+            color: #cccccc;
+            line-height: 1.5;
+            overflow: auto;
+            flex-grow: 1;
+            max-height: 300px;
+        }
+        .key-concepts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .concept-tag {
+            background-color: rgba(78, 201, 176, 0.2);
+            color: #4ec9b0;
+            font-size: 14px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: 'Source Code Pro', monospace;
+        }
+        .dict-card .concept-tag {
+            background-color: rgba(220, 220, 170, 0.2);
+            color: #dcdcaa;
+        }
+        .nested-card .concept-tag {
+            background-color: rgba(197, 134, 192, 0.2);
+            color: #c586c0;
+        }
+        .iteration-card .concept-tag {
+            background-color: rgba(156, 220, 254, 0.2);
+            color: #9cdcfe;
+        }
+        .keyword {
+            color: #569cd6;
+        }
+        .function {
+            color: #dcdcaa;
+        }
+        .string {
+            color: #ce9178;
+        }
+        .comment {
+            color: #608b4e;
+        }
+        .number {
+            color: #b5cea8;
+        }
+        .python-logo {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 10s linear infinite;
+            z-index: 1;
+        }
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .code-decoration {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            opacity: 0.6;
+            padding: 20px;
+            overflow: hidden;
+            z-index: 1;
+        }
+        .code-line {
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="slide-header">
+            <div class="title">Practice with Element Access and Iteration</div>
+        </div>
+        <div class="slide-content">
+            <div class="exercises-grid">
+                <div class="exercise-card listcomp-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">code</i>
+                        <div class="card-title">List Comprehensions</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="exercise-desc">
+                            Create new lists by applying expressions to existing sequences
+                        </div>
+                        <div class="code-example">
+                            <span class="comment"># Basic list comprehension</span><br>
+                            <span class="comment"># Create list of squares</span><br>
+                            squares = [x**<span class="number">2</span> <span class="keyword">for</span> x <span class="keyword">in</span> <span class="function">range</span>(<span class="number">10</span>)]<br><br>
+                            <span class="function">print</span>(squares)  <span class="comment"># [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]</span><br><br>
+                            
+                            <span class="comment"># Filter even numbers</span><br>
+                            even_numbers = [x <span class="keyword">for</span> x <span class="keyword">in</span> <span class="function">range</span>(<span class="number">1</span>, <span class="number">21</span>) <span class="keyword">if</span> x % <span class="number">2</span> == <span class="number">0</span>]<br><br>
+                            <span class="function">print</span>(even_numbers)  <span class="comment"># [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]</span><br><br>
+                            
+                            <span class="comment"># Filter strings by length</span><br>
+                            words = [<span class="string">"apple"</span>, <span class="string">"banana"</span>, <span class="string">"cherry"</span>, <span class="string">"date"</span>, <span class="string">"fig"</span>]<br>
+                            short_words = [word <span class="keyword">for</span> word <span class="keyword">in</span> words <span class="keyword">if</span> <span class="function">len</span>(word) <= <span class="number">4</span>]<br>
+                            <span class="function">print</span>(short_words)  <span class="comment"># ['apple', 'date', 'fig']</span><br><br>
+                            
+                            <span class="comment"># Dictionary comprehension</span><br>
+                            word_lengths = {word: <span class="function">len</span>(word) <span class="keyword">for</span> word <span class="keyword">in</span> words}<br>
+                            <span class="function">print</span>(word_lengths)  <span class="comment"># {'apple': 5, 'banana': 6, 'cherry': 6, 'date': 4, 'fig': 3}</span>
+                        </div>
+                        <div class="key-concepts">
+                            <div class="concept-tag">list comprehension</div>
+                            <div class="concept-tag">filtering</div>
+                            <div class="concept-tag">mapping</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="exercise-card dict-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">account_tree</i>
+                        <div class="card-title">Dictionary Operations</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="exercise-desc">
+                            Practice accessing, modifying, and iterating through dictionaries
+                        </div>
+                        <div class="code-example">
+                            <span class="comment"># Accessing dictionary values</span><br>
+                            student = {<br>
+                              <span class="string">"name"</span>: <span class="string">"Alice"</span>,<br>
+                              <span class="string">"age"</span>: <span class="number">20</span>,<br>
+                              <span class="string">"courses"</span>: [<span class="string">"Math"</span>, <span class="string">"Physics"</span>]<br>
+                            }<br><br>
+                            
+                            <span class="comment"># Accessing values</span><br>
+                            <span class="function">print</span>(student[<span class="string">"name"</span>])  <span class="comment"># Alice</span><br>
+                            <span class="function">print</span>(student.get(<span class="string">"age"</span>, <span class="string">"Not specified"</span>))  <span class="comment"># 20</span><br>
+                            <span class="function">print</span>(student[<span class="string">"courses"</span>])  <span class="comment"># ['Math', 'Physics']</span><br><br><br>
+                            
+                            <span class="comment"># Modifying dictionaries</span><br>
+                            student[<span class="string">"gpa"</span>] = <span class="number">3.8</span><br>
+                            student[<span class="string">"is_graduated"</span>] = <span class="keyword">True</span><br>
+                            <span class="function">print</span>(student)  <span class="comment"># Updated dictionary</span><br><br>
+                            
+                            <span class="comment"># Dictionary comprehension</span><br>
+                            squares = {x: x**<span class="number">2</span> <span class="keyword">for</span> x <span class="keyword">in</span> <span class="function">range</span>(<span class="number">5</span>)}<br>
+                            <span class="function">print</span>(squares)  <span class="comment"># {0: 0, 1: 1, 2: 4, 3: 9, 4: 16}</span><br><br>
+                            
+                            <span class="comment"># Iterating through dictionaries</span><br>
+                            <span class="keyword">for</span> key, value <span class="keyword">in</span> student.<span class="function">items</span>():<br>
+                              <span class="function">print</span>(<span class="string">f"{key}: {value}"</span>)<br>
+                              <span class="comment"># name: Alice</span><br>
+                              <span class="comment"># age: 20</span><br>
+                              <span class="comment"># courses: ['Math', 'Physics']</span><br>
+                              <span class="comment"># is_graduated: True</span><br>
+                              <span class="comment"># gpa: 3.8</span>
+                        </div>
+                        <div class="key-concepts">
+                            <div class="concept-tag">key access</div>
+                            <div class="concept-tag">get() method</div>
+                            <div class="concept-tag">dictionary comprehension</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="exercise-card nested-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">layers</i>
+                        <div class="card-title">Nested Data Structures</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="exercise-desc">
+                            Practice working with lists, tuples, and dictionaries within each other
+                        </div>
+                        <div class="code-example">
+                            <span class="comment"># Nested lists</span><br>
+                            matrix = [<br>
+                              [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>],<br>
+                              [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>],<br>
+                              [<span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>]<br>
+                            ]<br><br>
+                            
+                            <span class="comment"># Accessing nested elements</span><br>
+                            <span class="function">print</span>(matrix[<span class="number">1</span>][<span class="number">2</span>])  <span class="comment"># 2</span><br>
+                            <span class="function">print</span>(matrix[<span class="number">2</span>][<span class="number">1</span>])  <span class="comment"># 5</span><br>
+                            <span class="function">print</span>(matrix[<span class="number">0</span>][<span class="number">2</span>])  <span class="comment"># 4</span><br><br>
+                            
+                            <span class="comment"># Flattening nested lists</span><br>
+                            flat_matrix = [element <span class="keyword">for</span> row <span class="keyword">in</span> matrix <span class="keyword">for</span> element <span class="keyword">in</span> row]<br>
+                            <span class="function">print</span>(flat_matrix)  <span class="comment"># [1, 2, 3, 4, 5, 6, 7, 8, 9]</span><br><br>
+                            
+                            <span class="comment"># Sum of diagonal elements</span><br>
+                            diagonal_sum = <span class="function">sum</span>(matrix[i][i] <span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(<span class="function">len</span>(matrix)) <span class="keyword">if</span> i == <span class="function">len</span>(matrix) - <span class="number">1</span> - i])<br>
+                            <span class="function">print</span>(diagonal_sum)  <span class="comment"># 15</span>
+                        </div>
+                        <div class="key-concepts">
+                            <div class="concept-tag">nested structures</div>
+                            <div class="concept-tag">matrix operations</div>
+                            <div class="concept-tag">flattening</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="exercise-card iteration-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">loop</i>
+                        <div class="card-title">Iteration Techniques</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="exercise-desc">
+                            Practice different ways to iterate through data structures
+                        </div>
+                        <div class="code-example">
+                            <span class="comment"># Iterating with enumerate</span><br>
+                            fruits = [<span class="string">"apple"</span>, <span class="string">"banana"</span>, <span class="string">"cherry"</span>]<br><br>
+                            
+                            <span class="keyword">for</span> index, fruit <span class="keyword">in</span> <span class="function">enumerate</span>(fruits):<br>
+                             <span class="function">print</span>(<span class="string">f"{index}: {fruit}"</span>)<br>
+                              <span class="comment"># 0: apple, 1: banana, 2: cherry</span><br><br>
+                            
+                            <span class="comment"># Iterating over dictionary items</span><br>
+                            student_scores = {<br>
+                              <span class="string">"Alice"</span>: <span class="number">85</span>,<br>
+                              <span class="string">"Bob"</span>: <span class="number">92</span>,<br>
+                              <span class="string">"Charlie"</span>: <span class="number">78</span><br>
+                            }<br><br>
+                            
+                            <span class="comment"># Find highest score</span><br>
+                            highest_score = <span class="number">0</span><br>
+                            highest_student = <span class="string">""</span><br>
+                            <span class="keyword">for</span> student, score <span class="keyword">in</span> student_scores.<span class="function">items</span>():<br>
+                              <span class="keyword">if</span> score > highest_score:<br>
+                                highest_score = score<br>
+                                highest_student = student<br>
+                             <span class="function">print</span>(<span class="string">f"Highest score: {highest_score} by {highest_student}"</span>)<br><br>
+                            
+                            <span class="comment"># Create sorted list of tuples</span><br>
+                            sorted_scores = <span class="function">sorted</span>(student_scores.<span class="function">items</span>(), <span class="keyword">key</span>=<span class="keyword">lambda</span> item: item[<span class="number">1</span>], reverse=<span class="keyword">True</span>)<br>
+                            <span class="function">print</span>(sorted_scores)  <span class="comment"># [('Charlie', 78), ('Bob', 92), ('Alice', 85)]</span>
+                        </div>
+                        <div class="key-concepts">
+                            <div class="concept-tag">enumerate()</div>
+                            <div class="concept-tag">items()</div>
+                            <div class="concept-tag">sorted()</div>
+                            <div class="concept-tag">lambda functions</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="python-logo">
+            <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" style="width: 100%; height: 100%;">
+        </div>
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">def</span> <span class="function">data_structure_practice</span>():</div>
+            <div class="code-line">    <span class="comment"># List comprehensions</span></div>
+            <div class="code-line">    result = [x**<span class="number">2</span> <span class="keyword">for</span> x <span class="keyword">in</span> <span class="function">range</span>(<span class="number">10</span>)]</div>
+            <div class="code-line">    </div>
+            <div class="code-line">    <span class="comment"># Dictionary operations</span></div>
+            <div class="code-line">    <span class="keyword">for</span> key, value <span class="keyword">in</span> dictionary.<span class="function">items</span>():</div>
+            <div class="code-line">        <span class="function">process</span>(key, value)</div>
+            <div class="code-line">    </div>
+            <div class="code-line">    </div>
+            <div class="code-line">    <span class="comment"># Nested structures</span></div>
+            <div class="code-line">    <span class="keyword">for</span> row <span class="keyword">in</span> matrix:</div>
+            <div class="code-line">        <span class="keyword">for</span> element <span class="keyword">in</span> row:</div>
+            <div class="code-line">            </div>
+            <div class="code-line">    </div>
+            <div class="code-line">    <span class="comment"># Iteration techniques</span></div>
+            <div class="code-line">    <span class="keyword">for</span> index, item <span class="keyword">in</span> <span class="function">enumerate</span>(data_structure):</div>
+            <div class="code-line">        <span class="function">access</span>(index, item)</div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Implementing Programs with Basic Data Types and Operations</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            overflow: hidden;
+            background-color: #1e1e1e;
+            background-image: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(30,30,30,0.9) 100%);
+            display: flex;
+            flex-direction: column;
+        }
+        .slide-header {
+            padding: 40px 70px 20px;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            color: #569cd6;
+            margin-bottom: 20px;
+            font-family: 'Source Code Pro', monospace;
+        }
+        .slide-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 0 70px 50px;
+            gap: 25px;
+        }
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            flex-grow: 1;
+        }
+        .example-card {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .example-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .calculator-card {
+            border-left: 4px solid #4ec9b0;
+        }
+        .temp-card {
+            border-left: 4px solid #dcdcaa;
+        }
+        .grade-card {
+            border-left: 4px solid #c586c0;
+        }
+        .password-card {
+            border-left: 4px solid #9cdcfe;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-icon {
+            font-size: 28px;
+        }
+        .calculator-card .card-icon {
+            color: #4ec9b0;
+        }
+        .temp-card .card-icon {
+            color: #dcdcaa;
+        }
+        .grade-card .card-icon {
+            color: #c586c0;
+        }
+        .password-card .card-icon {
+            color: #9cdcfe;
+        }
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #d4d4d4;
+        }
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+        }
+        .code-example {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 16px;
+            color: #cccccc;
+            line-height: 1.5;
+            overflow: auto;
+            flex-grow: 1;
+        }
+        .key-concepts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .concept-tag {
+            background-color: rgba(78, 201, 176, 0.2);
+            color: #4ec9b0;
+            font-size: 14px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: 'Source Code Pro', monospace;
+        }
+        .temp-card .concept-tag {
+            background-color: rgba(220, 220, 170, 0.2);
+            color: #dcdcaa;
+        }
+        .grade-card .concept-tag {
+            background-color: rgba(197, 134, 192, 0.2);
+            color: #c586c0;
+        }
+        .password-card .concept-tag {
+            background-color: rgba(156, 220, 254, 0.2);
+            color: #9cdcfe;
+        }
+        .keyword {
+            color: #569cd6;
+        }
+        .function {
+            color: #dcdcaa;
+        }
+        .string {
+            color: #ce9178;
+        }
+        .comment {
+            color: #608b4e;
+        }
+        .number {
+            color: #b5cea8;
+        }
+        .python-logo {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 10s linear infinite;
+        }
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .code-decoration {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            opacity: 0.6;
+            padding: 20px;
+            overflow: hidden;
+        }
+        .code-line {
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="slide-header">
+            <div class="title">Implementing Programs with Basic Data Types and Operations</div>
+        </div>
+        <div class="slide-content">
+            <div class="examples-grid">
+                <div class="example-card calculator-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">calculate</i>
+                        <div class="card-title">Simple Calculator</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="code-example">
+                            <span class="comment"># Get user input</span><br>
+                            num1 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">"Enter first number: "</span>))<br>
+                            num2 = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">"Enter second number: "</span>))<br>
+                            operator = <span class="function">input</span>(<span class="string">"Enter operator (+, -, *, /): "</span>)<br><br>
+                            
+                            <span class="comment"># Perform calculation</span><br>
+                            <span class="keyword">if</span> operator == <span class="string">"+"</span>:<br>
+                            &nbsp;&nbsp;result = num1 + num2<br>
+                            <span class="keyword">elif</span> operator == <span class="string">"-"</span>:<br>
+                            &nbsp;&nbsp;result = num1 - num2<br>
+                            <span class="keyword">elif</span> operator == <span class="string">"*"</span>:<br>
+                            &nbsp;&nbsp;result = num1 * num2<br>
+                            <span class="keyword">elif</span> operator == <span class="string">"/"</span>:<br>
+                            &nbsp;&nbsp;result = num1 / num2 <span class="keyword">if</span> num2 != <span class="number">0</span> <span class="keyword">else</span> <span class="string">"Error: Division by zero"</span><br><br>
+                            
+                            <span class="comment"># Display result</span><br>
+                            <span class="function">print</span>(<span class="string">f"{num1} {operator} {num2} = {result}"</span>)
+                        </div>
+                        <div class="key-concepts">
+                            <div class="concept-tag">float</div>
+                            <div class="concept-tag">input()</div>
+                            <div class="concept-tag">if-elif</div>
+                            <div class="concept-tag">arithmetic</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="example-card temp-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">thermostat</i>
+                        <div class="card-title">Temperature Converter</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="code-example">
+                            <span class="comment"># Temperature conversion functions</span><br>
+                            <span class="keyword">def</span> <span class="function">celsius_to_fahrenheit</span>(celsius):<br>
+                            &nbsp;&nbsp;<span class="keyword">return</span> (celsius * <span class="number">9/5</span>) + <span class="number">32</span><br><br>
+                            
+                            <span class="keyword">def</span> <span class="function">fahrenheit_to_celsius</span>(fahrenheit):<br>
+                            &nbsp;&nbsp;<span class="keyword">return</span> (fahrenheit - <span class="number">32</span>) * <span class="number">5/9</span><br><br>
+                            
+                            <span class="comment"># User interaction</span><br>
+                            choice = <span class="function">input</span>(<span class="string">"Convert (C)elsius or (F)ahrenheit? "</span>).<span class="function">upper</span>()<br><br>
+                            
+                            <span class="keyword">if</span> choice == <span class="string">"C"</span>:<br>
+                            &nbsp;&nbsp;celsius = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">"Enter temperature in Celsius: "</span>))<br>
+                            &nbsp;&nbsp;fahrenheit = <span class="function">celsius_to_fahrenheit</span>(celsius)<br>
+                            &nbsp;&nbsp;<span class="function">print</span>(<span class="string">f"{celsius}°C = {fahrenheit:.2f}°F"</span>)<br>
+                            <span class="keyword">elif</span> choice == <span class="string">"F"</span>:<br>
+                            &nbsp;&nbsp;fahrenheit = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">"Enter temperature in Fahrenheit: "</span>))<br>
+                            &nbsp;&nbsp;celsius = <span class="function">fahrenheit_to_celsius</span>(fahrenheit)<br>
+                            &nbsp;&nbsp;<span class="function">print</span>(<span class="string">f"{fahrenheit}°F = {celsius:.2f}°C"</span>)
+                        </div>
+                        <div class="key-concepts">
+                            <div class="concept-tag">functions</div>
+                            <div class="concept-tag">float</div>
+                            <div class="concept-tag">string methods</div>
+                            <div class="concept-tag">f-strings</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="example-card grade-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">school</i>
+                        <div class="card-title">Grade Calculator</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="code-example">
+                            <span class="comment"># Get student grades</span><br>
+                            grades = []<br>
+                            <span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(<span class="number">5</span>):<br>
+                            &nbsp;&nbsp;grade = <span class="keyword">float</span>(<span class="function">input</span>(<span class="string">f"Enter grade {i+1}: "</span>))<br>
+                            &nbsp;&nbsp;grades.<span class="function">append</span>(grade)<br><br>
+                            
+                            <span class="comment"># Calculate statistics</span><br>
+                            average = <span class="function">sum</span>(grades) / <span class="function">len</span>(grades)<br>
+                            highest = <span class="function">max</span>(grades)<br>
+                            lowest = <span class="function">min</span>(grades)<br><br>
+                            
+                            <span class="comment"># Determine letter grade</span><br>
+                            <span class="keyword">if</span> average >= <span class="number">90</span>:<br>
+                            &nbsp;&nbsp;letter_grade = <span class="string">"A"</span><br>
+                            <span class="keyword">elif</span> average >= <span class="number">80</span>:<br>
+                            &nbsp;&nbsp;letter_grade = <span class="string">"B"</span><br>
+                            <span class="keyword">elif</span> average >= <span class="number">70</span>:<br>
+                            &nbsp;&nbsp;letter_grade = <span class="string">"C"</span><br>
+                            <span class="keyword">elif</span> average >= <span class="number">60</span>:<br>
+                            &nbsp;&nbsp;letter_grade = <span class="string">"D"</span><br>
+                            <span class="keyword">else</span>:<br>
+                            &nbsp;&nbsp;letter_grade = <span class="string">"F"</span><br><br>
+                            
+                            <span class="comment"># Display results</span><br>
+                            <span class="function">print</span>(<span class="string">f"Average: {average:.2f} ({letter_grade})"</span>)<br>
+                            <span class="function">print</span>(<span class="string">f"Highest: {highest}, Lowest: {lowest}"</span>)
+                        </div>
+                        <div class="key-concepts">
+                            <div class="concept-tag">list</div>
+                            <div class="concept-tag">for loop</div>
+                            <div class="concept-tag">built-in functions</div>
+                            <div class="concept-tag">conditional logic</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="example-card password-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">password</i>
+                        <div class="card-title">Password Validator</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="code-example">
+                            <span class="comment"># Password validation function</span><br>
+                            <span class="keyword">def</span> <span class="function">validate_password</span>(password):<br>
+                            &nbsp;&nbsp;<span class="comment"># Check length</span><br>
+                            &nbsp;&nbsp;<span class="keyword">if</span> <span class="function">len</span>(password) < <span class="number">8</span>:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="string">"Password must be at least 8 characters"</span><br><br>
+                            &nbsp;&nbsp;<span class="comment"># Check for uppercase</span><br>
+                            &nbsp;&nbsp;has_upper = <span class="keyword">any</span>(c.<span class="function">isupper</span>() <span class="keyword">for</span> c <span class="keyword">in</span> password)<br>
+                            &nbsp;&nbsp;<span class="keyword">if not</span> has_upper:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="string">"Password must contain at least one uppercase letter"</span><br><br>
+                            &nbsp;&nbsp;<span class="comment"># Check for digit</span><br>
+                            &nbsp;&nbsp;has_digit = <span class="keyword">any</span>(c.<span class="function">isdigit</span>() <span class="keyword">for</span> c <span class="keyword">in</span> password)<br>
+                            &nbsp;&nbsp;<span class="keyword">if not</span> has_digit:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="string">"Password must contain at least one digit"</span><br><br>
+                            &nbsp;&nbsp;<span class="keyword">return</span> <span class="string">"Password is valid"</span><br><br>
+                            
+                            <span class="comment"># Test the function</span><br>
+                            password = <span class="function">input</span>(<span class="string">"Enter a password: "</span>)<br>
+                            result = <span class="function">validate_password</span>(password)<br>
+                            <span class="function">print</span>(result)
+                        </div>
+                        <div class="key-concepts">
+                            <div class="concept-tag">string methods</div>
+                            <div class="concept-tag">any()</div>
+                            <div class="concept-tag">generator expression</div>
+                            <div class="concept-tag">boolean logic</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="python-logo">
+            <img src="https://sfile.chatglm.cn/images-ppt/a0509d774a35.png" alt="Python Logo" style="width: 100%; height: 100%;">
+        </div>
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">def</span> <span class="function">practical_examples</span>():</div>
+            <div class="code-line">    programs = [<span class="string">"calculator"</span>, <span class="string">"converter"</span>, <span class="string">"grader"</span>, <span class="string">"validator"</span>]</div>
+            <div class="code-line">    <span class="keyword">for</span> program <span class="keyword">in</span> programs:</div>
+            <div class="code-line">        <span class="function">implement</span>(program)</div>
+        </div>
+    </div>
+</body>
+</html>

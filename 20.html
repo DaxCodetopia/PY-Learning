@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debugging in Python Sessions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            overflow: hidden;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+	.slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .header {
+            padding: 40px 70px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .slide-header {
+            padding: 50px 70px 30px;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+	.content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: 0 70px 40px;
+            gap: 20px;
+        }
+        .slide-content {
+            flex-grow: 1;
+            display: flex;
+            padding: 0 70px 50px;
+            gap: 30px;
+        }
+        .content-container {
+            display: flex;
+            width: 100%;
+            gap: 30px;
+        }
+        .left-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .right-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .debug-card {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .debug-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .techniques-card {
+            border-left: 4px solid #4ec9b0;
+        }
+        .errors-card {
+            border-left: 4px solid #dcdcaa;
+        }
+        .tools-card {
+            border-left: 4px solid #c586c0;
+        }
+        .example-card {
+            border-left: 4px solid #9cdcfe;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-icon {
+            font-size: 28px;
+        }
+        .techniques-card .card-icon {
+            color: #4ec9b0;
+        }
+        .errors-card .card-icon {
+            color: #dcdcaa;
+        }
+        .tools-card .card-icon {
+            color: #c586c0;
+        }
+        .example-card .card-icon {
+            color: #9cdcfe;
+        }
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #d4d4d4;
+        }
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+        }
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .point-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .point-icon {
+            font-size: 20px;
+            margin-top: 3px;
+        }
+        .techniques-card .point-icon {
+            color: #4ec9b0;
+        }
+        .errors-card .point-icon {
+            color: #dcdcaa;
+        }
+        .tools-card .point-icon {
+            color: #c586c0;
+        }
+        .example-card .point-icon {
+            color: #9cdcfe;
+        }
+        .point-text {
+            font-size: 20px;
+            line-height: 1.4;
+            color: #cccccc;
+        }
+        .key-concept {
+            display: inline-block;
+            background-color: rgba(78, 201, 176, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin: 0 2px;
+            color: #4ec9b0;
+            font-weight: 500;
+        }
+        .errors-card .key-concept {
+            background-color: rgba(220, 220, 170, 0.2);
+            color: #dcdcaa;
+        }
+        .tools-card .key-concept {
+            background-color: rgba(197, 134, 192, 0.2);
+            color: #c586c0;
+        }
+        .example-card .key-concept {
+            background-color: rgba(156, 220, 254, 0.2);
+            color: #9cdcfe;
+        }
+        .code-example {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 18px;
+            color: #cccccc;
+            line-height: 1.5;
+            overflow: auto;
+            flex-grow: 1;
+        }
+        .keyword {
+            color: #569cd6;
+        }
+        .function {
+            color: #dcdcaa;
+        }
+        .string {
+            color: #ce9178;
+        }
+        .comment {
+            color: #608b4e;
+        }
+        .number {
+            color: #b5cea8;
+        }
+        .error {
+            color: #f44747;
+        }
+        .python-logo {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 10s linear infinite;
+        }
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .code-decoration {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            opacity: 0.6;
+            padding: 20px;
+            overflow: hidden;
+        }
+        .code-line {
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+        .error-types {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .error-type {
+            background-color: rgba(220, 220, 170, 0.1);
+            border-radius: 4px;
+            padding: 8px 12px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 16px;
+            color: #dcdcaa;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .error-icon {
+            font-size: 18px;
+            color: #dcdcaa;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="slide-header">
+            <div class="title">Debugging in Python Sessions</div>
+        </div>
+        <div class="slide-content">
+            <div class="content-container">
+                <div class="left-column">
+                    <div class="debug-card techniques-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">bug_report</i>
+                            <div class="card-title">Debugging Techniques</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">Print debugging</span> - Insert print statements to track variable values</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">Code review</span> - Read through code carefully</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">Rubber duck debugging</span> - Explain code to someone else</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">Isolate the problem</span> - Comment out sections to find the issue</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="debug-card errors-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">error</i>
+                            <div class="card-title">Common Error Types</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Understand <span class="key-concept">error messages</span> and tracebacks</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Check <span class="key-concept">line numbers</span> in error output</div>
+                                </div>
+                            </div>
+                            <div class="error-types">
+                                <div class="error-type">
+                                    <i class="material-icons error-icon">code</i>
+                                    SyntaxError
+                                </div>
+                                <div class="error-type">
+                                    <i class="material-icons error-icon">error_outline</i>
+                                    NameError
+                                </div>
+                                <div class="error-type">
+                                    <i class="material-icons error-icon">data_object</i>
+                                    TypeError
+                                </div>
+                                <div class="error-type">
+                                    <i class="material-icons error-icon">filter_none</i>
+                                    IndexError
+                                </div>
+                                <div class="error-type">
+                                    <i class="material-icons error-icon">key</i>
+                                    KeyError
+                                </div>
+                                <div class="error-type">
+                                    <i class="material-icons error-icon">calculate</i>
+                                    ZeroDivisionError
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="right-column">
+                    <div class="debug-card tools-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">build</i>
+                            <div class="card-title">Debugging Tools</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">pdb module</span> - Python's built-in debugger</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">IDE debuggers</span> - PyCharm, VS Code, IDLE</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">Logging</span> - More advanced than print debugging</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">assert statements</span> - Check conditions during development</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="debug-card example-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">code</i>
+                            <div class="card-title">Debugging Example</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="code-example">
+                                <span class="comment"># Debugging a function with errors</span><br>
+                                <span class="keyword">def</span> <span class="function">calculate_average</span>(numbers):<br>
+                                &nbsp;&nbsp;<span class="comment"># Debug: Check if list is empty</span><br>
+                                &nbsp;&nbsp;<span class="function">print</span>(<span class="string">f"Input: {numbers}"</span>)<br>
+                                &nbsp;&nbsp;<span class="keyword">if</span> <span class="keyword">not</span> numbers:<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="number">0</span><br><br>
+                                &nbsp;&nbsp;<span class="comment"># Debug: Check sum and count</span><br>
+                                &nbsp;&nbsp;total = <span class="function">sum</span>(numbers)<br>
+                                &nbsp;&nbsp;count = <span class="function">len</span>(numbers)<br>
+                                &nbsp;&nbsp;<span class="function">print</span>(<span class="string">f"Sum: {total}, Count: {count}"</span>)<br><br>
+                                &nbsp;&nbsp;<span class="comment"># Original error: Missing parentheses</span><br>
+                                &nbsp;&nbsp;<span class="comment"># return total / count  # This would cause a TypeError</span><br>
+                                &nbsp;&nbsp;<span class="comment"># Fixed: Add parentheses</span><br>
+                                &nbsp;&nbsp;<span class="keyword">return</span> total / count<br><br>
+                                
+                                <span class="comment"># Test the function</span><br>
+                                result = <span class="function">calculate_average</span>([<span class="number">10</span>, <span class="number">20</span>, <span class="number">30</span>])<br>
+                                <span class="function">print</span>(<span class="string">f"Average: {result}"</span>)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="python-logo">
+            <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" style="width: 100%; height: 100%;">
+        </div>
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">def</span> <span class="function">debugging_process</span>():</div>
+            <div class="code-line">    <span class="function">identify_error</span>()</div>
+            <div class="code-line">    <span class="function">locate_source</span>()</div>
+            <div class="code-line">    <span class="function">apply_fix</span>()</div>
+            <div class="code-line">    <span class="function">test_solution</span>()</div>
+        </div>
+    </div>
+</body>
+</html>

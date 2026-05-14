@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flowchart Basics: Symbols and Examples</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .header {
+            padding: 40px 70px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .slide-header {
+            padding: 25px 70px 5px;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+        .content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: 0 70px 40px;
+            gap: 20px;
+        }
+        .slide-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 0 70px 25px;
+            gap: 18px;
+        }
+        .symbol-summary {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 10px;
+            border-left: 4px solid #4CAF50;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        .symbol-summary-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        .symbol-summary-icon {
+            font-size: 28px;
+            color: #4CAF50;
+        }
+        .symbol-summary-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #d4d4d4;
+        }
+        .symbol-summary-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+        }
+        .symbol-summary-image {
+            max-width: 100%;
+            max-height: 320px;
+            border-radius: 6px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease;
+            object-fit: contain;
+        }
+        .symbol-summary-image:hover {
+            transform: scale(1.02);
+        }
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: auto auto;
+            gap: 25px;
+            flex-grow: 1;
+        }
+        .content-card {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .terminal-card {
+            border-left: 4px solid #4ec9b0;
+        }
+        .process-card {
+            border-left: 4px solid #dcdcaa;
+        }
+        .decision-card {
+            border-left: 4px solid #c586c0;
+        }
+        .example-card {
+            border-left: 4px solid #9cdcfe;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-icon {
+            font-size: 28px;
+        }
+        .terminal-card .card-icon {
+            color: #4ec9b0;
+        }
+        .process-card .card-icon {
+            color: #dcdcaa;
+        }
+        .decision-card .card-icon {
+            color: #c586c0;
+        }
+        .example-card .card-icon {
+            color: #9cdcfe;
+        }
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #d4d4d4;
+        }
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex-grow: 1;
+        }
+        .shape-example {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 12px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 16px;
+            color: #cccccc;
+            line-height: 1.5;
+        }
+        .shape-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 120px;
+            position: relative;
+        }
+        .terminal-shape {
+            width: 160px;
+            height: 80px;
+            background-color: rgba(78, 201, 176, 0.2);
+            border: 2px solid #4ec9b0;
+            border-radius: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 600;
+            color: #4ec9b0;
+        }
+        .process-shape {
+            width: 160px;
+            height: 80px;
+            background-color: rgba(220, 220, 170, 0.2);
+            border: 2px solid #dcdcaa;
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 600;
+            color: #dcdcaa;
+        }
+        .decision-shape {
+            width: 120px;
+            height: 120px;
+            background-color: rgba(197, 134, 192, 0.2);
+            border: 2px solid #c586c0;
+            transform: rotate(45deg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .decision-text {
+            transform: rotate(-45deg);
+            font-weight: 600;
+            color: #c586c0;
+            font-size: 16px;
+            text-align: center;
+        }
+        .io-shape {
+            width: 160px;
+            height: 80px;
+            background-color: rgba(156, 220, 254, 0.2);
+            border: 2px solid #9cdcfe;
+            border-radius: 4px;
+            transform: skewX(-20deg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .io-text {
+            transform: skewX(20deg);
+            font-weight: 600;
+            color: #9cdcfe;
+        }
+        .shapes-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .shape-item {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+        }
+        .shape-name {
+            font-weight: 600;
+            text-align: center;
+            font-size: 16px;
+        }
+        .shape-desc {
+            font-size: 14px;
+            color: #cccccc;
+            text-align: center;
+        }
+        .flowchart-example {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            padding: 15px;
+        }
+        .flowchart-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #d4d4d4;
+            margin-bottom: 5px;
+        }
+        .flowchart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
+        .flowchart-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            width: 100%;
+        }
+        .flowchart-arrow {
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 15px solid #ffffff;
+        }
+        .flowchart-arrow-horizontal {
+            width: 40px;
+            height: 2px;
+            background-color: #ffffff;
+            position: relative;
+        }
+        .flowchart-arrow-horizontal::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: -4px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid #ffffff;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+        }
+        .flowchart-terminal {
+            width: 120px;
+            height: 40px;
+            background-color: rgba(78, 201, 176, 0.2);
+            border: 2px solid #4ec9b0;
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: #4ec9b0;
+        }
+        .flowchart-process {
+            width: 120px;
+            height: 40px;
+            background-color: rgba(220, 220, 170, 0.2);
+            border: 2px solid #dcdcaa;
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: #dcdcaa;
+        }
+        .flowchart-decision {
+            width: 80px;
+            height: 80px;
+            background-color: rgba(197, 134, 192, 0.2);
+            border: 2px solid #c586c0;
+            transform: rotate(45deg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .flowchart-decision-text {
+            transform: rotate(-45deg);
+            font-size: 14px;
+            font-weight: 600;
+            color: #c586c0;
+        }
+        .flowchart-io {
+            width: 120px;
+            height: 40px;
+            background-color: rgba(156, 220, 254, 0.2);
+            border: 2px solid #9cdcfe;
+            border-radius: 4px;
+            transform: skewX(-20deg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .flowchart-io-text {
+            transform: skewX(20deg);
+            font-size: 14px;
+            font-weight: 600;
+            color: #9cdcfe;
+        }
+        .decision-label {
+            font-size: 12px;
+            color: #cccccc;
+            position: absolute;
+        }
+        .yes-label {
+            top: -20px;
+            right: 10px;
+        }
+        .no-label {
+            bottom: -20px;
+            right: 10px;
+        }
+        .note {
+            font-size: 14px;
+            color: #cccccc;
+            font-style: italic;
+            margin-top: 5px;
+        }
+        .flowchart-logo {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 10s linear infinite;
+        }
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .code-decoration {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            opacity: 0.6;
+            padding: 20px;
+            overflow: hidden;
+        }
+        .code-line {
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+        .keyword {
+            color: #569cd6;
+        }
+        .function {
+            color: #dcdcaa;
+        }
+        .string {
+            color: #ce9178;
+        }
+        .comment {
+            color: #608b4e;
+        }
+        .number {
+            color: #b5cea8;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="slide-header">
+            <div class="title">Flowchart Basics: Symbols and Examples</div>
+        </div>
+        <div class="slide-content">
+            <!-- Enhanced Symbol Summary Section -->
+            <div class="symbol-summary">
+                <div class="symbol-summary-header">
+                    <i class="material-icons symbol-summary-icon">menu_book</i>
+                    <div class="symbol-summary-title">Flowchart Symbol Reference</div>
+                </div>
+                <div class="symbol-summary-content">
+                    <img src="https://z-cdn-media.chatglm.cn/files/3cfb3b92-819b-4e0e-b825-297188df7e01.png?auth_key=1865947813-5c2b4b65986140b592e63c53511a70c0-0-20ea6f2d576a7e2aa246e2f81a8b55c3" alt="Flowchart Symbols Reference" class="symbol-summary-image">
+                </div>
+            </div>
+            
+            <div class="content-grid">
+                <div class="content-card terminal-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">play_circle_filled</i>
+                        <div class="card-title">Terminal Symbols</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="shape-container">
+                            <div class="terminal-shape">START / END</div>
+                        </div>
+                        <div class="shape-example">
+                            <span class="comment"># Terminal shapes indicate start and end points</span><br>
+                            <span class="comment"># Oval or rounded rectangles</span><br><br>
+                            
+                            <span class="keyword">function</span> <span class="function">calculateSum</span>() {<br>
+                            &nbsp;&nbsp;<span class="comment">// Start of function</span><br>
+                            &nbsp;&nbsp;<span class="keyword">let</span> sum = <span class="number">0</span>;<br>
+                            &nbsp;&nbsp;<span class="comment">// Function logic here</span><br>
+                            &nbsp;&nbsp;<span class="keyword">return</span> sum;<br>
+                            } <span class="comment">// End of function</span>
+                        </div>
+                        <div class="note">Terminal symbols mark the beginning and end of a flowchart</div>
+                    </div>
+                </div>
+                <div class="content-card process-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">settings</i>
+                        <div class="card-title">Process & I/O Symbols</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="shapes-grid">
+                            <div class="shape-item">
+                                <div class="process-shape">PROCESS</div>
+                                <div class="shape-name">Process</div>
+                                <div class="shape-desc">Represents an operation or action</div>
+                            </div>
+                            <div class="shape-item">
+                                <div class="io-shape"><div class="io-text">INPUT/OUTPUT</div></div>
+                                <div class="shape-name">Input/Output</div>
+                                <div class="shape-desc">Represents data input or output</div>
+                            </div>
+                        </div>
+                        <div class="shape-example">
+                            <span class="comment"># Process and I/O operations</span><br>
+                            <span class="comment"># Rectangle for process, parallelogram for I/O</span><br><br>
+                            
+                            <span class="keyword">function</span> <span class="function">calculateSum</span>() {<br>
+                            &nbsp;&nbsp;<span class="keyword">let</span> input = <span class="function">getUserInput</span>(); <span class="comment">// Input</span><br>
+                            &nbsp;&nbsp;<span class="keyword">let</span> sum = <span class="number">0</span>;<br>
+                            &nbsp;&nbsp;<span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < input.length; i++) {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;sum += input[i]; <span class="comment">// Process</span><br>
+                            &nbsp;&nbsp;}<br>
+                            &nbsp;&nbsp;<span class="function">displayResult</span>(sum); <span class="comment">// Output</span><br>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="content-card decision-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">call_split</i>
+                        <div class="card-title">Decision & Connector Symbols</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="shapes-grid">
+                            <div class="shape-item">
+                                <div class="decision-shape">
+                                    <div class="decision-text">DECISION</div>
+                                </div>
+                                <div class="shape-name">Decision</div>
+                                <div class="shape-desc">Represents a conditional branch</div>
+                            </div>
+                            <div class="shape-item">
+                                <div style="width: 80px; height: 80px; background-color: rgba(255, 165, 0, 0.2); border: 2px solid #ffa500; border-radius: 50%; display: flex; justify-content: center; align-items: center;">
+                                    <span style="font-weight: 600; color: #ffa500;">CONNECTOR</span>
+                                </div>
+                                <div class="shape-name">Connector</div>
+                                <div class="shape-desc">Connects different parts of flowchart</div>
+                            </div>
+                        </div>
+                        <div class="shape-example">
+                            <span class="comment"># Decision and connector usage</span><br>
+                            <span class="comment"># Diamond for decision, circle for connector</span><br><br>
+                            
+                            <span class="keyword">function</span> <span class="function">checkAge</span>(age) {<br>
+                            &nbsp;&nbsp;<span class="keyword">if</span> (age >= <span class="number">18</span>) { <span class="comment">// Decision</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="string">"Adult"</span>;<br>
+                            &nbsp;&nbsp;} <span class="keyword">else</span> {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="string">"Minor"</span>;<br>
+                            &nbsp;&nbsp;}<br>
+                            }<br><br>
+                            <span class="comment">// Connector used to join complex flowcharts</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-card example-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">account_tree</i>
+                        <div class="card-title">Example Flowchart</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="flowchart-example">
+                            <div class="flowchart-title">Login Process Flowchart</div>
+                            <div class="flowchart">
+                                <div class="flowchart-row">
+                                    <div class="flowchart-terminal">START</div>
+                                </div>
+                                <div class="flowchart-arrow"></div>
+                                <div class="flowchart-row">
+                                    <div class="flowchart-io"><div class="flowchart-io-text">Enter Credentials</div></div>
+                                </div>
+                                <div class="flowchart-arrow"></div>
+                                <div class="flowchart-row">
+                                    <div class="flowchart-decision">
+                                        <div class="flowchart-decision-text">Valid?</div>
+                                    </div>
+                                </div>
+                                <div class="flowchart-row" style="position: relative;">
+                                    <div style="display: flex; flex-direction: column; align-items: center; position: absolute; left: 50px;">
+                                        <div class="flowchart-arrow-horizontal"></div>
+                                        <div class="decision-label no-label">No</div>
+                                    </div>
+                                    <div style="display: flex; flex-direction: column; align-items: center; position: absolute; right: 50px;">
+                                        <div class="flowchart-arrow-horizontal"></div>
+                                        <div class="decision-label yes-label">Yes</div>
+                                    </div>
+                                </div>
+                                <div class="flowchart-row" style="justify-content: space-between;">
+                                    <div class="flowchart-process">Show Error</div>
+                                    <div class="flowchart-process">Grant Access</div>
+                                </div>
+                                <div class="flowchart-row" style="justify-content: space-between;">
+                                    <div class="flowchart-arrow"></div>
+                                    <div class="flowchart-arrow"></div>
+                                </div>
+                                <div class="flowchart-row" style="justify-content: center;">
+                                    <div class="flowchart-terminal">END</div>
+                                </div>
+                            </div>
+                            <div class="note">This flowchart illustrates a simple login process with decision branching</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flowchart-logo">
+            <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Flowchart Logo" style="width: 100%; height: 100%;">
+        </div>
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">function</span> <span class="function">createFlowchart</span>() {</div>
+            <div class="code-line">    <span class="keyword">const</span> symbols = [<span class="string">"terminal"</span>, <span class="string">"process"</span>, <span class="string">"decision"</span>, <span class="string">"io"</span>];</div>
+            <div class="code-line">    <span class="keyword">return</span> <span class="function">connect</span>(symbols);</div>
+            <div class="code-line">}</div>
+        </div>
+    </div>
+</body>
+</html>

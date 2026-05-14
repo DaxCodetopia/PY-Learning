@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evolution of Programming Languages</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            overflow: hidden;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+	.slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .header {
+            padding: 40px 70px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .slide-header {
+            padding: 50px 70px 30px;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+	.content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: 0 70px 40px;
+            gap: 20px;
+        }
+
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            color: #569cd6;
+            margin-bottom: 20px;
+            font-family: 'Source Code Pro', monospace;
+        }
+        .slide-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 0 70px 50px;
+        }
+        .evolution-container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            flex-grow: 1;
+        }
+        .era-container {
+            display: flex;
+            gap: 20px;
+            height: 100%;
+        }
+        .era-card {
+            flex: 1;
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            height: 100%;
+        }
+        .era-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .era-card:nth-child(1) { border-left: 4px solid #d16969; }
+        .era-card:nth-child(2) { border-left: 4px solid #4ec9b0; }
+        .era-card:nth-child(3) { border-left: 4px solid #569cd6; }
+        
+        .era-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .era-icon {
+            font-size: 28px;
+        }
+        .era-card:nth-child(1) .era-icon { color: #d16969; }
+        .era-card:nth-child(2) .era-icon { color: #4ec9b0; }
+        .era-card:nth-child(3) .era-icon { color: #569cd6; }
+        
+        .era-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #d4d4d4;
+        }
+        .era-period {
+            font-size: 16px;
+            color: #9cdcfe;
+            font-family: 'Source Code Pro', monospace;
+        }
+        .era-content {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex-grow: 1;
+        }
+        .era-feature {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .feature-icon {
+            font-size: 20px;
+            color: #dcdcaa;
+            margin-top: 2px;
+        }
+        .feature-text {
+            font-size: 18px;
+            line-height: 1.4;
+            color: #cccccc;
+        }
+        .code-example {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+            padding: 10px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            margin-top: auto;
+        }
+        .milestone {
+            display: inline-block;
+            background-color: rgba(78, 201, 176, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin: 0 2px;
+            color: #4ec9b0;
+            font-weight: 500;
+        }
+        .python-logo {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 10s linear infinite;
+        }
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .code-decoration {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            opacity: 0.6;
+            padding: 20px;
+            overflow: hidden;
+        }
+        .code-line {
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+        .highlight {
+            color: #dcdcaa;
+        }
+        .keyword {
+            color: #569cd6;
+        }
+        .string {
+            color: #ce9178;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="slide-header">
+            <div class="title">Evolution of Programming Languages</div>
+        </div>
+        <div class="slide-content">
+            <div class="evolution-container">
+                <div class="era-container">
+                    <div class="era-card">
+                        <div class="era-header">
+                            <i class="material-icons era-icon">memory</i>
+                            <div>
+                                <div class="era-title">Machine Language</div>
+                                <div class="era-period">1940s - 1950s</div>
+                            </div>
+                        </div>
+                        <div class="era-content">
+                            <div class="era-feature">
+                                <i class="material-icons feature-icon">check_circle</i>
+                                <div class="feature-text">Binary code (0s and 1s)</div>
+                            </div>
+                            <div class="era-feature">
+                                <i class="material-icons feature-icon">check_circle</i>
+                                <div class="feature-text">Directly executed by CPU</div>
+                            </div>
+                            <div class="era-feature">
+                                <i class="material-icons feature-icon">check_circle</i>
+                                <div class="feature-text">Hardware-specific</div>
+                            </div>
+                            <div class="code-example">
+                                10110001 01100011<br>
+                                11000010 00110001<br>
+                                00010100 00000001
+                            </div>
+                        </div>
+                    </div>
+                    <div class="era-card">
+                        <div class="era-header">
+                            <i class="material-icons era-icon">developer_board</i>
+                            <div>
+                                <div class="era-title">Assembly Language</div>
+                                <div class="era-period">1950s - 1960s</div>
+                            </div>
+                        </div>
+                        <div class="era-content">
+                            <div class="era-feature">
+                                <i class="material-icons feature-icon">check_circle</i>
+                                <div class="feature-text">Mnemonic instructions</div>
+                            </div>
+                            <div class="era-feature">
+                                <i class="material-icons feature-icon">check_circle</i>
+                                <div class="feature-text">Requires assembler</div>
+                            </div>
+                            <div class="era-feature">
+                                <i class="material-icons feature-icon">check_circle</i>
+                                <div class="feature-text">Hardware-specific</div>
+                            </div>
+                            <div class="code-example">
+                                MOV AX, 5<br>
+                                ADD AX, 10<br>
+                                MOV BX, AX
+                            </div>
+                        </div>
+                    </div>
+                    <div class="era-card">
+                        <div class="era-header">
+                            <i class="material-icons era-icon">code</i>
+                            <div>
+                                <div class="era-title">High-Level Languages</div>
+                                <div class="era-period">1960s - Present</div>
+                            </div>
+                        </div>
+                        <div class="era-content">
+                            <div class="era-feature">
+                                <i class="material-icons feature-icon">check_circle</i>
+                                <div class="feature-text">Human-readable syntax</div>
+                            </div>
+                            <div class="era-feature">
+                                <i class="material-icons feature-icon">check_circle</i>
+                                <div class="feature-text">Platform-independent</div>
+                            </div>
+                            <div class="era-feature">
+                                <i class="material-icons feature-icon">check_circle</i>
+                                <div class="feature-text">Key milestones: <span class="milestone">FORTRAN</span> <span class="milestone">C</span> <span class="milestone">Java</span> <span class="milestone">Python</span></div>
+                            </div>
+                            <div class="code-example">
+                                result = 5 + 10<br>
+                                print(result)<br>
+                                # Output: 15
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="python-logo">
+            <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" style="width: 100%; height: 100%;">
+        </div>
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">def</span> <span class="highlight">evolution</span>():</div>
+            <div class="code-line">    <span class="keyword">return</span> {</div>
+            <div class="code-line">        <span class="string">"1940s"</span>: <span class="string">"Machine Language"</span>,</div>
+            <div class="code-line">        <span class="string">"1950s"</span>: <span class="string">"Assembly Language"</span>,</div>
+            <div class="code-line">        <span class="string">"1960s+"</span>: <span class="string">"High-Level Languages"</span></div>
+            <div class="code-line">    }</div>
+        </div>
+    </div>
+</body>
+</html>

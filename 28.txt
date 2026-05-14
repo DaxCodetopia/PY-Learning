@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loop Control with Continue</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            /* Changed from overflow: hidden to allow scrolling */
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        .slide {
+            width: 1280px;
+            /* Changed from min-height to allow content to expand */
+            min-height: 100vh;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: visible;
+            display: flex;
+            flex-direction: column;
+        }
+    .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .header {
+            padding: 40px 70px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .slide-header {
+            padding: 50px 70px 30px;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+    .content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: 0 70px 40px;
+            gap: 20px;
+        }
+        .slide-content {
+            flex-grow: 1;
+            display: flex;
+            padding: 0 70px 50px;
+            gap: 30px;
+        }
+        .content-container {
+            display: flex;
+            width: 100%;
+            gap: 30px;
+        }
+        .left-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .right-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .continue-card {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .continue-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .concept-card {
+            border-left: 4px solid #4ec9b0;
+        }
+        .flow-card {
+            border-left: 4px solid #dcdcaa;
+        }
+        .examples-card {
+            border-left: 4px solid #c586c0;
+        }
+        .tips-card {
+            border-left: 4px solid #9cdcfe;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-icon {
+            font-size: 28px;
+        }
+        .concept-card .card-icon {
+            color: #4ec9b0;
+        }
+        .flow-card .card-icon {
+            color: #dcdcaa;
+        }
+        .examples-card .card-icon {
+            color: #c586c0;
+        }
+        .tips-card .card-icon {
+            color: #9cdcfe;
+        }
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #d4d4d4;
+        }
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+        }
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .point-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .point-icon {
+            font-size: 20px;
+            margin-top: 3px;
+        }
+        .concept-card .point-icon {
+            color: #4ec9b0;
+        }
+        .flow-card .point-icon {
+            color: #dcdcaa;
+        }
+        .examples-card .point-icon {
+            color: #c586c0;
+        }
+        .tips-card .point-icon {
+            color: #9cdcfe;
+        }
+        .point-text {
+            font-size: 20px;
+            line-height: 1.4;
+            color: #cccccc;
+        }
+        .key-concept {
+            display: inline-block;
+            background-color: rgba(78, 201, 176, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin: 0 2px;
+            color: #4ec9b0;
+            font-weight: 500;
+        }
+        .flow-card .key-concept {
+            background-color: rgba(220, 220, 170, 0.2);
+            color: #dcdcaa;
+        }
+        .examples-card .key-concept {
+            background-color: rgba(197, 134, 192, 0.2);
+            color: #c586c0;
+        }
+        .tips-card .key-concept {
+            background-color: rgba(156, 220, 254, 0.2);
+            color: #9cdcfe;
+        }
+        .code-example {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 18px;
+            color: #cccccc;
+            line-height: 1.5;
+            overflow: auto;
+            flex-grow: 1;
+        }
+        .keyword {
+            color: #569cd6;
+        }
+        .function {
+            color: #dcdcaa;
+        }
+        .string {
+            color: #ce9178;
+        }
+        .comment {
+            color: #608b4e;
+        }
+        .number {
+            color: #b5cea8;
+        }
+        .python-logo {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 10s linear infinite;
+        }
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .code-decoration {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            opacity: 0.6;
+            padding: 20px;
+            overflow: hidden;
+        }
+        .code-line {
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+        .flow-visual {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 15px 0;
+        }
+        .flow-step {
+            width: 120px;
+            height: 60px;
+            background-color: rgba(86, 156, 214, 0.2);
+            border: 2px solid #569cd6;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 600;
+            color: #d4d4d4;
+            position: relative;
+        }
+        .flow-step::after {
+            content: "→";
+            position: absolute;
+            right: -25px;
+            color: #569cd6;
+            font-size: 24px;
+        }
+        .flow-step:last-child::after {
+            content: "";
+        }
+        .flow-step.skip {
+            background-color: rgba(220, 220, 170, 0.2);
+            border-color: #dcdcaa;
+        }
+        .flow-step.skip::after {
+            color: #dcdcaa;
+        }
+        
+        /* Scroll indicators */
+        .scroll-indicator {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 100;
+        }
+        .scroll-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: rgba(33, 150, 243, 0.7);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .scroll-btn:hover {
+            background-color: rgba(33, 150, 243, 0.9);
+            transform: scale(1.1);
+        }
+        
+        /* Custom scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(26, 26, 46, 0.5);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(33, 150, 243, 0.7);
+            border-radius: 6px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(33, 150, 243, 0.9);
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="slide-header">
+            <div class="title">Loop Control with Continue</div>
+        </div>
+        <div class="slide-content">
+            <div class="content-container">
+                <div class="left-column">
+                    <div class="continue-card concept-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">skip_next</i>
+                            <div class="card-title">Continue Statement</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">Skips</span> the rest of the current iteration</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">Moves</span> to the next iteration immediately</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Useful for <span class="key-concept">filtering</span> values in loops</div>
+                                </div>
+                            </div>
+                            <div class="flow-visual">
+                                <div class="flow-step">Start Loop</div>
+                                <div class="flow-step">Check Condition</div>
+                                <div class="flow-step skip">Continue?</div>
+                                <div class="flow-step">Next Iteration</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="continue-card flow-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">alt_route</i>
+                            <div class="card-title">Flow Control</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">continue</span> vs <span class="key-concept">break</span></div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">continue: <span class="key-concept">skip</span> current iteration</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">break: <span class="key-concept">exit</span> the loop entirely</div>
+                                </div>
+                            </div>
+                            <div class="code-example">
+                                <span class="comment"># Continue vs Break comparison</span><br>
+                                <span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(<span class="number">5</span>):<br>
+                                &nbsp;&nbsp;<span class="keyword">if</span> i == <span class="number">2</span>:<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">continue</span>  <span class="comment"># Skip iteration 2</span><br>
+                                &nbsp;&nbsp;<span class="keyword">if</span> i == <span class="number">4</span>:<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">break</span>     <span class="comment"># Exit at iteration 4</span><br>
+                                &nbsp;&nbsp;<span class="function">print</span>(i)<br><br>
+                                
+                                <span class="comment"># Output: 0, 1, 3</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="right-column">
+                    <div class="continue-card examples-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">code</i>
+                            <div class="card-title">Practical Examples</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="code-example">
+                                <span class="comment"># Example 1: Skip even numbers</span><br>
+                                <span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(<span class="number">1</span>, <span class="number">11</span>):<br>
+                                &nbsp;&nbsp;<span class="keyword">if</span> i % <span class="number">2</span> == <span class="number">0</span>:<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">continue</span><br>
+                                &nbsp;&nbsp;<span class="function">print</span>(i)<br><br>
+                                
+                                <span class="comment"># Example 2: Filter data</span><br>
+                                data = [<span class="number">10</span>, <span class="number">-5</span>, <span class="number">20</span>, <span class="number">-3</span>, <span class="number">15</span>]<br>
+                                positive_sum = <span class="number">0</span><br><br>
+                                <span class="keyword">for</span> value <span class="keyword">in</span> data:<br>
+                                &nbsp;&nbsp;<span class="keyword">if</span> value < <span class="number">0</span>:<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">continue</span><br>
+                                &nbsp;&nbsp;positive_sum += value<br><br>
+                                
+                                <span class="function">print</span>(<span class="string">f"Sum of positives: {positive_sum}"</span>)<br><br>
+                                
+                                <span class="comment"># Example 3: Process valid inputs</span><br>
+                                inputs = [<span class="string">"10"</span>, <span class="string">"abc"</span>, <span class="string">"20"</span>, <span class="string">""</span>, <span class="string">"30"</span>]<br><br>
+                                <span class="keyword">for</span> item <span class="keyword">in</span> inputs:<br>
+                                &nbsp;&nbsp;<span class="keyword">if</span> <span class="keyword">not</span> item.<span class="function">isdigit</span>():<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">continue</span><br>
+                                &nbsp;&nbsp;num = <span class="keyword">int</span>(item)<br>
+                                &nbsp;&nbsp;<span class="function">print</span>(num * <span class="number">2</span>)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="continue-card tips-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">tips_and_updates</i>
+                            <div class="card-title">Best Practices</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Use continue for <span class="key-concept">filtering</span> conditions</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Keep code <span class="key-concept">readable</span> with clear conditions</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Avoid <span class="key-concept">overusing</span> continue in complex loops</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Consider <span class="key-concept">list comprehensions</span> for simple filtering</div>
+                                </div>
+                            </div>
+                            <div class="code-example">
+                                <span class="comment"># Alternative: List comprehension</span><br>
+                                numbers = <span class="function">range</span>(<span class="number">1</span>, <span class="number">11</span>)<br>
+                                odds = [n <span class="keyword">for</span> n <span class="keyword">in</span> numbers <span class="keyword">if</span> n % <span class="number">2</span> != <span class="number">0</span>]<br>
+                                <span class="function">print</span>(odds)  <span class="comment"># [1, 3, 5, 7, 9]</span><br><br>
+                                
+                                <span class="comment"># Alternative: Generator expression</span><br>
+                                positive_sum = <span class="function">sum</span>(x <span class="keyword">for</span> x <span class="keyword">in</span> data <span class="keyword">if</span> x > <span class="number">0</span>)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="python-logo">
+            <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" style="width: 100%; height: 100%;">
+        </div>
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">def</span> <span class="function">continue_example</span>():</div>
+            <div class="code-line">    <span class="keyword">for</span> item <span class="keyword">in</span> collection:</div>
+            <div class="code-line">        <span class="keyword">if</span> condition:</div>
+            <div class="code-line">            <span class="keyword">continue</span></div>
+            <div class="code-line">        <span class="function">process</span>(item)</div>
+        </div>
+    </div>
+    
+    <!-- Scroll buttons -->
+    <div class="scroll-indicator">
+        <button class="scroll-btn" id="scrollUpBtn" title="Scroll Up">
+            <i class="material-icons">keyboard_arrow_up</i>
+        </button>
+        <button class="scroll-btn" id="scrollDownBtn" title="Scroll Down">
+            <i class="material-icons">keyboard_arrow_down</i>
+        </button>
+    </div>
+    
+    <script>
+        // Scroll functionality
+        document.getElementById('scrollUpBtn').addEventListener('click', function() {
+            window.scrollBy({
+                top: -300,
+                behavior: 'smooth'
+            });
+        });
+        
+        document.getElementById('scrollDownBtn').addEventListener('click', function() {
+            window.scrollBy({
+                top: 300,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Show/hide scroll buttons based on scroll position
+        window.addEventListener('scroll', function() {
+            const scrollUpBtn = document.getElementById('scrollUpBtn');
+            const scrollDownBtn = document.getElementById('scrollDownBtn');
+            
+            // Show/hide up button
+            if (window.pageYOffset > 100) {
+                scrollUpBtn.style.opacity = '1';
+            } else {
+                scrollUpBtn.style.opacity = '0.5';
+            }
+            
+            // Show/hide down button
+            if ((window.innerHeight + window.pageYOffset) >= document.body.offsetHeight - 100) {
+                scrollDownBtn.style.opacity = '0.5';
+            } else {
+                scrollDownBtn.style.opacity = '1';
+            }
+        });
+    </script>
+</body>
+</html>

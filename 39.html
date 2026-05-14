@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practical Programming Exercises: Data Structures</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            overflow: auto;
+            min-height: 100vh;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 100vh;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: visible;
+            display: flex;
+            flex-direction: column;
+        }
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .slide-header {
+            padding: 30px 70px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+        .slide-content {
+            flex-grow: 1;
+            display: flex;
+            padding: 0 70px 50px;
+            gap: 25px;
+            position: relative;
+            z-index: 1;
+        }
+        .exercises-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            flex-grow: 1;
+        }
+        .exercise-card {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .exercise-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .data-card {
+            border-left: 4px solid #4ec9b0;
+        }
+        .text-card {
+            border-left: 4px solid #dcdcaa;
+        }
+        .algorithm-card {
+            border-left: 4px solid #c586c0;
+        }
+        .utility-card {
+            border-left: 4px solid #9cdcfe;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-icon {
+            font-size: 28px;
+        }
+        .data-card .card-icon {
+            color: #4ec9b0;
+        }
+        .text-card .card-icon {
+            color: #dcdcaa;
+        }
+        .algorithm-card .card-icon {
+            color: #c586c0;
+        }
+        .utility-card .card-icon {
+            color: #9cdcfe;
+        }
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #d4d4d4;
+        }
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+        }
+        .exercise-desc {
+            font-size: 18px;
+            line-height: 1.4;
+            color: #cccccc;
+        }
+        .code-example {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 16px;
+            color: #cccccc;
+            line-height: 1.5;
+            overflow: auto;
+            flex-grow: 1;
+            max-height: 300px;
+        }
+        .key-concepts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .concept-tag {
+            background-color: rgba(78, 201, 176, 0.2);
+            color: #4ec9b0;
+            font-size: 14px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: 'Source Code Pro', monospace;
+        }
+        .text-card .concept-tag {
+            background-color: rgba(220, 220, 170, 0.2);
+            color: #dcdcaa;
+        }
+        .algorithm-card .concept-tag {
+            background-color: rgba(197, 134, 192, 0.2);
+            color: #c586c0;
+        }
+        .utility-card .concept-tag {
+            background-color: rgba(156, 220, 254, 0.2);
+            color: #9cdcfe;
+        }
+        .keyword {
+            color: #569cd6;
+        }
+        .function {
+            color: #dcdcaa;
+        }
+        .string {
+            color: #ce9178;
+        }
+        .comment {
+            color: #608b4e;
+        }
+        .number {
+            color: #b5cea8;
+        }
+        .python-logo {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 10s linear infinite;
+            z-index: 1;
+        }
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .code-decoration {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            opacity: 0.6;
+            padding: 20px;
+            overflow: hidden;
+            z-index: 1;
+        }
+        .code-line {
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="slide-header">
+            <div class="title">Practical Programming Exercises: Data Structures</div>
+        </div>
+        <div class="slide-content">
+            <div class="exercises-grid">
+                <div class="exercise-card data-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">storage</i>
+                        <div class="card-title">Data Processing</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="exercise-desc">
+                            Process and analyze data using Python data structures
+                        </div>
+                        <div class="code-example">
+                            <span class="comment"># Calculate statistics from list of numbers</span><br>
+                            <span class="keyword">def</span> <span class="function">calculate_statistics</span>(numbers):<br>
+                              <span class="keyword">if not</span> numbers:<br>
+                                <span class="keyword">return</span> {<span class="string">"count"</span>: <span class="number">0</span>, <span class="string">"sum"</span>: <span class="number">0</span>, <span class="string">"min"</span>: <span class="keyword">None</span>, <span class="string">"max"</span>: <span class="keyword">None</span>, <span class="string">"average"</span>: <span class="keyword">None</span>}<br>
+                              stats = {<br>
+                                <span class="string">"count"</span>: <span class="function">len</span>(numbers),<br>
+                                <span class="string">"sum"</span>: <span class="function">sum</span>(numbers),<br>
+                                <span class="string">"min"</span>: <span class="function">min</span>(numbers),<br>
+                                <span class="string">"max"</span>: <span class="function">max</span>(numbers),<br>
+                                <span class="string">"average"</span>: <span class="function">sum</span>(numbers) / <span class="function">len</span>(numbers)<br>
+                              }<br>
+                             <span class="keyword">return</span> stats<br><br>
+                            
+                            <span class="comment"># Using function</span><br>
+                            numbers = [<span class="number">12</span>, <span class="number">15</span>, <span class="number">8</span>, <span class="number">20</span>, <span class="number">25</span>]<br>
+                            result = <span class="function">calculate_statistics</span>(numbers)<br>
+                            <span class="function">print</span>(<span class="string">f"Count: {result['count']}"</span>)<br>
+                            <span class="function">print</span>(<span class="string">f"Sum: {result['sum']}"</span>)<br>
+                            <span class="function">print</span>(<span class="string">f"Min: {result['min']}"</span>)<br>
+                            <span class="function">print</span>(<span class="string">f"Max: {result['max']}"</span>)<br>
+                            <span class="function">print</span>(<span class="string">f"Average: {result['average']:.2f}"</span>)
+                        </div>
+                        <div class="key-concepts">
+                            <span class="concept-tag">statistics</span>
+                            <span class="concept-tag">list operations</span>
+                            <span class="concept-tag">data analysis</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="exercise-card text-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">text_fields</i>
+                        <div class="card-title">Text Analysis</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="exercise-desc">
+                            Analyze text content using Python data structures
+                        </div>
+                        <div class="code-example">
+                            <span class="comment"># Word frequency analysis</span><br>
+                            <span class="keyword">def</span> <span class="function">analyze_text</span>(text):<br>
+                              <span class="comment"># Convert to lowercase and split into words</span><br>
+                              words = text.<span class="function">lower</span>().<span class="function">split</span>()<br>
+                              <span class="comment"># Count word frequencies</span><br>
+                              word_count = {}<br>
+                              <span class="keyword">for</span> word <span class="keyword">in</span> words:<br>
+                                <span class="keyword">if</span> word <span class="keyword">in</span> word_count:<br>
+                                    word_count[word] += <span class="number">1</span><br>
+                                <span class="keyword">else</span>:<br>
+                                    word_count[word] = <span class="number">1</span><br>
+                              <span class="comment"># Find most common word</span><br>
+                              most_common = <span class="keyword">max</span>(word_count.<span class="function">items</span>(), <span class="keyword">key</span>=<span class="keyword">lambda</span> item: item[<span class="number">1</span>])<br>
+                              <span class="keyword">return</span> most_common<br><br><br>
+                            
+                            <span class="comment"># Count unique words</span><br>
+                             <span class="keyword">unique_words</span> = <span class="function">set</span>(words)<br>
+                             <span class="function">print</span>(<span class="string">f"Unique words: {len(unique_words)}"</span>)<br>
+                             <span class="function">print</span>(<span class="string">f"Word diversity: {len(unique_words) / len(words):.2f}"</span>)
+                        </div>
+                        <div class="key-concepts">
+                            <span class="concept-tag">string methods</span>
+                            <span class="concept-tag">dictionaries</span>
+                            <span class="concept-tag">sets</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="exercise-card algorithm-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">account_tree</i>
+                        <div class="card-title">Simple Algorithms</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="exercise-desc">
+                            Implement basic algorithms using Python data structures
+                        </div>
+                        <div class="code-example">
+                            <span class="comment"># Bubble sort algorithm</span><br>
+                            <span class="keyword">def</span> <span class="function">bubble_sort</span>(arr):<br>
+                              n = <span class="function">len</span>(arr)<br>
+                              <span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(n):<br>
+                                <span class="keyword">for</span> j <span class="keyword">in</span> <span class="function">range</span>(<span class="number">0</span>, n-i-<span class="number">1</span>):<br>
+                                <span class="keyword">if</span> arr[j] > arr[j+<span class="number">1</span>]:<br>
+                                    arr[j], arr[j+<span class="number">1</span>] = arr[j+<span class="number">1</span>]<br>
+                              <span class="keyword">return</span> arr<br><br>
+                            
+                            <span class="comment"># Binary search algorithm</span><br>
+                            <span class="keyword">def</span> <span class="function">binary_search</span>(arr, target):<br>
+                              <span class="keyword">low</span> = <span class="number">0</span><br>
+                             <span class="keyword">high</span> = <span class="function">len</span>(arr) - <span class="number">1</span><br>
+                             <span class="keyword">while</span> low <= high:<br>
+                                mid = (low + high) // <span class="number">2</span><br>
+                                <span class="keyword">if</span> arr[mid] == target:<br>
+                                <span class="keyword">return</span> mid<br>
+                                <span class="keyword">elif</span> arr[mid] < target:<br>
+                                <span class="keyword">return</span> <span class="function">binary_search</span>(arr, target, mid+<span class="number">1</span>, high)<br>
+                                <span class="keyword">else</span>:<br>
+                                <span class="keyword">return</span> <span class="function">binary_search</span>(arr, target, low, mid-<span class="number">1</span>)<br><br>
+                              <span class="keyword">return</span> <span class="keyword">-1</span><br><br>
+                            
+                            <span class="comment"># Using functions</span><br>
+                            numbers = [<span class="number">64</span>, <span class="number">34</span>, <span class="number">25</span>, <span class="number">12</span>, <span class="number">22</span>, <span class="number">11</span>, <span class="number">90</span>, <span class="number">88</span>]<br>
+                            <span class="function">print</span>(<span class="string">"Original: {numbers}"</span>)<br>
+                            <span class="function">bubble_sort</span>(numbers)<br>
+                            <span class="function">print</span>(<span class="string">"Sorted: {numbers}"</span>)<br>
+                            <span class="keyword">print</span>(<span class="function">binary_search</span>(numbers, <span class="number">22</span>))  <span class="comment"># 4</span><br>
+                            <span class="function">print</span>(<span class="function">binary_search</span>(numbers, <span class="number">90</span>))  <span class="comment"># 8</span>
+                        </div>
+                        <div class="key-concepts">
+                            <span class="concept-tag">sorting algorithms</span>
+                            <span class="concept-tag">search algorithms</span>
+                            <span class="concept-tag">data structure manipulation</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="exercise-card utility-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">build</i>
+                        <div class="card-title">Utility Functions</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="exercise-desc">
+                            Create reusable utility functions for data structures
+                        </div>
+                        <div class="code-example">
+                            <span class="comment"># Function to find duplicates in a list</span><br>
+                            <span class="keyword">def</span> <span class="function">find_duplicates</span>(lst):<br>
+                              <span class="keyword">return</span> [item <span class="keyword">for</span> item <span class="keyword">in</span> lst <span class="keyword">if</span> lst.<span class="function">count</span>(item) > <span class="number">1</span>]<br>
+                            
+                            <span class="comment"># Function to merge two lists</span><br>
+                            <span class="keyword">def</span> <span class="function">merge_lists</span>(list1, list2):<br>
+                              <span class="comment"># Create a copy to avoid modifying original lists</span><br>
+                              result = list1.copy()<br>
+                              result.<span class="function">extend</span>(list2)<br>
+                             <span class="keyword">return</span> result<br><br>
+                            
+                            <span class="comment"># Function to group list elements by key</span><br>
+                            <span class="keyword">def</span> <span class="function">group_by_key</span>(data, key_func):<br>
+                              groups = {}<br>
+                              <span class="keyword">for</span> item <span class="keyword">in</span> data:<br>
+                                key = key_func(item)<br>
+                                <span class="keyword">if</span> key <span class="keyword">not</span> <span class="keyword">in</span> groups:<br>
+                                    groups[key] = []<br>
+                                groups[key].<span class="function">append</span>(item)<br>
+                             <span class="keyword">return</span> groups<br><br>
+                            
+                            <span class="comment"># Using functions</span><br>
+                            students = [<br>
+                              {<span class="string">"name"</span>: <span class="string">"Alice"</span>, <span class="string">"grade"</span>: <span class="number">85</span>},<br>
+                              {<span class="string">"name"</span>: <span class="string">"Bob"</span>, <span class="string">"grade"</span>: <span class="number">92</span>},<br>
+                              {<span class="string">"name"</span>: <span class="string">"Charlie"</span>, <span class="string">"grade"</span>: <span class="number">78</span>},<br>
+                              {<span class="string">"name"</span>: <span class="string">"Diana"</span>, <span class="string">"grade"</span>: <span class="number">95</span>}<br>
+                            ]<br><br>
+                            
+                            <span class="comment"># Group by grade</span><br>
+                            grouped_by_grade = <span class="function">group_by_key</span>(students, <span class="keyword">lambda</span> student: student[<span class="string">"grade"</span>])<br>
+                            <span class="keyword">for</span> grade, group <span class="keyword">in</span> grouped_by_grade.<span class="function">items</span>():<br>
+                             <span class="function">print</span>(<span class="string">f"Grade {grade}: {len(group)}"</span>)
+                        </div>
+                        <div class="key-concepts">
+                            <span class="concept-tag">reusable functions</span>
+                            <span class="concept-tag">lambda functions</span>
+                            <span class="concept-tag">data grouping</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="python-logo">
+            <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" style="width: 100%; height: 100%;">
+        </div>
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">def</span> <span class="function">data_structure_exercises</span>():</div>
+            <div class="code-line">    <span class="comment"># Data processing</span></div>
+            <div class="code-line">    data = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]</div>
+            <div class="code-line">    stats = <span class="function">calculate_statistics</span>(data)</div>
+            <div class="code-line">    </div>
+            <div class="code-line">    <span class="comment"># Text analysis</span></div>
+            <div class="code-line">    text = <span class="string">"Python is a powerful programming language"</span></div>
+            <div class="code-line">    word_freq = <span class="function">analyze_text</span>(text)</div>
+            <div class="code-line">    </div>
+            <div class="code-line">    <span class="comment"># Algorithms</span></div>
+            <div class="code-line">    sorted_data = <span class="function">bubble_sort</span>(data)</div>
+            <div class="code-line">    found = <span class="function">binary_search</span>(sorted_data, <span class="number">3</span>)</div>
+            <div class="code-line">    </div>
+            <div class="code-line">    <span class="comment"># Utilities</span></div>
+            <div class="code-line">    duplicates = <span class="function">find_duplicates</span>(data)</div>
+            <div class="code-line">    merged = <span class="function">merge_lists</span>(data, [<span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>])</div>
+            <div class="code-line">    grouped = <span class="function">group_by_key</span>(students, <span class="keyword">lambda</span> item: item[<span class="string">"grade"</span>])</div>
+            <div class="code-line">    <span class="keyword">return</span> <span class="function">list</span>(grouped.<span class="function">values</span>())</div>
+        </div>
+    </div>
+</body>
+</html>

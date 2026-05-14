@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scope and Lifetime of Variables</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: visible;
+            display: flex;
+            flex-direction: column;
+        }
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.1;
+            z-index: 0;
+        }
+        .slide-header {
+            position: relative;
+            z-index: 1;
+            padding: 30px 70px 10px;
+        }
+        .title {
+            font-size: 64px;
+            font-weight: 700;
+            text-align: center;
+            background: linear-gradient(90deg, #4CAF50, #2196F3, #9C27B0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0px 0px 30px rgba(76, 175, 80, 0.3);
+        }
+        .python-logo {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 10s linear infinite;
+            z-index: 2;
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .slide-content {
+            position: relative;
+            z-index: 1;
+            flex-grow: 1;
+            display: flex;
+            padding: 10px 70px 100px;
+            gap: 30px;
+        }
+        .content-container {
+            display: flex;
+            width: 100%;
+            gap: 30px;
+        }
+        .left-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .right-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .scope-card {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .scope-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .local-card {
+            border-left: 4px solid #4ec9b0;
+        }
+        .global-card {
+            border-left: 4px solid #dcdcaa;
+        }
+        .legb-card {
+            border-left: 4px solid #c586c0;
+        }
+        .lifetime-card {
+            border-left: 4px solid #9cdcfe;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-icon {
+            font-size: 28px;
+        }
+        .local-card .card-icon {
+            color: #4ec9b0;
+        }
+        .global-card .card-icon {
+            color: #dcdcaa;
+        }
+        .legb-card .card-icon {
+            color: #c586c0;
+        }
+        .lifetime-card .card-icon {
+            color: #9cdcfe;
+        }
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #d4d4d4;
+        }
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+        }
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .point-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .point-icon {
+            font-size: 20px;
+            margin-top: 3px;
+        }
+        .local-card .point-icon {
+            color: #4ec9b0;
+        }
+        .global-card .point-icon {
+            color: #dcdcaa;
+        }
+        .legb-card .point-icon {
+            color: #c586c0;
+        }
+        .lifetime-card .point-icon {
+            color: #9cdcfe;
+        }
+        .point-text {
+            font-size: 20px;
+            line-height: 1.4;
+            color: #cccccc;
+        }
+        .key-concept {
+            display: inline-block;
+            background-color: rgba(78, 201, 176, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin: 0 2px;
+            color: #4ec9b0;
+            font-weight: 500;
+        }
+        .global-card .key-concept {
+            background-color: rgba(220, 220, 170, 0.2);
+            color: #dcdcaa;
+        }
+        .legb-card .key-concept {
+            background-color: rgba(197, 134, 192, 0.2);
+            color: #c586c0;
+        }
+        .lifetime-card .key-concept {
+            background-color: rgba(156, 220, 254, 0.2);
+            color: #9cdcfe;
+        }
+        .code-example {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 18px;
+            color: #cccccc;
+            line-height: 1.5;
+            overflow: auto;
+            flex-grow: 1;
+            max-height: 250px;
+        }
+        .keyword {
+            color: #569cd6;
+        }
+        .function {
+            color: #dcdcaa;
+        }
+        .string {
+            color: #ce9178;
+        }
+        .comment {
+            color: #608b4e;
+        }
+        .number {
+            color: #b5cea8;
+        }
+        .code-decoration {
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            opacity: 0.6;
+            padding: 20px 70px;
+            height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .code-line {
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+        .legb-diagram {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 0;
+            gap: 10px;
+        }
+        .legb-level {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: rgba(197, 134, 192, 0.1);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+        .legb-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #c586c0;
+            margin-bottom: 5px;
+        }
+        .legb-desc {
+            font-size: 16px;
+            color: #cccccc;
+        }
+        .arrow {
+            font-size: 24px;
+            color: #c586c0;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="slide-header">
+            <div class="title">Scope and Lifetime of Variables</div>
+        </div>
+        <div class="slide-content">
+            <div class="content-container">
+                <div class="left-column">
+                    <div class="scope-card local-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">visibility</i>
+                            <div class="card-title">Local Variables</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Defined <span class="key-concept">inside</span> functions</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Accessible <span class="key-concept">only</span> within that function</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">Created</span> when function is called</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">Destroyed</span> when function exits</div>
+                                </div>
+                            </div>
+                            <div class="code-example">
+                                <span class="comment"># Local variable example</span><br>
+                                <span class="keyword">def</span> <span class="function">calculate_area</span>(length, width):<br>
+                                  <span class="comment"># Local variable</span><br>
+                                  area = length * width<br>
+                                  <span class="function">print</span>(<span class="string">f"Inside function: {area}"</span>)<br>
+                                  <span class="keyword">return</span> area<br><br>
+                                
+                                <span class="comment"># Area is not accessible outside</span><br>
+                                result = <span class="function">calculate_area</span>(<span class="number">5</span>, <span class="number">3</span>)<br>
+                                <span class="function">print</span>(result)  <span class="comment"># 15</span><br>
+                                <span class="comment"># print(area) would cause NameError</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="scope-card global-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">public</i>
+                            <div class="card-title">Global Variables</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Defined <span class="key-concept">outside</span> all functions</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Accessible <span class="key-concept">anywhere</span> in the program</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Use <span class="key-concept">global</span> keyword to modify</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Avoid when <span class="key-concept">possible</span> for better code organization</div>
+                                </div>
+                            </div>
+                            <div class="code-example">
+                                <span class="comment"># Global variable example</span><br>
+                                <span class="comment"># Global variable defined outside functions</span><br>
+                                counter = <span class="number">0</span><br><br>
+                                
+                                <span class="keyword">def</span> <span class="function">increment</span>():<br>
+                                  <span class="keyword">global</span> counter<br>
+                                  counter += <span class="number">1</span><br>
+                                  <span class="function">print</span>(<span class="string">f"Counter: {counter}"</span>)<br><br>
+                                
+                                <span class="comment"># Using global variable</span><br>
+                                <span class="function">increment</span>()<br>
+                                <span class="function">increment</span>()<br>
+                                <span class="function">print</span>(<span class="string">f"Final counter: {counter}"</span>)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="right-column">
+                    <div class="scope-card legb-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">layers</i>
+                            <div class="card-title">LEGB Rule</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">L</span> - Local (function)</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">E</span> - Enclosing function</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">G</span> - Global (module)</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">B</span> - Built-in (Python)</div>
+                                </div>
+                            </div>
+                            <div class="legb-diagram">
+                                <div class="legb-level">
+                                    <div class="legb-title">B</div>
+                                    <div class="legb-desc">Built-in</div>
+                                </div>
+                                <i class="material-icons arrow">arrow_downward</i>
+                                <div class="legb-level">
+                                    <div class="legb-title">G</div>
+                                    <div class="legb-desc">Global</div>
+                                </div>
+                                <i class="material-icons arrow">arrow_downward</i>
+                                <div class="legb-level">
+                                    <div class="legb-title">E</div>
+                                    <div class="legb-desc">Enclosing</div>
+                                </div>
+                                <i class="material-icons arrow">arrow_downward</i>
+                                <div class="legb-level">
+                                    <div class="legb-title">L</div>
+                                    <div class="legb-desc">Local</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="scope-card lifetime-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">hourglass_empty</i>
+                            <div class="card-title">Variable Lifetime</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Local variables: <span class="key-concept">function call</span> duration</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Global variables: <span class="key-concept">program execution</span> duration</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Memory <span class="key-concept">freed</span> when no longer referenced</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">Garbage collection</span> handles cleanup</div>
+                                </div>
+                            </div>
+                            <div class="code-example">
+                                <span class="comment"># Variable lifetime example</span><br>
+                                <span class="keyword">def</span> <span class="function">demonstrate_lifetime</span>():<br>
+                                  <span class="comment"># Local variable created</span><br>
+                                  local_var = <span class="string">"I exist only inside"</span><br>
+                                  <span class="function">print</span>(local_var)<br>
+                                  <span class="comment"># Function ends, local_var is destroyed</span><br><br>
+                                
+                                <span class="comment"># Using id() to check object existence</span><br>
+                                <span class="function">demonstrate_lifetime</span>()<br>
+                                <span class="keyword">try</span>:<br>
+                                    <span class="function">print</span>(<span class="string">"Local var still exists?"</span>, local_var <span class="keyword">is not</span> <span class="keyword">None</span>)<br>
+                                <span class="keyword">except</span> NameError:<br>
+                                    <span class="function">print</span>(<span class="string">"Local var no longer exists"</span>)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="python-logo">
+            <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" style="width: 100%; height: 100%;">
+        </div>
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">def</span> <span class="function">variable_scope</span>():</div>
+            <div class="code-line">    <span class="keyword">global</span> global_var</div>
+            <div class="code-line">    local_var = <span class="string">"I'm local"</span></div>
+            <div class="code-line">    <span class="keyword">def</span> <span class="function">inner_function</span>():</div>
+            <div class="code-line">        <span class="keyword">nonlocal</span> outer_var</div>
+            <div class="code-line">        <span class="keyword">return</span> <span class="string">"Can access both"</span></div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modularization, Predefined and User-Defined Modules/Functions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        .slide {
+            max-width: 1280px;
+            min-height: 100vh;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: visible;
+            display: flex;
+            flex-direction: column;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.1;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .header {
+            padding: 40px 70px 20px;
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+        .title {
+            font-size: 64px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+            background: linear-gradient(90deg, #4CAF50, #2196F3, #9C27B0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0px 0px 30px rgba(76, 175, 80, 0.3);
+        }
+        
+        /* Rotating Python Logo (From reference code) */
+        .python-logo {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 80px;
+            height: 80px;
+            z-index: 10;
+            animation: rotate 10s linear infinite;
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            padding: 0 70px 80px; /* Added bottom padding for scroll space */
+            gap: 30px;
+        }
+        .content-container {
+            display: flex;
+            width: 100%;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        .left-column, .right-column {
+            flex: 1;
+            min-width: 350px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        /* CARD STYLES (From Reference Code) */
+        .function-card { /* Renamed from module-card to match reference style logic */
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .function-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Border Colors matching reference logic */
+        .definition-card { border-left: 4px solid #4ec9b0; }
+        .calling-card { border-left: 4px solid #dcdcaa; }
+        .parameters-card { border-left: 4px solid #c586c0; }
+        .return-card { border-left: 4px solid #9cdcfe; }
+
+        /* Mapping to our previous content types */
+        .concept-card { border-left: 4px solid #4ec9b0; }
+        .predefined-card { border-left: 4px solid #dcdcaa; }
+        .userdefined-card { border-left: 4px solid #c586c0; }
+        .benefits-card { border-left: 4px solid #9cdcfe; }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-icon { font-size: 28px; }
+        
+        /* Icon Colors from Reference */
+        .definition-card .card-icon { color: #4ec9b0; }
+        .calling-card .card-icon { color: #dcdcaa; }
+        .parameters-card .card-icon { color: #c586c0; }
+        .return-card .card-icon { color: #9cdcfe; }
+        .concept-card .card-icon { color: #4ec9b0; }
+        .predefined-card .card-icon { color: #dcdcaa; }
+        .userdefined-card .card-icon { color: #c586c0; }
+        .benefits-card .card-icon { color: #9cdcfe; }
+
+        .card-title { font-size: 24px; font-weight: 600; color: #d4d4d4; }
+        .card-content { display: flex; flex-direction: column; gap: 15px; flex-grow: 1; }
+        
+        .key-points { display: flex; flex-direction: column; gap: 12px; }
+        .point-item { display: flex; align-items: flex-start; gap: 10px; }
+        .point-icon { font-size: 20px; margin-top: 3px; }
+        
+        /* Point Icon Colors */
+        .definition-card .point-icon { color: #4ec9b0; }
+        .calling-card .point-icon { color: #dcdcaa; }
+        .parameters-card .point-icon { color: #c586c0; }
+        .return-card .point-icon { color: #9cdcfe; }
+        .concept-card .point-icon { color: #4ec9b0; }
+        .predefined-card .point-icon { color: #dcdcaa; }
+        .userdefined-card .point-icon { color: #c586c0; }
+        .benefits-card .point-icon { color: #9cdcfe; }
+
+        .point-text { font-size: 20px; line-height: 1.4; color: #cccccc; }
+        
+        /* Key Concept Badge */
+        .key-concept {
+            display: inline-block;
+            background-color: rgba(78, 201, 176, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin: 0 2px;
+            color: #4ec9b0;
+            font-weight: 500;
+        }
+        .calling-card .key-concept, .predefined-card .key-concept {
+            background-color: rgba(220, 220, 170, 0.2); color: #dcdcaa;
+        }
+        .parameters-card .key-concept, .userdefined-card .key-concept {
+            background-color: rgba(197, 134, 192, 0.2); color: #c586c0;
+        }
+        .return-card .key-concept, .benefits-card .key-concept {
+            background-color: rgba(156, 220, 254, 0.2); color: #9cdcfe;
+        }
+
+        /* Code Blocks (From Reference) */
+        .code-example {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 18px;
+            color: #cccccc;
+            line-height: 1.5;
+            overflow-x: auto;
+            flex-grow: 1;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .keyword { color: #569cd6; }
+        .function { color: #dcdcaa; }
+        .string { color: #ce9178; }
+        .comment { color: #608b4e; }
+        .number { color: #b5cea8; }
+        .operator { color: #d4d4d4; }
+
+        /* --- STYLES FOR NEW SECTIONS (Adapted to Reference Theme) --- */
+        .section-heading {
+            font-size: 32px;
+            color: #ffffff;
+            border-left: 5px solid #2196F3;
+            padding-left: 15px;
+            margin-bottom: 20px;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(90deg, rgba(33, 150, 243, 0.1), transparent);
+        }
+
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 10px;
+        }
+        .module-item {
+            background-color: rgba(220, 220, 170, 0.1);
+            border-radius: 6px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .module-icon { font-size: 18px; color: #dcdcaa; }
+        .module-name { font-size: 16px; color: #cccccc; }
+
+        /* Comparison Wrapper */
+        .comparison-wrapper { display: flex; gap: 20px; margin-bottom: 30px; flex-wrap: wrap; }
+        .comparison-col {
+            flex: 1; min-width: 300px;
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px; padding: 20px;
+        }
+        .comp-title { font-size: 22px; font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .comp-bad { border-top: 4px solid #ff5252; color: #ff5252; }
+        .comp-good { border-top: 4px solid #4caf50; color: #4caf50; }
+        .comp-list { list-style: none; }
+        .comp-list li { margin-bottom: 10px; font-size: 18px; color: #ddd; display: flex; align-items: center; gap: 10px; }
+
+        /* Table */
+        .table-container { overflow-x: auto; background: rgba(30, 30, 30, 0.7); border-radius: 8px; margin-bottom: 30px; }
+        .comparison-table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        .comparison-table th {
+            background-color: rgba(33, 150, 243, 0.2);
+            color: #2196F3; font-weight: 700; text-align: left;
+            padding: 15px; border-bottom: 2px solid rgba(33, 150, 243, 0.4); font-size: 18px;
+        }
+        .comparison-table td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); color: #ccc; font-size: 18px; }
+        .comparison-table tr:hover { background-color: rgba(255,255,255,0.02); }
+        .check-mark { color: #4caf50; font-weight: bold; }
+        .cross-mark { color: #ff5252; font-weight: bold; }
+
+        /* Code Split */
+        .code-split { display: flex; gap: 20px; margin-bottom: 30px; flex-wrap: wrap; }
+        .code-split-col { flex: 1; min-width: 300px; }
+        .code-caption { font-size: 18px; font-weight: 600; margin-bottom: 10px; color: #9cdcfe; text-align: center; }
+
+        /* Analogy */
+        .analogy-card {
+            background: linear-gradient(135deg, rgba(33, 150, 243, 0.1), rgba(33, 150, 243, 0.05));
+            border: 1px solid rgba(33, 150, 243, 0.3);
+            border-radius: 12px; padding: 30px; margin-bottom: 30px;
+            display: flex; gap: 30px; align-items: center; flex-wrap: wrap;
+        }
+        .analogy-text { flex: 1; min-width: 280px; }
+        .analogy-title { font-size: 26px; color: #2196F3; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .analogy-list { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
+        .analogy-list li { background-color: rgba(0,0,0,0.2); padding: 10px 15px; border-radius: 4px; color: #ddd; display: flex; align-items: center; gap: 10px; }
+        .analogy-bad .analogy-icon { color: #ff5252; }
+        .analogy-good .analogy-icon { color: #4caf50; }
+
+        /* Trick */
+        .trick-container { display: flex; justify-content: center; gap: 40px; margin-bottom: 30px; flex-wrap: wrap; }
+        .trick-box {
+            flex: 1; min-width: 300px; padding: 30px; border-radius: 12px;
+            text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px;
+            background-color: rgba(40, 44, 52, 0.7); border: 1px solid rgba(255,255,255,0.05);
+        }
+        .trick-box.show { border: 2px solid #ff9800; background-color: rgba(255, 152, 0, 0.1); }
+        .trick-box.send { border: 2px solid #4caf50; background-color: rgba(76, 175, 80, 0.1); }
+        .trick-word { font-size: 42px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; }
+        .show .trick-word { color: #ff9800; }
+        .send .trick-word { color: #4caf50; }
+        .trick-desc { font-size: 20px; color: #ddd; font-weight: 500; }
+        .trick-sub { font-size: 16px; color: #aaa; font-style: italic; }
+
+        /* Footer Code Decoration */
+        .code-decoration {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            opacity: 0.6;
+            padding: 20px;
+            overflow: hidden;
+            z-index: 5;
+        }
+        .code-line { margin-bottom: 5px; white-space: nowrap; }
+
+        /* Scroll buttons */
+        .scroll-indicator { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 10px; z-index: 100; }
+        .scroll-btn { width: 50px; height: 50px; border-radius: 50%; background-color: rgba(33, 150, 243, 0.7); color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background-color 0.3s, transform 0.3s; }
+        .scroll-btn:hover { background-color: rgba(33, 150, 243, 0.9); transform: scale(1.1); }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .content-container { flex-direction: column; }
+            .comparison-wrapper { flex-direction: column; }
+            .analogy-card { flex-direction: column; }
+        }
+        ::-webkit-scrollbar { width: 12px; }
+        ::-webkit-scrollbar-track { background: rgba(26, 26, 46, 0.5); }
+        ::-webkit-scrollbar-thumb { background: rgba(33, 150, 243, 0.7); border-radius: 6px; }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <!-- Rotating Python Logo (Added as requested) -->
+        <div class="python-logo">
+            <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" style="width: 100%; height: 100%;">
+        </div>
+
+        <div class="header">
+            <div class="title">Modularization, Predefined and User-Defined Modules/Functions</div>
+        </div>
+        
+        <div class="content">
+            <!-- ORIGINAL CONTENT (Styled with Reference CSS) -->
+            <div class="content-container">
+                <div class="left-column">
+                    <div class="function-card concept-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">view_module</i>
+                            <div class="card-title">What is Modularization?</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Breaking <span class="key-concept">complex programs</span> into smaller, manageable parts</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Creating <span class="key-concept">reusable components</span> for common tasks</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Improving <span class="key-concept">code organization</span> and maintainability</div>
+                                </div>
+                            </div>
+                            <div class="code-example">
+                                <span class="comment"># Non-modular approach</span><br>
+                                <span class="comment"># All code in one file, hard to maintain</span><br><br>
+                                <span class="comment"># Modular approach</span><br>
+                                <span class="keyword">import</span> user_module<br>
+                                <span class="keyword">import</span> math_module<br>
+                                result = user_module.<span class="function">process_data</span>(data)<br>
+                                calculation = math_module.<span class="function">calculate</span>(values)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="function-card predefined-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">library_books</i>
+                            <div class="card-title">Predefined Modules</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Built-in <span class="key-concept">Python modules</span> ready to use</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Import with <span class="key-concept">import</span> statement</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Access with <span class="key-concept">dot notation</span></div>
+                                </div>
+                            </div>
+                            <div class="module-grid">
+                                <div class="module-item">
+                                    <i class="material-icons module-icon">calculate</i>
+                                    <div class="module-name">math</div>
+                                </div>
+                                <div class="module-item">
+                                    <i class="material-icons module-icon">casino</i>
+                                    <div class="module-name">random</div>
+                                </div>
+                                <div class="module-item">
+                                    <i class="material-icons module-icon">calendar_today</i>
+                                    <div class="module-name">datetime</div>
+                                </div>
+                                <div class="module-item">
+                                    <i class="material-icons module-icon">folder</i>
+                                    <div class="module-name">os</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="right-column">
+                    <div class="function-card userdefined-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">code</i>
+                            <div class="card-title">User-Defined Modules</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Create <span class="key-concept">.py files</span> with related functions</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Import with <span class="key-concept">import module_name</span></div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text">Access with <span class="key-concept">module.function()</span></div>
+                                </div>
+                            </div>
+                            <div class="code-example">
+                                <span class="comment"># Creating a custom module</span><br>
+                                <span class="comment"># File: calculator.py</span><br><br>
+                                <span class="keyword">def</span> <span class="function">add</span>(a, b):<br>
+                                  <span class="keyword">return</span> a + b<br><br>
+                                <span class="keyword">def</span> <span class="function">subtract</span>(a, b):<br>
+                                  <span class="keyword">return</span> a - b<br><br>
+                                <span class="comment"># Using module</span><br>
+                                <span class="comment"># File: main.py</span><br>
+                                <span class="keyword">import</span> calculator<br><br>
+                                result1 = calculator.<span class="function">add</span>(<span class="number">5</span>, <span class="number">3</span>)<br>
+                                result2 = calculator.<span class="function">multiply</span>(<span class="number">4</span>, <span class="number">7</span>)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="function-card benefits-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">stars</i>
+                            <div class="card-title">Benefits of Modularization</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">Reusability</span> - Write once, use many times</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">Maintainability</span> - Easier to update and fix</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">Readability</span> - Cleaner, more organized code</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">Collaboration</span> - Teams can work on different modules</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEW CONTENT ADDED (Styled to match Reference) -->
+            
+            <!-- Why Modularization is Important -->
+            <div class="section-heading">
+                <i class="material-icons">compare_arrows</i>
+                Why Modularization is Important
+            </div>
+            <div class="comparison-wrapper">
+                <div class="comparison-col comp-bad">
+                    <div class="comp-title">
+                        <i class="material-icons">cancel</i> Without Functions
+                    </div>
+                    <ul class="comp-list">
+                        <li><i class="material-icons cross-mark">close</i> One long messy program</li>
+                        <li><i class="material-icons cross-mark">close</i> Hard to find errors</li>
+                        <li><i class="material-icons cross-mark">close</i> Hard to reuse code</li>
+                    </ul>
+                </div>
+                <div class="comparison-col comp-good">
+                    <div class="comp-title">
+                        <i class="material-icons">check_circle</i> With Functions
+                    </div>
+                    <ul class="comp-list">
+                        <li><i class="material-icons check-mark">check</i> Easy to test</li>
+                        <li><i class="material-icons check-mark">check</i> Easy to reuse</li>
+                        <li><i class="material-icons check-mark">check</i> Easy to understand</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Difference Table -->
+            <div class="section-heading">
+                <i class="material-icons">compare</i>
+                Difference: Functions With Return vs. Without Return
+            </div>
+            <div class="table-container">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 20%">Feature</th>
+                            <th style="width: 40%">Function with NO Return</th>
+                            <th style="width: 40%">Function WITH Return</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Purpose</td>
+                            <td>Performs a task</td>
+                            <td>Performs a task and gives back a result</td>
+                        </tr>
+                        <tr>
+                            <td>Uses `return` keyword</td>
+                            <td><span class="cross-mark">❌ No</span></td>
+                            <td><span class="check-mark">✅ Yes</span></td>
+                        </tr>
+                        <tr>
+                            <td>Output</td>
+                            <td>Shows result using `print()`</td>
+                            <td>Sends value back to where it was called</td>
+                        </tr>
+                        <tr>
+                            <td>Can be stored in variable</td>
+                            <td><span class="cross-mark">❌ No</span></td>
+                            <td><span class="check-mark">✅ Yes</span></td>
+                        </tr>
+                        <tr>
+                            <td>Can be used in calculations</td>
+                            <td><span class="cross-mark">❌ No</span></td>
+                            <td><span class="check-mark">✅ Yes</span></td>
+                        </tr>
+                        <tr>
+                            <td>Can be reused in other functions</td>
+                            <td><span class="cross-mark">❌ Limited</span></td>
+                            <td><span class="check-mark">✅ Very useful</span></td>
+                        </tr>
+                        <tr>
+                            <td>Best for</td>
+                            <td>Displaying, messages, reports</td>
+                            <td>Calculations, decisions, processing</td>
+                        </tr>
+                        <tr>
+                            <td>Example use</td>
+                            <td>`print bill`, `show menu`, `display name`</td>
+                            <td>`calculate total`, `find max`, `compute salary`</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Code Comparison Examples -->
+            <div class="code-split">
+                <div class="code-split-col">
+                    <div class="code-caption">Example: No Return</div>
+                    <div class="code-example">
+                        <span class="comment"># Output is printed, but we cannot store the result.</span><br><br>
+                        <span class="keyword">def</span> <span class="function">show_total</span>(a, b):<br>
+                          <span class="function">print</span>(a + b)<br><br>
+                        <span class="comment"># Calling it</span><br>
+                        <span class="function">show_total</span>(<span class="number">10</span>, <span class="number">20</span>)
+                    </div>
+                </div>
+                <div class="code-split-col">
+                    <div class="code-caption">Example: With Return</div>
+                    <div class="code-example">
+                        <span class="comment"># Result can be: printed/stored/used in another calculation</span><br><br>
+                        <span class="keyword">def</span> <span class="function">total</span>(a, b):<br>
+                          <span class="keyword">return</span> a + b<br><br>
+                        <span class="comment"># Calling it</span><br>
+                        result = <span class="function">total</span>(<span class="number">10</span>, <span class="number">20</span>)<br>
+                        <span class="function">print</span>(result)
+                    </div>
+                </div>
+            </div>
+
+            <!-- Supermarket Analogy -->
+            <div class="section-heading">
+                <i class="material-icons">shopping_cart</i>
+                Why Return Functions Are Important
+            </div>
+            <div class="analogy-card">
+                <div class="analogy-text analogy-bad">
+                    <div class="analogy-title">
+                        <i class="material-icons">print</i> If cashier only prints total
+                    </div>
+                    <ul class="analogy-list">
+                        <li><i class="material-icons analogy-icon">block</i> You can't give discount</li>
+                        <li><i class="material-icons analogy-icon">block</i> You can't add tax</li>
+                        <li><i class="material-icons analogy-icon">block</i> You can't store it in database</li>
+                    </ul>
+                </div>
+                
+                <div class="analogy-divider" style="display:flex; flex-direction:column; align-items:center; gap:10px; padding:0 20px; color:#666; font-weight:bold; font-size:20px;">
+                    <span>V</span>
+                    <span>S</span>
+                </div>
+
+                <div class="analogy-text analogy-good">
+                    <div class="analogy-title">
+                        <i class="material-icons">published_with_changes</i> If cashier returns total
+                    </div>
+                    <ul class="analogy-list">
+                        <li><i class="material-icons analogy-icon">check</i> You can apply discount</li>
+                        <li><i class="material-icons analogy-icon">check</i> You can calculate balance</li>
+                        <li><i class="material-icons analogy-icon">check</i> You can save bill</li>
+                        <li><i class="material-icons analogy-icon">check</i> You can send to another function</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Memory Trick -->
+            <div class="trick-container">
+                <div class="trick-box show">
+                    <i class="material-icons" style="font-size: 48px; color: #ff9800;">tv</i>
+                    <div class="trick-word">Show</div>
+                    <div class="trick-desc">No return</div>
+                    <div class="trick-sub">Only display</div>
+                </div>
+                <div class="trick-box send">
+                    <i class="material-icons" style="font-size: 48px; color: #4caf50;">send</i>
+                    <div class="trick-word">Send</div>
+                    <div class="trick-desc">Return</div>
+                    <div class="trick-sub">Give data to rest of program</div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer Code Decoration (From Reference) -->
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">def</span> <span class="function">modular_programming</span>():</div>
+            <div class="code-line">    <span class="keyword">import</span> module1, module2</div>
+            <div class="code-line">    <span class="function">result</span> = module1.<span class="function">process</span>(data)</div>
+            <div class="code-line">    <span class="keyword">return</span> module2.<span class="function">calculate</span>(result)</div>
+        </div>
+    </div>
+    
+    <!-- Scroll buttons -->
+    <div class="scroll-indicator">
+        <button class="scroll-btn" id="scrollUpBtn" title="Scroll Up">
+            <i class="material-icons">keyboard_arrow_up</i>
+        </button>
+        <button class="scroll-btn" id="scrollDownBtn" title="Scroll Down">
+            <i class="material-icons">keyboard_arrow_down</i>
+        </button>
+    </div>
+    
+    <script>
+        // Scroll functionality
+        document.getElementById('scrollUpBtn').addEventListener('click', function() {
+            window.scrollBy({
+                top: -300,
+                behavior: 'smooth'
+            });
+        });
+        
+        document.getElementById('scrollDownBtn').addEventListener('click', function() {
+            window.scrollBy({
+                top: 300,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Show/hide scroll buttons based on scroll position
+        window.addEventListener('scroll', function() {
+            const scrollUpBtn = document.getElementById('scrollUpBtn');
+            const scrollDownBtn = document.getElementById('scrollDownBtn');
+            
+            // Show/hide up button
+            if (window.pageYOffset > 100) {
+                scrollUpBtn.style.opacity = '1';
+            } else {
+                scrollUpBtn.style.opacity = '0.5';
+            }
+            
+            // Show/hide down button
+            if ((window.innerHeight + window.pageYOffset) >= document.body.offsetHeight - 100) {
+                scrollDownBtn.style.opacity = '0.5';
+            } else {
+                scrollDownBtn.style.opacity = '1';
+            }
+        });
+    </script>
+</body>
+</html>
