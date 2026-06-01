@@ -7,66 +7,36 @@
     <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
-               /* CSS Variables for Dark/Light Mode */
-        :root {
-            --bg-primary: #121212;
-            --bg-secondary: #1a1a2e;
-            --bg-tertiary: #16213e;
-            --bg-navbar: rgba(30, 30, 45, 0.9);
-            --text-primary: #ffffff;
-            --text-secondary: #d4d4d4;
-            --accent-color: #4ec9b0;
-            --title-color: #569cd6;
-            --author-color: #c586c0;
-            --faculty-color: #9cdcfe;
-            --border-color: rgba(255, 255, 255, 0.1);
-            --hover-bg: rgba(78, 201, 176, 0.2);
-        }
-
-        /* Light Mode Variables */
-        [data-theme="light"] {
-            --bg-primary: #f5f5f5;
-            --bg-secondary: #ffffff;
-            --bg-tertiary: #f0f0f0;
-            --bg-navbar: rgba(255, 255, 255, 0.9);
-            --text-primary: #333333;
-            --text-secondary: #666666;
-            --accent-color: #00796b;
-            --title-color: #1976d2;
-            --author-color: #7b1fa2;
-            --faculty-color: #0288d1;
-            --border-color: rgba(0, 0, 0, 0.1);
-            --hover-bg: rgba(0, 121, 107, 0.1);
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
-        /* MODIFIED: Added scrolling functionality */
-        body {
+
+        html, body {
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
             font-family: 'Roboto', sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            /* Changed from overflow-x: hidden to allow scrolling */
-            overflow-x: auto;
-            overflow-y: auto;
-            min-height: 100vh;
+            background-color: #121212;
+            color: #ffffff;
         }
-        
+
+        /* =====================
+           FIX 1: Remove fixed 1280px width — use 100% instead
+           ===================== */
         .slide {
-            width: 1280px;
-            /* Changed from min-height to allow content to expand */
+            width: 100%;          /* WAS: width: 1280px — THIS caused the black gap */
             min-height: 100vh;
             position: relative;
-            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
-            overflow: hidden;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: visible;
             display: flex;
             flex-direction: column;
         }
-        
+
         .slide::before {
             content: '';
             position: absolute;
@@ -80,211 +50,205 @@
             opacity: 0.05;
             z-index: 0;
         }
-        
-        /* Navigation Bar Styles */
+
+        /* Navigation Bar */
         .navbar {
-            background-color: var(--bg-navbar);
-            padding: 15px 70px;
+            background-color: rgba(30, 30, 45, 0.95);
+            padding: 15px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             position: relative;
-            z-index: 10;
-            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             animation: slideDown 0.5s ease-out;
+            flex-wrap: wrap;
+            gap: 10px;
         }
-        
+
         @keyframes slideDown {
-            from {
-                transform: translateY(-100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+            from { transform: translateY(-100%); opacity: 0; }
+            to   { transform: translateY(0);     opacity: 1; }
         }
-        
+
         .nav-title {
-            font-size: 24px;
+            font-size: 18px;
             font-weight: 600;
-            color: var(--accent-color);
+            color: #4ec9b0;
             font-family: 'Source Code Pro', monospace;
-            animation: fadeIn 1s ease-out;
         }
-        
+
+        /* =====================
+           FIX 2: Hamburger button — was commented out, now restored & styled
+           ===================== */
+        .menu-toggle {
+            display: none;
+            color: #ffffff;
+            font-size: 28px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .menu-toggle:hover {
+            background: rgba(78, 201, 176, 0.2);
+        }
+
         .nav-menu {
             display: flex;
-            gap: 20px;
+            gap: 4px;
+            align-items: center;
+            flex-wrap: wrap;
         }
-        
+
         .nav-item {
             position: relative;
         }
-        
+
         .nav-link {
-            color: var(--text-primary);
-            padding: 10px 15px;
-            font-size: 16px;
+            color: #ffffff;
+            padding: 10px 14px;
+            font-size: 15px;
             border-radius: 4px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             transition: all 0.3s ease;
             text-decoration: none;
             position: relative;
             overflow: hidden;
+            white-space: nowrap;
         }
-        
+
         .nav-link::before {
             content: '';
             position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background-color: var(--accent-color);
+            bottom: 0; left: 0;
+            width: 0; height: 2px;
+            background-color: #4ec9b0;
             transition: width 0.3s ease;
         }
-        
-        .nav-link:hover::before {
-            width: 100%;
-        }
-        
+
+        .nav-link:hover::before { width: 100%; }
         .nav-link:hover {
-            background-color: var(--hover-bg);
+            background-color: rgba(78, 201, 176, 0.2);
             transform: translateY(-2px);
         }
-        
-        .dropdown {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            background-color: var(--bg-navbar);
-            min-width: 200px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            z-index: 11;
-            border-radius: 4px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(10px);
-            transition: all 0.3s ease;
+
+        /* ===== Desktop Dropdown ===== */
+        @media (min-width: 769px) {
+            .dropdown {
+                position: absolute;
+                top: 100%; left: 0;
+                background-color: rgba(30, 30, 45, 0.98);
+                min-width: 280px;
+                box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+                z-index: 1001;
+                border-radius: 8px;
+                border: 1px solid rgba(255,255,255,0.1);
+                opacity: 0;
+                visibility: hidden;
+                transform: translateY(10px);
+                transition: all 0.3s ease;
+            }
+
+            .dropdown.active,
+            .nav-item:hover > .dropdown {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
+            }
+
+            .dropdown-item { position: relative; }
+
+            .dropdown-link {
+                color: #ffffff;
+                padding: 12px 16px;
+                text-decoration: none;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                transition: all 0.3s ease;
+                width: 100%;
+                cursor: pointer;
+                white-space: nowrap;
+            }
+
+            .dropdown-link:hover {
+                background-color: rgba(78, 201, 176, 0.2);
+                padding-left: 20px;
+            }
+
+            .dropdown-link i { color: #4ec9b0; font-size: 20px; transition: transform 0.3s ease; }
+            .dropdown-link:hover i { transform: scale(1.2); }
+
+            .submenu {
+                position: absolute;
+                top: 0; left: 100%;
+                background-color: rgba(30, 30, 45, 0.98);
+                min-width: 350px;
+                box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+                z-index: 1002;
+                border-radius: 8px;
+                border: 1px solid rgba(255,255,255,0.1);
+                opacity: 0;
+                visibility: hidden;
+                transform: translateX(10px);
+                transition: all 0.3s ease;
+            }
+
+            .submenu.active,
+            .dropdown-item:hover > .submenu {
+                opacity: 1;
+                visibility: visible;
+                transform: translateX(0);
+            }
+
+            .submenu-link {
+                color: #ffffff;
+                padding: 10px 16px;
+                text-decoration: none;
+                display: block;
+                transition: all 0.3s ease;
+                font-size: 13px;
+                position: relative;
+                white-space: normal;
+                word-wrap: break-word;
+                line-height: 1.4;
+            }
+
+            .submenu-link::before {
+                content: '';
+                position: absolute;
+                left: 0; top: 0;
+                height: 100%; width: 3px;
+                background-color: #4ec9b0;
+                transform: scaleY(0);
+                transition: transform 0.3s ease;
+            }
+
+            .submenu-link:hover {
+                background-color: rgba(78, 201, 176, 0.2);
+                padding-left: 20px;
+            }
+
+            .submenu-link:hover::before { transform: scaleY(1); }
         }
-        
-        .dropdown.active {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-        
-        .nav-item:hover > .dropdown {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-        
-        .dropdown-item {
-            position: relative;
-        }
-        
-        .dropdown-link {
-            color: var(--text-primary);
-            padding: 12px 16px;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: all 0.3s ease;
-            width: 100%;
-            cursor: pointer;
-        }
-        
-        .dropdown-link:hover {
-            background-color: var(--hover-bg);
-            padding-left: 20px;
-        }
-        
-        .dropdown-link i {
-            color: var(--accent-color);
-            font-size: 20px;
-            transition: transform 0.3s ease;
-        }
-        
-        .dropdown-link:hover i {
-            transform: scale(1.2);
-        }
-        
-        /* Submenu Styles */
-        .submenu {
-            position: absolute;
-            top: 0;
-            left: 100%;
-            background-color: var(--bg-navbar);
-            min-width: 220px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            z-index: 12;
-            border-radius: 4px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-            opacity: 0;
-            visibility: hidden;
-            transform: translateX(10px);
-            transition: all 0.3s ease;
-        }
-        
-        .submenu.active {
-            opacity: 1;
-            visibility: visible;
-            transform: translateX(0);
-        }
-        
-        .dropdown-item:hover > .submenu {
-            opacity: 1;
-            visibility: visible;
-            transform: translateX(0);
-        }
-        
-        .submenu-link {
-            color: var(--text-primary);
-            padding: 10px 16px;
-            text-decoration: none;
-            display: block;
-            transition: all 0.3s ease;
-            font-size: 14px;
-            position: relative;
-        }
-        
-        .submenu-link::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 3px;
-            background-color: var(--accent-color);
-            transform: scaleY(0);
-            transition: transform 0.3s ease;
-        }
-        
-        .submenu-link:hover {
-            background-color: var(--hover-bg);
-            padding-left: 20px;
-        }
-        
-        .submenu-link:hover::before {
-            transform: scaleY(1);
-        }
-        
+
+        /* ===== Slide Content ===== */
         .slide-content {
             display: flex;
-            height: 100%;
+            min-height: calc(100vh - 70px);
             padding: 60px;
             flex-grow: 1;
+            position: relative;
+            z-index: 1;
         }
-        
+
         .left-content {
             flex: 0 0 70%;
             display: flex;
@@ -292,583 +256,470 @@
             justify-content: center;
             padding-right: 20px;
         }
-        
+
         .right-content {
             flex: 0 0 30%;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        
+
         .subtitle {
-            font-size: 24px;
-            font-weight: 500;
-            color: var(--text-secondary);
+            font-size: 24px; font-weight: 500; color: #d4d4d4;
             margin-bottom: 10px;
-            opacity: 0;
-            animation: fadeInLeft 1s ease-out 0.3s forwards;
+            opacity: 0; animation: fadeInLeft 1s ease-out 0.3s forwards;
         }
-        
+
         .course-code {
-            font-size: 32px;
-            font-weight: 600;
-            color: var(--accent-color);
-            margin-bottom: 30px;
-            font-family: 'Source Code Pro', monospace;
-            opacity: 0;
-            animation: fadeInLeft 1s ease-out 0.5s forwards;
+            font-size: 32px; font-weight: 600; color: #4ec9b0;
+            margin-bottom: 30px; font-family: 'Source Code Pro', monospace;
+            opacity: 0; animation: fadeInLeft 1s ease-out 0.5s forwards;
         }
-        
+
         .title {
-            font-size: 60px;
-            font-weight: 700;
-            color: var(--title-color);
-            margin-bottom: 20px;
-            line-height: 1.2;
-            opacity: 0;
-            animation: fadeInLeft 1s ease-out 0.7s forwards;
-            position: relative;
-            overflow: hidden;
+            font-size: 60px; font-weight: 700; color: #569cd6;
+            margin-bottom: 20px; line-height: 1.2;
+            opacity: 0; animation: fadeInLeft 1s ease-out 0.7s forwards;
+            position: relative; overflow: hidden;
         }
-        
+
         .title::after {
             content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: linear-gradient(90deg, var(--title-color), var(--accent-color));
-            transform: scaleX(0);
-            transform-origin: left;
+            position: absolute; bottom: 0; left: 0;
+            width: 100%; height: 3px;
+            background: linear-gradient(90deg, #569cd6, #4ec9b0);
+            transform: scaleX(0); transform-origin: left;
             animation: expandWidth 1.5s ease-out 1.7s forwards;
         }
-        
-        @keyframes expandWidth {
-            to {
-                transform: scaleX(1);
-            }
-        }
-        
+
+        @keyframes expandWidth { to { transform: scaleX(1); } }
+
         .author {
-            font-size: 22px;
-            margin-bottom: 10px;
-            color: var(--author-color);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            opacity: 0;
-            animation: fadeInLeft 1s ease-out 0.9s forwards;
+            font-size: 22px; margin-bottom: 10px; color: #c586c0;
+            display: flex; align-items: center; gap: 10px;
+            opacity: 0; animation: fadeInLeft 1s ease-out 0.9s forwards;
         }
-        
-        .author i {
-            color: var(--author-color);
-            animation: pulse 2s infinite;
-        }
-        
+
+        .author i { color: #c586c0; animation: pulse 2s infinite; }
+
         .faculty {
-            font-size: 20px;
-            color: var(--faculty-color);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            opacity: 0;
-            animation: fadeInLeft 1s ease-out 1.1s forwards;
+            font-size: 20px; color: #9cdcfe;
+            display: flex; align-items: center; gap: 10px;
+            opacity: 0; animation: fadeInLeft 1s ease-out 1.1s forwards;
         }
-        
-        .faculty i {
-            color: var(--faculty-color);
-            animation: pulse 2s infinite 0.5s;
-        }
-        
+
+        .faculty i { color: #9cdcfe; animation: pulse 2s infinite 0.5s; }
+
         @keyframes pulse {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.1);
-            }
-            100% {
-                transform: scale(1);
-            }
+            0%, 100% { transform: scale(1); }
+            50%       { transform: scale(1.1); }
         }
-        
+
         .code-decoration {
-            position: absolute;
-            bottom: 0;
-            left: 0;
+            position: relative;
             width: 100%;
-            height: 120px;
             background: linear-gradient(transparent, rgba(0,0,0,0.7));
             font-family: 'Source Code Pro', monospace;
-            font-size: 14px;
-            color: #608b4e;
-            opacity: 0.6;
-            padding: 20px;
-            overflow: hidden;
+            font-size: 14px; color: #608b4e; opacity: 0.6;
+            padding: 20px; overflow: hidden; z-index: 1;
         }
-        
+
         .code-line {
-            margin-bottom: 5px;
-            white-space: nowrap;
-            opacity: 0;
-            animation: fadeIn 0.5s ease-out forwards;
+            margin-bottom: 5px; white-space: nowrap;
+            opacity: 0; animation: fadeIn 0.5s ease-out forwards;
         }
-        
+
         .code-line:nth-child(1) { animation-delay: 1.3s; }
         .code-line:nth-child(2) { animation-delay: 1.4s; }
         .code-line:nth-child(3) { animation-delay: 1.5s; }
         .code-line:nth-child(4) { animation-delay: 1.6s; }
         .code-line:nth-child(5) { animation-delay: 1.7s; }
-        
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-        
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes fadeInLeft {
-            from {
-                opacity: 0;
-                transform: translateX(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+            from { opacity: 0; transform: translateX(-30px); }
+            to   { opacity: 1; transform: translateX(0); }
         }
-        
-        .highlight {
-            color: #dcdcaa;
-        }
-        
-        .keyword {
-            color: var(--title-color);
-        }
-        
-        .string {
-            color: #ce9178;
-        }
-        
-        /* Floating animation for right content */
-        .floating-element {
-            animation: float 6s ease-in-out infinite;
-        }
-        
+
+        .highlight { color: #dcdcaa; }
+        .keyword   { color: #569cd6; }
+        .string    { color: #ce9178; }
+
+        .floating-element { animation: float 6s ease-in-out infinite; }
+
         @keyframes float {
-            0% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-20px);
-            }
-            100% {
-                transform: translateY(0px);
-            }
+            0%, 100% { transform: translateY(0px); }
+            50%       { transform: translateY(-20px); }
         }
-        
-        /* Typing effect for title */
-        .typing-effect {
-            overflow: hidden;
-            border-right: 3px solid var(--title-color);
-            white-space: nowrap;
-            animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
-        }
-        
-        @keyframes typing {
-            from { width: 0 }
-            to { width: 100% }
-        }
-        
-        @keyframes blink-caret {
-            from, to { border-color: transparent }
-            50% { border-color: var(--title-color); }
-        }
-        
-        /* Mobile menu toggle */
-        .menu-toggle {
-            display: none;
-            color: var(--text-primary);
-            font-size: 24px;
-            cursor: pointer;
-        }
-        
-        /* NEW: Dark/Light Mode Toggle Button */
-        .theme-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--hover-bg);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-left: 15px;
-        }
-        
-        .theme-toggle:hover {
-            transform: scale(1.1);
-        }
-        
-        .theme-toggle i {
-            color: var(--accent-color);
-            font-size: 24px;
-        }
-        
-        /* NEW: Scroll to Top Button */
-        .scroll-to-top {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: var(--accent-color);
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            z-index: 100;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-        
-        .scroll-to-top.visible {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .scroll-to-top:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-        }
-        
-        /* Responsive styles */
+
+        /* =====================
+           MOBILE STYLES
+           ===================== */
         @media (max-width: 768px) {
             .navbar {
-                padding: 15px 20px;
+                padding: 12px 20px;
+                justify-content: space-between;
             }
-            
-            .nav-menu {
-                position: fixed;
-                left: -100%;
-                top: 70px;
-                flex-direction: column;
-                background-color: var(--bg-navbar);
-                width: 100%;
-                text-align: center;
-                transition: 0.3s;
-                box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
-                padding: 20px 0;
-                z-index: 100;
-            }
-            
-            .nav-menu.active {
-                left: 0;
-            }
-            
-            .nav-item {
-                margin: 10px 0;
-            }
-            
-            .dropdown {
-                position: static;
-                opacity: 1;
-                visibility: visible;
-                transform: none;
-                box-shadow: none;
-                background-color: rgba(20, 20, 35, 0.9);
-                margin-top: 10px;
-                display: none;
-            }
-            
-            .dropdown.active {
-                display: block;
-            }
-            
-            .submenu {
-                position: static;
-                opacity: 1;
-                visibility: visible;
-                transform: none;
-                box-shadow: none;
-                background-color: rgba(10, 10, 25, 0.9);
-                margin-top: 10px;
-                margin-left: 20px;
-                display: none;
-            }
-            
-            .submenu.active {
-                display: block;
-            }
-            
+
+            /* Show hamburger on mobile */
             .menu-toggle {
                 display: block;
             }
-            
-            .slide {
+
+            /* Hide nav menu by default, slide in when .active */
+            .nav-menu {
+                position: fixed;
+                top: 60px; left: -100%;
+                flex-direction: column;
+                background-color: rgba(20, 20, 35, 0.99);
+                width: 100%;
+                max-height: calc(100vh - 60px);
+                overflow-y: auto;
+                transition: left 0.3s ease;
+                z-index: 999;
+                padding: 16px 0;
+                gap: 0;
+                align-items: stretch;
+            }
+
+            .nav-menu.active {
+                left: 0;
+            }
+
+            .nav-item {
                 width: 100%;
             }
-            
+
+            .nav-link {
+                justify-content: flex-start;
+                padding: 14px 24px;
+                font-size: 16px;
+                border-radius: 0;
+            }
+
+            .nav-link:hover {
+                transform: none;
+            }
+
+            /* Mobile dropdowns */
+            .dropdown {
+                position: static !important;
+                opacity: 1 !important;
+                visibility: visible !important;
+                transform: none !important;
+                box-shadow: none !important;
+                background-color: rgba(15, 15, 30, 0.98);
+                display: none;
+                width: 100%;
+                border-radius: 0;
+                border: none;
+                border-top: 1px solid rgba(255,255,255,0.05);
+                overflow: visible !important; /* CRITICAL: don't clip submenus */
+            }
+
+            .dropdown.active {
+                display: block !important;
+            }
+
+            .dropdown-link {
+                justify-content: flex-start;
+                padding: 14px 36px;
+                white-space: normal;
+                cursor: pointer;
+                user-select: none;
+                -webkit-tap-highlight-color: rgba(78,201,176,0.2);
+            }
+
+            /* Mobile submenus */
+            .submenu {
+                position: static !important;
+                opacity: 1 !important;
+                visibility: visible !important;
+                transform: none !important;
+                box-shadow: none !important;
+                background-color: rgba(8, 8, 20, 0.98);
+                display: none;
+                width: 100%;
+                border-radius: 0;
+                border: none;
+                border-top: 1px solid rgba(255,255,255,0.04);
+                border-left: 3px solid #4ec9b0;
+                min-width: unset !important;
+            }
+
+            .submenu.active {
+                display: block !important;
+            }
+
+            .submenu-link {
+                padding: 11px 24px;
+                white-space: normal;
+                word-wrap: break-word;
+                font-size: 13px;
+                border-bottom: 1px solid rgba(255,255,255,0.03);
+                display: block;
+                -webkit-tap-highlight-color: rgba(78,201,176,0.2);
+            }
+
+            .submenu-link:active {
+                background-color: rgba(78,201,176,0.2);
+            }
+
+            /* Page content */
             .slide-content {
                 flex-direction: column;
-                padding: 40px 20px;
+                padding: 30px 20px;
+                min-height: auto;
             }
-            
+
             .left-content, .right-content {
                 flex: 1;
                 width: 100%;
+                padding-right: 0;
             }
-            
-            .title {
-                font-size: 40px;
+
+            .right-content {
+                margin-top: 30px;
             }
-            
-            .course-code {
-                font-size: 24px;
-            }
-            
-            .subtitle {
-                font-size: 18px;
-            }
-            
-            .author, .faculty {
-                font-size: 18px;
+
+            .title       { font-size: 36px; }
+            .course-code { font-size: 20px; }
+            .subtitle    { font-size: 16px; }
+            .author, .faculty { font-size: 16px; }
+
+            .right-content img {
+                width: 200px !important;
+                height: 200px !important;
             }
         }
     </style>
 </head>
 <body>
     <div class="slide">
-        <!-- Navigation Bar with Dropdown Menu -->
+
         <nav class="navbar">
-            <div class="nav-title">CSE 4202: Fundamentals of Programming</div>
-            <div class="menu-toggle" id="mobile-menu">
+            <!-- FIX 2: nav-title + hamburger button restored (were commented out) -->
+            <div class="nav-title">CSE 4202</div>
+            <button class="menu-toggle" id="mobile-menu" aria-label="Toggle menu">
                 <i class="material-icons">menu</i>
-            </div>
-            <div class="nav-menu">
-                <!-- Home Link -->
+            </button>
+
+            <div class="nav-menu" id="nav-menu">
+
                 <div class="nav-item">
                     <a href="index.html" class="nav-link">
-                        <i class="material-icons">home</i>
-                        Home
+                        <i class="material-icons">home</i>Home
                     </a>
                 </div>
-                
-                <!-- Course Outline Dropdown -->
+
                 <div class="nav-item">
                     <a href="2.html" class="nav-link">
-                        <i class="material-icons">description</i>
-                        Course Outline
+                        <i class="material-icons">description</i>Course Outline
                     </a>
                 </div>
-                
-                <!-- Syllabus Dropdown with Submenu -->
+
+                <div class="nav-item">
+                    <a href="3.html" class="nav-link">
+                        <i class="material-icons">description</i>Module Aim
+                    </a>
+                </div>
+
+                <div class="nav-item">
+                    <a href="4.html" class="nav-link">
+                        <i class="material-icons">description</i>Learning Outcome
+                    </a>
+                </div>
+
+                <!-- Syllabus -->
                 <div class="nav-item">
                     <div class="nav-link" id="syllabus-toggle">
-                        <i class="material-icons">menu_book</i>
-                        Syllabus
-                        <i class="material-icons" style="font-size: 18px;">arrow_drop_down</i>
+                        <i class="material-icons">menu_book</i>Syllabus
+                        <i class="material-icons" style="font-size:18px;margin-left:auto;">arrow_drop_down</i>
                     </div>
                     <div class="dropdown" id="syllabus-dropdown">
+
                         <div class="dropdown-item">
                             <div class="dropdown-link" id="intro-toggle">
-                                <i class="material-icons">code</i>
-                                Introduction to Programming
-                                <i class="material-icons" style="margin-left: auto; font-size: 18px;">chevron_right</i>
+                                <i class="material-icons">code</i>Introduction to Programming
+                                <i class="material-icons" style="margin-left:auto;font-size:18px;">chevron_right</i>
                             </div>
                             <div class="submenu" id="intro-submenu">
-                                <a href="introduction-to-programming/lesson1.html" class="submenu-link">Lesson 1: What is Programming?</a>
-                                <a href="introduction-to-programming/lesson2.html" class="submenu-link">Lesson 2: Programming Paradigms</a>
-                                <a href="introduction-to-programming/lesson3.html" class="submenu-link">Lesson 3: Python Introduction</a>
+                                <a href="4.1.html" class="submenu-link">Lesson 1: Introduction to Machines &amp; Programming</a>
+                                <a href="6.html"   class="submenu-link">Lesson 2: Evolution of Programming Languages</a>
+                                <a href="7.html"   class="submenu-link">Lesson 3: Programming Process</a>
+                                <a href="8.html"   class="submenu-link">Lesson 4: High Level Language Translation?</a>
+                                <a href="9.html"   class="submenu-link">Lesson 5: Introduction to Python Programming</a>
+                                <a href="5.html"   class="submenu-link">Lesson 6: Why is it called Python?</a>
+                                <a href="10.html"  class="submenu-link">Lesson 7: Execution of Python Programs using an Interpreter</a>
+                                <a href="11.html"  class="submenu-link">Lesson 8: Introduction to Python Environment and IDLE</a>
+                                <a href="11.1.html" class="submenu-link">Lesson 9: PEP 8: Python Style Guide</a>
                             </div>
                         </div>
+
                         <div class="dropdown-item">
                             <div class="dropdown-link" id="algo-toggle">
-                                <i class="material-icons">account_tree</i>
-                                Algorithm Design & Development
-                                <i class="material-icons" style="margin-left: auto; font-size: 18px;">chevron_right</i>
+                                <i class="material-icons">account_tree</i>Algorithm Design &amp; Development
+                                <i class="material-icons" style="margin-left:auto;font-size:18px;">chevron_right</i>
                             </div>
                             <div class="submenu" id="algo-submenu">
-                                <a href="algorithm-design/lesson1.html" class="submenu-link">Lesson 1: Algorithm Basics</a>
-                                <a href="algorithm-design/lesson2.html" class="submenu-link">Lesson 2: Flowcharts</a>
-                                <a href="algorithm-design/lesson3.html" class="submenu-link">Lesson 3: Pseudocode</a>
+                                <a href="11.2.html" class="submenu-link">Lesson 1: Algorithm Basics - Flow Charts</a>
+                                <a href="12.html"   class="submenu-link">Lesson 2: Algorithm Representation</a>
+                                <a href="13.html"   class="submenu-link">Lesson 3: Problem-Solving Techniques</a>
+                                <a href="14.html"   class="submenu-link">Lesson 4: Problem Decomposition and Analysis</a>
+                                <a href="15.html"   class="submenu-link">Lesson 5: In-Class Activity and Group Work</a>
                             </div>
                         </div>
+
                         <div class="dropdown-item">
                             <div class="dropdown-link" id="lang-toggle">
-                                <i class="material-icons">language</i>
-                                Language Basics
-                                <i class="material-icons" style="margin-left: auto; font-size: 18px;">chevron_right</i>
+                                <i class="material-icons">language</i>Language Basics
+                                <i class="material-icons" style="margin-left:auto;font-size:18px;">chevron_right</i>
                             </div>
                             <div class="submenu" id="lang-submenu">
-                                <a href="language-basics/lesson1.html" class="submenu-link">Lesson 1: Variables & Data Types</a>
-                                <a href="language-basics/lesson2.html" class="submenu-link">Lesson 2: Operators</a>
-                                <a href="language-basics/lesson3.html" class="submenu-link">Lesson 3: Input/Output</a>
+                                <a href="16.html"   class="submenu-link">Lesson 1: Data Types, Variables, Operators and Expressions</a>
+                                <a href="16.1.html" class="submenu-link">Lesson 1.1: Python Variable Scopes and Data Mutability</a>
+                                <a href="17.html"   class="submenu-link">Lesson 2: Input/Output Operations</a>
+                                <a href="17.1.html" class="submenu-link">Lesson 3: File Handling in Python (Read,Write)</a>
+                                <a href="18.html"   class="submenu-link">Lesson 4: Implementing Programs with Basic Data Types and Operations</a>
+                                <a href="24.html"   class="submenu-link">Lesson 5: Logical and Relational Operators</a>
+                                <a href="25.html"   class="submenu-link">Lesson 6: Practical Programming Exercises: Logical and Relational Operators</a>
+                                <a href="20.html"   class="submenu-link">Lesson 7: Debugging in Python Sessions</a>
                             </div>
                         </div>
+
                         <div class="dropdown-item">
                             <div class="dropdown-link" id="select-toggle">
-                                <i class="material-icons">call_split</i>
-                                Selection & Looping
-                                <i class="material-icons" style="margin-left: auto; font-size: 18px;">chevron_right</i>
+                                <i class="material-icons">call_split</i>Selection &amp; Looping
+                                <i class="material-icons" style="margin-left:auto;font-size:18px;">chevron_right</i>
                             </div>
                             <div class="submenu" id="select-submenu">
-                                <a href="selection-looping/lesson1.html" class="submenu-link">Lesson 1: If Statements</a>
-                                <a href="selection-looping/lesson2.html" class="submenu-link">Lesson 2: For Loops</a>
-                                <a href="selection-looping/lesson3.html" class="submenu-link">Lesson 3: While Loops</a>
+                                <a href="21.html"   class="submenu-link">Lesson 1: Conditional Logic: if, elif, else</a>
+                                <a href="22.html"   class="submenu-link">Lesson 2: Practical Programming Exercises: Conditional Logic</a>
+                                <a href="23.html"   class="submenu-link">Lesson 3: Match-Case Structures (Python 3.10+)</a>
+                                <a href="25.1.html" class="submenu-link">Lesson 4: Loops: For Loop</a>
+                                <a href="26.html"   class="submenu-link">Lesson 5: While Loops</a>
+                                <a href="27.html"   class="submenu-link">Lesson 6: Simulating Do-While Loops</a>
+                                <a href="28.html"   class="submenu-link">Lesson 7: Loop Control with Continue</a>
+                                <a href="29.html"   class="submenu-link">Lesson 8: Practical Programming Exercises: Loops</a>
+                                <a href="30.html"   class="submenu-link">Lesson 9: For Loops, range() Function, Nested Loops, and Indentation</a>
                             </div>
                         </div>
+
                         <div class="dropdown-item">
                             <div class="dropdown-link" id="func-toggle">
-                                <i class="material-icons">functions</i>
-                                Functions & Modularization
-                                <i class="material-icons" style="margin-left: auto; font-size: 18px;">chevron_right</i>
+                                <i class="material-icons">functions</i>Functions &amp; Modularization
+                                <i class="material-icons" style="margin-left:auto;font-size:18px;">chevron_right</i>
                             </div>
                             <div class="submenu" id="func-submenu">
-                                <a href="functions/lesson1.html" class="submenu-link">Lesson 1: Defining Functions</a>
-                                <a href="functions/lesson2.html" class="submenu-link">Lesson 2: Parameters & Return Values</a>
-                                <a href="functions/lesson3.html" class="submenu-link">Lesson 3: Modules</a>
+                                <a href="31.html" class="submenu-link">Lesson 1: Modularization, Predefined and User-Defined Modules/Functions</a>
+                                <a href="32.html" class="submenu-link">Lesson 2: Defining and Calling Functions</a>
+                                <a href="33.html" class="submenu-link">Lesson 3: Function Parameters and Arguments</a>
+                                <a href="34.html" class="submenu-link">Lesson 4: Returning Values Using Return Statements</a>
+                                <a href="35.html" class="submenu-link">Lesson 5: Scope and Lifetime of Variables</a>
+                                <a href="36.html" class="submenu-link">Lesson 6: Practical Programming Exercises: Functions</a>
                             </div>
                         </div>
+
                         <div class="dropdown-item">
                             <div class="dropdown-link" id="data-toggle">
-                                <i class="material-icons">storage</i>
-                                Data Structures
-                                <i class="material-icons" style="margin-left: auto; font-size: 18px;">chevron_right</i>
+                                <i class="material-icons">storage</i>Data Structures
+                                <i class="material-icons" style="margin-left:auto;font-size:18px;">chevron_right</i>
                             </div>
                             <div class="submenu" id="data-submenu">
-                                <a href="data-structures/lesson1.html" class="submenu-link">Lesson 1: Lists & Tuples</a>
-                                <a href="data-structures/lesson2.html" class="submenu-link">Lesson 2: Dictionaries</a>
-                                <a href="data-structures/lesson3.html" class="submenu-link">Lesson 3: Sets</a>
+                                <a href="37.html" class="submenu-link">Lesson 1: Introducing Python Data Structures: Lists, Tuples, Dictionaries</a>
+                                <a href="38.html" class="submenu-link">Lesson 2: Practice with Element Access and Iteration</a>
+                                <a href="39.html" class="submenu-link">Lesson 3: Practical Programming Exercises: Data Structures</a>
+                                <a href="43.html" class="submenu-link">Lesson 4: Python Lists (Arrays)</a>
+                                <a href="44.html" class="submenu-link">Lesson 5: Stack (LIFO)</a>
+                                <a href="45.html" class="submenu-link">Lesson 6: Queue (FIFO)</a>
                             </div>
                         </div>
+
                         <div class="dropdown-item">
                             <div class="dropdown-link" id="search-toggle">
-                                <i class="material-icons">search</i>
-                                Searching & Sorting
-                                <i class="material-icons" style="margin-left: auto; font-size: 18px;">chevron_right</i>
+                                <i class="material-icons">search</i>Searching &amp; Sorting
+                                <i class="material-icons" style="margin-left:auto;font-size:18px;">chevron_right</i>
                             </div>
                             <div class="submenu" id="search-submenu">
-                                <a href="searching-sorting/lesson1.html" class="submenu-link">Lesson 1: Linear Search</a>
-                                <a href="searching-sorting/lesson2.html" class="submenu-link">Lesson 2: Binary Search</a>
-                                <a href="searching-sorting/lesson3.html" class="submenu-link">Lesson 3: Sorting Algorithms</a>
+                                <a href="Sort.html" class="submenu-link">Lesson 1: Basic Sorting Algorithms</a>
+                                <a href="46.html"   class="submenu-link">Lesson 2: Linear Search &amp; Binary Search</a>
                             </div>
                         </div>
+
                         <div class="dropdown-item">
                             <div class="dropdown-link" id="prob-toggle">
-                                <i class="material-icons">integration_instructions</i>
-                                Problem Implementation
-                                <i class="material-icons" style="margin-left: auto; font-size: 18px;">chevron_right</i>
+                                <i class="material-icons">integration_instructions</i>Problem Implementation
+                                <i class="material-icons" style="margin-left:auto;font-size:18px;">chevron_right</i>
                             </div>
                             <div class="submenu" id="prob-submenu">
-                                <a href="problem-implementation/lesson1.html" class="submenu-link">Lesson 1: Problem Analysis</a>
-                                <a href="problem-implementation/lesson2.html" class="submenu-link">Lesson 2: Solution Design</a>
-                                <a href="problem-implementation/lesson3.html" class="submenu-link">Lesson 3: Implementation</a>
+                                <a href="40.html"       class="submenu-link">Lesson 1: Problem Analysis</a>
+                                <a href="41.html"       class="submenu-link">Lesson 2: Solution Design</a>
+                                <a href="42.html"       class="submenu-link">Lesson 3: Implementation</a>
+                                <a href="TECHDOC.html"  class="submenu-link">Lesson 4: Technical Documentation</a>
                             </div>
                         </div>
+
                         <div class="dropdown-item">
                             <div class="dropdown-link" id="test-toggle">
-                                <i class="material-icons">bug_report</i>
-                                Testing & Documentation
-                                <i class="material-icons" style="margin-left: auto; font-size: 18px;">chevron_right</i>
+                                <i class="material-icons">bug_report</i>Testing &amp; Documentation
+                                <i class="material-icons" style="margin-left:auto;font-size:18px;">chevron_right</i>
                             </div>
                             <div class="submenu" id="test-submenu">
-                                <a href="testing-documentation/lesson1.html" class="submenu-link">Lesson 1: Testing Methods</a>
-                                <a href="testing-documentation/lesson2.html" class="submenu-link">Lesson 2: Debugging</a>
-                                <a href="testing-documentation/lesson3.html" class="submenu-link">Lesson 3: Documentation</a>
+                                <a href="TESTING TECHNIQUES.html" class="submenu-link">Lesson 1: Testing Methods</a>
+                                <a href="DEBUGGING.html"          class="submenu-link">Lesson 2: Debugging</a>
+                                <a href="TESTING.html"            class="submenu-link">Lesson 3: Documentation</a>
                             </div>
                         </div>
+
                     </div>
                 </div>
-                
-                <!-- Resources Dropdown -->
+
+                <!-- Resources -->
                 <div class="nav-item">
                     <div class="nav-link" id="resources-toggle">
-                        <i class="material-icons">folder</i>
-                        Resources
-                        <i class="material-icons" style="font-size: 18px;">arrow_drop_down</i>
+                        <i class="material-icons">folder</i>Resources
+                        <i class="material-icons" style="font-size:18px;margin-left:auto;">arrow_drop_down</i>
                     </div>
                     <div class="dropdown" id="resources-dropdown">
-                        <a href="resources/notes.html" class="dropdown-link">
-                            <i class="material-icons">notes</i>
-                            Lecture Notes
-                        </a>
-                        <a href="resources/videos.html" class="dropdown-link">
-                            <i class="material-icons">video_library</i>
-                            Video Tutorials
-                        </a>
-                        <a href="resources/code-examples.html" class="dropdown-link">
-                            <i class="material-icons">code</i>
-                            Code Examples
-                        </a>
-                        <a href="resources/exercises.html" class="dropdown-link">
-                            <i class="material-icons">assignment</i>
-                            Exercises
-                        </a>
+                        <a href="CODE EX.html"    class="dropdown-link"><i class="material-icons">code</i>Code Examples</a>
+                        <a href="ScenarioEX.html" class="dropdown-link"><i class="material-icons">assignment</i>Scenario Based Exercises</a>
                     </div>
                 </div>
-                
-                <!-- Assignments Dropdown -->
+
+                <!-- Assignments -->
                 <div class="nav-item">
                     <div class="nav-link" id="assignments-toggle">
-                        <i class="material-icons">assignment</i>
-                        Assignments
-                        <i class="material-icons" style="font-size: 18px;">arrow_drop_down</i>
+                        <i class="material-icons">assignment</i>Assignments
+                        <i class="material-icons" style="font-size:18px;margin-left:auto;">arrow_drop_down</i>
                     </div>
                     <div class="dropdown" id="assignments-dropdown">
-                        <a href="assignments/assignment1.html" class="dropdown-link">
-                            <i class="material-icons">description</i>
-                            Assignment 1
-                        </a>
-                        <a href="assignments/assignment2.html" class="dropdown-link">
-                            <i class="material-icons">description</i>
-                            Assignment 2
-                        </a>
-                        <a href="assignments/final-project.html" class="dropdown-link">
-                            <i class="material-icons">school</i>
-                            Final Project
-                        </a>
+                        <a href="CTEST.html" class="dropdown-link"><i class="material-icons">description</i>CETEST 50%</a>
+                        <a href="WRT.html"   class="dropdown-link"><i class="material-icons">description</i>Report 50%</a>
                     </div>
                 </div>
-                
-                <!-- Contact Link -->
-                <div class="nav-item">
-                    <a href="contact.html" class="nav-link">
-                        <i class="material-icons">contact_mail</i>
-                        Contact
-                    </a>
-                </div>
-            </div>
+
+            </div><!-- end .nav-menu -->
         </nav>
-        
+
         <div class="slide-content">
             <div class="left-content">
                 <div class="subtitle">HD in Computing and Software Engineering</div>
                 <div class="course-code">CSE 4202: Fundamentals of Programming</div>
                 <div class="title">Fundamentals in Programming in Python</div>
                 <div class="author">
-                    <i class="material-icons">person</i>
-                    Thisaru Rathnayake
+                    <i class="material-icons">person</i>Thisaru Rathnayake
                 </div>
                 <div class="faculty">
-                    <i class="material-icons">school</i>
-                    Faculty of Information Technology
+                    <i class="material-icons">school</i>Faculty of Information Technology
                 </div>
             </div>
             <div class="right-content">
                 <div class="floating-element">
-                    <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" style="width: 300px; height: 300px; opacity: 0.9;">
+                    <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" style="width:300px;height:300px;opacity:0.9;">
                 </div>
             </div>
         </div>
+
         <div class="code-decoration">
             <div class="code-line"><span class="keyword">import</span> <span class="highlight">sys</span></div>
             <div class="code-line"><span class="keyword">def</span> <span class="highlight">main</span>():</div>
@@ -876,287 +727,94 @@
             <div class="code-line">    <span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</div>
             <div class="code-line">        <span class="highlight">main</span>()</div>
         </div>
-    </div>
+
+    </div><!-- end .slide -->
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Mobile menu toggle
-            const mobileMenu = document.getElementById('mobile-menu');
-            const navMenu = document.querySelector('.nav-menu');
-            
-            mobileMenu.addEventListener('click', function() {
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const isMobile = () => window.innerWidth <= 768;
+
+            // ── Hamburger toggle ──────────────────────────────────────
+            const mobileMenuBtn = document.getElementById('mobile-menu');
+            const navMenu       = document.getElementById('nav-menu');
+
+            mobileMenuBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
                 navMenu.classList.toggle('active');
+                this.querySelector('i').textContent =
+                    navMenu.classList.contains('active') ? 'close' : 'menu';
             });
-            
-            // Dropdown toggles
-            const syllabusToggle = document.getElementById('syllabus-toggle');
-            const syllabusDropdown = document.getElementById('syllabus-dropdown');
-            
-            syllabusToggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                syllabusDropdown.classList.toggle('active');
-                
-                // Close other dropdowns
-                document.getElementById('resources-dropdown').classList.remove('active');
-                document.getElementById('assignments-dropdown').classList.remove('active');
+
+            // ── Top-level dropdown toggles (Syllabus / Resources / Assignments) ──
+            [
+                ['syllabus-toggle',    'syllabus-dropdown'],
+                ['resources-toggle',   'resources-dropdown'],
+                ['assignments-toggle', 'assignments-dropdown'],
+            ].forEach(([toggleId, dropdownId]) => {
+                const btn      = document.getElementById(toggleId);
+                const dropdown = document.getElementById(dropdownId);
+                if (!btn || !dropdown) return;
+
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    // On mobile: just toggle this dropdown, close others
+                    document.querySelectorAll('.dropdown').forEach(d => {
+                        if (d !== dropdown) d.classList.remove('active');
+                    });
+                    // Close all submenus when switching top-level dropdowns
+                    document.querySelectorAll('.submenu').forEach(s => s.classList.remove('active'));
+
+                    dropdown.classList.toggle('active');
+                });
             });
-            
-            // Resources dropdown toggle
-            const resourcesToggle = document.getElementById('resources-toggle');
-            const resourcesDropdown = document.getElementById('resources-dropdown');
-            
-            resourcesToggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                resourcesDropdown.classList.toggle('active');
-                
-                // Close other dropdowns
-                syllabusDropdown.classList.remove('active');
-                document.getElementById('assignments-dropdown').classList.remove('active');
+
+            // ── Submenu toggles (inside Syllabus dropdown) ────────────
+            [
+                ['intro-toggle',  'intro-submenu'],
+                ['algo-toggle',   'algo-submenu'],
+                ['lang-toggle',   'lang-submenu'],
+                ['select-toggle', 'select-submenu'],
+                ['func-toggle',   'func-submenu'],
+                ['data-toggle',   'data-submenu'],
+                ['search-toggle', 'search-submenu'],
+                ['prob-toggle',   'prob-submenu'],
+                ['test-toggle',   'test-submenu'],
+            ].forEach(([toggleId, submenuId]) => {
+                const btn     = document.getElementById(toggleId);
+                const submenu = document.getElementById(submenuId);
+                if (!btn || !submenu) return;
+
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation(); // stop but NOT block — dropdown stays open
+
+                    // Close sibling submenus
+                    document.querySelectorAll('.submenu').forEach(s => {
+                        if (s !== submenu) s.classList.remove('active');
+                    });
+
+                    submenu.classList.toggle('active');
+                });
             });
-            
-            // Assignments dropdown toggle
-            const assignmentsToggle = document.getElementById('assignments-toggle');
-            const assignmentsDropdown = document.getElementById('assignments-dropdown');
-            
-            assignmentsToggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                assignmentsDropdown.classList.toggle('active');
-                
-                // Close other dropdowns
-                syllabusDropdown.classList.remove('active');
-                resourcesDropdown.classList.remove('active');
-            });
-            
-            // Submenu toggles for Syllabus
-            const introToggle = document.getElementById('intro-toggle');
-            const introSubmenu = document.getElementById('intro-submenu');
-            
-            introToggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                introSubmenu.classList.toggle('active');
-                
-                // Close other submenus
-                document.getElementById('algo-submenu').classList.remove('active');
-                document.getElementById('lang-submenu').classList.remove('active');
-                document.getElementById('select-submenu').classList.remove('active');
-                document.getElementById('func-submenu').classList.remove('active');
-                document.getElementById('data-submenu').classList.remove('active');
-                document.getElementById('search-submenu').classList.remove('active');
-                document.getElementById('prob-submenu').classList.remove('active');
-                document.getElementById('test-submenu').classList.remove('active');
-            });
-            
-            const algoToggle = document.getElementById('algo-toggle');
-            const algoSubmenu = document.getElementById('algo-submenu');
-            
-            algoToggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                algoSubmenu.classList.toggle('active');
-                
-                // Close other submenus
-                introSubmenu.classList.remove('active');
-                document.getElementById('lang-submenu').classList.remove('active');
-                document.getElementById('select-submenu').classList.remove('active');
-                document.getElementById('func-submenu').classList.remove('active');
-                document.getElementById('data-submenu').classList.remove('active');
-                document.getElementById('search-submenu').classList.remove('active');
-                document.getElementById('prob-submenu').classList.remove('active');
-                document.getElementById('test-submenu').classList.remove('active');
-            });
-            
-            const langToggle = document.getElementById('lang-toggle');
-            const langSubmenu = document.getElementById('lang-submenu');
-            
-            langToggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                langSubmenu.classList.toggle('active');
-                
-                // Close other submenus
-                introSubmenu.classList.remove('active');
-                algoSubmenu.classList.remove('active');
-                document.getElementById('select-submenu').classList.remove('active');
-                document.getElementById('func-submenu').classList.remove('active');
-                document.getElementById('data-submenu').classList.remove('active');
-                document.getElementById('search-submenu').classList.remove('active');
-                document.getElementById('prob-submenu').classList.remove('active');
-                document.getElementById('test-submenu').classList.remove('active');
-            });
-            
-            const selectToggle = document.getElementById('select-toggle');
-            const selectSubmenu = document.getElementById('select-submenu');
-            
-            selectToggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                selectSubmenu.classList.toggle('active');
-                
-                // Close other submenus
-                introSubmenu.classList.remove('active');
-                algoSubmenu.classList.remove('active');
-                langSubmenu.classList.remove('active');
-                document.getElementById('func-submenu').classList.remove('active');
-                document.getElementById('data-submenu').classList.remove('active');
-                document.getElementById('search-submenu').classList.remove('active');
-                document.getElementById('prob-submenu').classList.remove('active');
-                document.getElementById('test-submenu').classList.remove('active');
-            });
-            
-            const funcToggle = document.getElementById('func-toggle');
-            const funcSubmenu = document.getElementById('func-submenu');
-            
-            funcToggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                funcSubmenu.classList.toggle('active');
-                
-                // Close other submenus
-                introSubmenu.classList.remove('active');
-                algoSubmenu.classList.remove('active');
-                langSubmenu.classList.remove('active');
-                selectSubmenu.classList.remove('active');
-                document.getElementById('data-submenu').classList.remove('active');
-                document.getElementById('search-submenu').classList.remove('active');
-                document.getElementById('prob-submenu').classList.remove('active');
-                document.getElementById('test-submenu').classList.remove('active');
-            });
-            
-            const dataToggle = document.getElementById('data-toggle');
-            const dataSubmenu = document.getElementById('data-submenu');
-            
-            dataToggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                dataSubmenu.classList.toggle('active');
-                
-                // Close other submenus
-                introSubmenu.classList.remove('active');
-                algoSubmenu.classList.remove('active');
-                langSubmenu.classList.remove('active');
-                selectSubmenu.classList.remove('active');
-                funcSubmenu.classList.remove('active');
-                document.getElementById('search-submenu').classList.remove('active');
-                document.getElementById('prob-submenu').classList.remove('active');
-                document.getElementById('test-submenu').classList.remove('active');
-            });
-            
-            const searchToggle = document.getElementById('search-toggle');
-            const searchSubmenu = document.getElementById('search-submenu');
-            
-            searchToggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                searchSubmenu.classList.toggle('active');
-                
-                // Close other submenus
-                introSubmenu.classList.remove('active');
-                algoSubmenu.classList.remove('active');
-                langSubmenu.classList.remove('active');
-                selectSubmenu.classList.remove('active');
-                funcSubmenu.classList.remove('active');
-                dataSubmenu.classList.remove('active');
-                document.getElementById('prob-submenu').classList.remove('active');
-                document.getElementById('test-submenu').classList.remove('active');
-            });
-            
-            const probToggle = document.getElementById('prob-toggle');
-            const probSubmenu = document.getElementById('prob-submenu');
-            
-            probToggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                probSubmenu.classList.toggle('active');
-                
-                // Close other submenus
-                introSubmenu.classList.remove('active');
-                algoSubmenu.classList.remove('active');
-                langSubmenu.classList.remove('active');
-                selectSubmenu.classList.remove('active');
-                funcSubmenu.classList.remove('active');
-                dataSubmenu.classList.remove('active');
-                searchSubmenu.classList.remove('active');
-                document.getElementById('test-submenu').classList.remove('active');
-            });
-            
-            const testToggle = document.getElementById('test-toggle');
-            const testSubmenu = document.getElementById('test-submenu');
-            
-            testToggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                testSubmenu.classList.toggle('active');
-                
-                // Close other submenus
-                introSubmenu.classList.remove('active');
-                algoSubmenu.classList.remove('active');
-                langSubmenu.classList.remove('active');
-                selectSubmenu.classList.remove('active');
-                funcSubmenu.classList.remove('active');
-                dataSubmenu.classList.remove('active');
-                searchSubmenu.classList.remove('active');
-                probSubmenu.classList.remove('active');
-            });
-            
-            // Close dropdowns when clicking outside
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.nav-item')) {
-                    syllabusDropdown.classList.remove('active');
-                    resourcesDropdown.classList.remove('active');
-                    assignmentsDropdown.classList.remove('active');
-                    
-                    // Close all submenus
-                    introSubmenu.classList.remove('active');
-                    algoSubmenu.classList.remove('active');
-                    langSubmenu.classList.remove('active');
-                    selectSubmenu.classList.remove('active');
-                    funcSubmenu.classList.remove('active');
-                    dataSubmenu.classList.remove('active');
-                    searchSubmenu.classList.remove('active');
-                    probSubmenu.classList.remove('active');
-                    testSubmenu.classList.remove('active');
+
+            // ── Close everything when clicking outside navbar ──────────
+            document.addEventListener('click', function (e) {
+                if (!e.target.closest('.navbar')) {
+                    document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
+                    document.querySelectorAll('.submenu').forEach(s => s.classList.remove('active'));
+                    navMenu.classList.remove('active');
+                    mobileMenuBtn.querySelector('i').textContent = 'menu';
                 }
             });
-	    // NEW: Dark/Light Mode Toggle Functionality
-            const themeToggle = document.getElementById('theme-toggle');
-            const themeIcon = document.getElementById('theme-icon');
-            const htmlElement = document.documentElement;
-            
-            // Check for saved theme preference or default to dark mode
-            const currentTheme = localStorage.getItem('theme') || 'dark';
-            htmlElement.setAttribute('data-theme', currentTheme);
-            
-            // Update icon based on current theme
-            if (currentTheme === 'light') {
-                themeIcon.textContent = 'light_mode';
-            } else {
-                themeIcon.textContent = 'dark_mode';
-            }
-            
-            // Toggle theme when button is clicked
-            themeToggle.addEventListener('click', function() {
-                const currentTheme = htmlElement.getAttribute('data-theme');
-                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                
-                // Update theme
-                htmlElement.setAttribute('data-theme', newTheme);
-                
-                // Update icon
-                themeIcon.textContent = newTheme === 'dark' ? 'dark_mode' : 'light_mode';
-                
-                // Save preference to localStorage
-                localStorage.setItem('theme', newTheme);
-            });
-            
-            // NEW: Scroll to Top Button Functionality
-            const scrollToTopBtn = document.getElementById('scroll-to-top');
-            
-            // Show/hide the button based on scroll position
-            window.addEventListener('scroll', function() {
-                if (window.pageYOffset > 300) {
-                    scrollToTopBtn.classList.add('visible');
-                } else {
-                    scrollToTopBtn.classList.remove('visible');
-                }
-            });
-            
-            // Scroll to top when button is clicked
-            scrollToTopBtn.addEventListener('click', function() {
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
+
+            // ── CRITICAL: Only stop propagation on submenu LINKS (not the whole dropdown)
+            // This lets dropdown-link clicks reach their own handlers
+            document.querySelectorAll('.submenu-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.stopPropagation(); // prevent closing nav when tapping a lesson link
                 });
             });
         });
