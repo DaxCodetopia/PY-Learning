@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering Python Sorting</title>
+    <style>
+        /* --- CSS Variables & Reset --- */
+        :root {
+            /* Light Theme (Default) */
+            --primary: #3776ab;
+            --secondary: #ffd343;
+            --accent: #6c5ce7;
+            
+            --bg-body: #f8f9fa;
+            --bg-sidebar: #ffffff;
+            --card-bg: #ffffff;
+            --table-head: #f1f3f5;
+            
+            --text-main: #2d3436;
+            --text-muted: #636e72;
+            --border-color: #e9ecef;
+            
+            --code-bg: #282c34;
+            --code-header: #21252b;
+            --code-text: #abb2bf;
+            
+            --note-bg: #fff3cd;
+            --note-text: #856404;
+            --note-border: #ffc107;
+
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            
+            --radius: 8px;
+            --font-main: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --font-mono: 'Fira Code', 'Consolas', monospace;
+            
+            --nav-hover: #eff3ff;
+            --nav-active-bg: #eff3ff;
+            --nav-active-text: var(--primary);
+        }
+
+        /* Dark Theme Override */
+        body.dark-mode {
+            --primary: #64b5f6; /* Lighter blue for dark mode visibility */
+            --secondary: #ffd54f;
+            --accent: #a29bfe;
+            
+            /* Requested Dark Blue Background */
+            --bg-body: #0f172a; 
+            --bg-sidebar: #1e293b; /* Slightly lighter blue for sidebar */
+            --card-bg: #1e293b;
+            --table-head: #334155;
+            
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            
+            --code-bg: #282c34; /* Keep code blocks dark/standard */
+            --code-header: #1a202c;
+            
+            --note-bg: #422006; /* Dark version of yellow */
+            --note-text: #fcd34d;
+            --note-border: #f59e0b;
+
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.4);
+            
+            --nav-hover: rgba(255,255,255, 0.05);
+            --nav-active-bg: rgba(55, 118, 171, 0.2);
+            --nav-active-text: var(--primary);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        /* --- Layout --- */
+        .app-container {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: 100vh;
+        }
+
+        /* --- Sidebar Navigation --- */
+        .sidebar {
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 1.5rem;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo span { color: var(--text-main); }
+
+        /* Toggle Button */
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-main);
+        }
+        .theme-toggle:hover {
+            background-color: var(--nav-hover);
+        }
+        .theme-toggle svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .nav-links {
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            display: block;
+            padding: 0.5rem 0.75rem;
+            border-radius: var(--radius);
+            transition: all 0.2s;
+        }
+
+        .nav-links a:hover {
+            background-color: var(--nav-hover);
+            color: var(--text-main);
+        }
+
+        .nav-links a.active {
+            background-color: var(--nav-active-bg);
+            color: var(--nav-active-text);
+            font-weight: 600;
+        }
+
+        .nav-category {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+            opacity: 0.7;
+        }
+
+        /* --- Main Content --- */
+        .content {
+            padding: 3rem 4rem;
+            max-width: 900px;
+        }
+
+        h1 { font-size: 2.5rem; margin-bottom: 1rem; color: var(--text-main); }
+        h2 { font-size: 1.8rem; margin-top: 3rem; margin-bottom: 1.25rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--border-color); }
+        h3 { font-size: 1.3rem; margin-top: 2rem; margin-bottom: 1rem; color: var(--primary); }
+        p { margin-bottom: 1.2rem; color: var(--text-main); }
+        
+        .lead {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        /* --- Code Blocks --- */
+        .code-window {
+            background: var(--code-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            margin: 1.5rem 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .code-header {
+            background: var(--code-header);
+            padding: 0.5rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #181a1f;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 6px;
+        }
+
+        .control { width: 12px; height: 12px; border-radius: 50%; }
+        .red { background: #ff5f56; }
+        .yellow { background: #ffbd2e; }
+        .green { background: #27c93f; }
+
+        .lang-label {
+            color: #9da5b4;
+            font-size: 0.8rem;
+            font-family: var(--font-mono);
+        }
+
+        pre {
+            padding: 1.2rem;
+            overflow-x: auto;
+            color: var(--code-text);
+            font-family: var(--font-mono);
+            font-size: 0.95rem;
+        }
+
+        /* Syntax Highlighting Simulation */
+        .kw { color: #c678dd; } 
+        .func { color: #61afef; } 
+        .str { color: #98c379; } 
+        .num { color: #d19a66; } 
+        .com { color: #5c6370; font-style: italic; } 
+        .op { color: #56b6c2; } 
+
+        /* --- Copy Button --- */
+        .copy-btn {
+            background: transparent;
+            border: 1px solid #5c6370;
+            color: #9da5b4;
+            cursor: pointer;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            transition: all 0.2s;
+        }
+        .copy-btn:hover { background: #5c6370; color: #fff; }
+
+        /* --- Info Cards / Tables --- */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .comparison-table th, .comparison-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .comparison-table th { background: var(--table-head); font-weight: 600; color: var(--text-main); }
+        .comparison-table tr:last-child td { border-bottom: none; }
+
+        .note-box {
+            background: var(--note-bg);
+            border-left: 4px solid var(--note-border);
+            padding: 1rem;
+            border-radius: 0 var(--radius) var(--radius) 0;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+        }
+        
+        .note-title { font-weight: 700; color: var(--note-text); margin-bottom: 0.25rem; display: block; }
+
+        /* --- Mobile Responsive --- */
+        @media (max-width: 768px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                height: auto;
+                position: relative;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                padding: 1rem;
+            }
+            .nav-links {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            .nav-category { display: none; }
+            .content { padding: 2rem 1.5rem; }
+            h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="logo-header">
+            <div class="logo">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>PySort</span>
+            </div>
+            
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+                <!-- Sun Icon -->
+                <svg id="icon-sun" class="sun-icon" style="display: none;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                <!-- Moon Icon -->
+                <svg id="icon-moon" class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </button>
+        </div>
+
+        <ul class="nav-links">
+            <li><a href="#intro" class="active">Introduction</a></li>
+            
+            <div class="nav-category">Core Methods</div>
+            <li><a href="#method-sort">The .sort() Method</a></li>
+            <li><a href="#method-sorted">The sorted() Function</a></li>
+            
+            <div class="nav-category">Direction</div>
+            <li><a href="#ascending">Ascending Order</a></li>
+            <li><a href="#descending">Descending Order</a></li>
+            
+            <div class="nav-category">Data Structures</div>
+            <li><a href="#sort-list">Lists</a></li>
+            <li><a href="#sort-tuple">Tuples</a></li>
+            <li><a href="#sort-set">Sets</a></li>
+            <li><a href="#sort-dict">Dictionaries</a></li>
+
+            <div class="nav-category">Advanced</div>
+            <li><a href="#sort-by-key">Sort by Key (Lambda)</a></li>
+            <li><a href="#real-world">Real World: Price/Name</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="content">
+        <section id="intro">
+            <h1>Python Sorting Guide</h1>
+            <p class="lead">Sorting is a fundamental operation in programming. In Python, you have powerful built-in tools to order data efficiently and readable.</p>
+            <p>This guide covers the two primary ways to sort data: the <code>.sort()</code> method and the <code>sorted()</code> function, and how to use them on lists, tuples, sets, and dictionaries.</p>
+        </section>
+
+        <!-- Core Methods -->
+        <h2 id="method-sort">1. The <code>.sort()</code> Method</h2>
+        <p>The <code>.sort()</code> method modifies the list <strong>in-place</strong>. This means it changes the original list directly and returns <code>None</code>.</p>
+        
+        <div class="code-window">
+            <div class="code-header">
+                <div class="window-controls"><div class="control red"></div><div class="control yellow"></div><div class="control green"></div></div>
+                <span class="lang-label">python</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre>
+<span class="kw">numbers</span> = [<span class="num">5</span>, <span class="num">2</span>, <span class="num">9</span>, <span class="num">1</span>, <span class="num">5</span>, <span class="num">6</span>]
+
+<span class="com"># Modifies 'numbers' directly</span>
+<span class="kw">numbers</span>.<span class="func">sort</span>()
+
+<span class="func">print</span>(<span class="kw">numbers</span>)
+<span class="com"># Output: [1, 2, 5, 5, 6, 9]</span></pre>
+        </div>
+
+        <div class="note-box">
+            <span class="note-title">⚠️ Important</span>
+            Because <code>.sort()</code> returns <code>None</code>, assigning it to a variable will result in that variable becoming <code>None</code>. 
+            <br><code>new_list = numbers.sort()</code> <span style="color:red"># Avoid this!</span>
+        </div>
+
+        <h2 id="method-sorted">2. The <code>sorted()</code> Function</h2>
+        <p>The <code>sorted()</code> function builds a <strong>new sorted list</strong> and leaves the original list unchanged. This is useful when you need to keep the original data order.</p>
+
+        <div class="code-window">
+            <div class="code-header">
+                <div class="window-controls"><div class="control red"></div><div class="control yellow"></div><div class="control green"></div></div>
+                <span class="lang-label">python</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre>
+<span class="kw">numbers</span> = [<span class="num">5</span>, <span class="num">2</span>, <span class="num">9</span>, <span class="num">1</span>, <span class="num">5</span>, <span class="num">6</span>]
+
+<span class="com"># Returns a new list, 'numbers' remains unchanged</span>
+<span class="kw">sorted_numbers</span> = <span class="func">sorted</span>(<span class="kw">numbers</span>)
+
+<span class="func">print</span>(<span class="str">"Original:"</span>, <span class="kw">numbers</span>)
+<span class="func">print</span>(<span class="str">"Sorted:"</span>, <span class="kw">sorted_numbers</span>)</pre>
+        </div>
+
+        <!-- Direction -->
+        <h2 id="ascending">3. Ascending Order</h2>
+        <p>By default, both <code>.sort()</code> and <code>sorted()</code> sort data in <strong>ascending</strong> order (smallest to largest, A to Z). You don't need to pass any extra arguments.</p>
+
+        <div class="code-window">
+            <div class="code-header">
+                <div class="window-controls"><div class="control red"></div><div class="control yellow"></div><div class="control green"></div></div>
+                <span class="lang-label">python</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre>
+<span class="kw">letters</span> = [<span class="str">'d'</span>, <span class="str">'a'</span>, <span class="str">'c'</span>, <span class="str">'b'</span>]
+<span class="kw">letters</span>.<span class="func">sort</span>() 
+<span class="com"># Result: ['a', 'b', 'c', 'd']</span></pre>
+        </div>
+
+        <h2 id="descending">4. Descending Order</h2>
+        <p>To sort in <strong>descending</strong> order (largest to smallest, Z to A), set the <code>reverse</code> parameter to <code>True</code>.</p>
+
+        <div class="code-window">
+            <div class="code-header">
+                <div class="window-controls"><div class="control red"></div><div class="control yellow"></div><div class="control green"></div></div>
+                <span class="lang-label">python</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre>
+<span class="kw">numbers</span> = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>]
+
+<span class="com"># Method 1: Using .sort()</span>
+<span class="kw">numbers</span>.<span class="func">sort</span>(<span class="kw">reverse</span>=<span class="kw">True</span>)
+
+<span class="com"># Method 2: Using sorted()</span>
+<span class="kw">desc_numbers</span> = <span class="func">sorted</span>(<span class="kw">numbers</span>, <span class="kw">reverse</span>=<span class="kw">True</span>)
+
+<span class="func">print</span>(<span class="kw">desc_numbers</span>)
+<span class="com"># Output: [5, 4, 3, 2, 1]</span></pre>
+        </div>
+
+        <!-- Data Structures -->
+        <h2 id="sort-list">5. Sorting Lists</h2>
+        <p>Lists are the most common data structure to sort. Both methods work directly on lists.</p>
+        <ul>
+            <li>Use <code>.sort()</code> if you don't need the original order anymore (saves memory).</li>
+            <li>Use <code>sorted()</code> if you need to preserve the original list.</li>
+        </ul>
+
+        <h2 id="sort-tuple">6. Sorting Tuples</h2>
+        <p>Tuples are <strong>immutable</strong> (they cannot be changed). Therefore, they do <strong>not</strong> have a <code>.sort()</code> method. You must use the <code>sorted()</code> function, which will return a new <strong>list</strong>.</p>
+
+        <div class="code-window">
+            <div class="code-header">
+                <div class="window-controls"><div class="control red"></div><div class="control yellow"></div><div class="control green"></div></div>
+                <span class="lang-label">python</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre>
+<span class="kw">my_tuple</span> = (<span class="num">3</span>, <span class="num">1</span>, <span class="num">4</span>, <span class="num">1</span>, <span class="num">5</span>)
+
+<span class="com"># Convert to sorted list</span>
+<span class="kw">sorted_list</span> = <span class="func">sorted</span>(<span class="kw">my_tuple</span>)
+
+<span class="func">print</span>(<span class="kw">sorted_list</span>)
+<span class="com"># Output: [1, 1, 3, 4, 5] (Note: It is a list, not a tuple)</span>
+
+<span class="com"># Convert back to tuple if needed</span>
+<span class="kw">sorted_tuple</span> = <span class="func">tuple</span>(<span class="kw">sorted_list</span>)</pre>
+        </div>
+
+        <h2 id="sort-set">7. Sorting Sets</h2>
+        <p>Sets are unordered collections. Like tuples, they do not have a <code>.sort()</code> method. Use <code>sorted()</code> to return a sorted list of the set's elements.</p>
+
+        <div class="code-window">
+            <div class="code-header">
+                <div class="window-controls"><div class="control red"></div><div class="control yellow"></div><div class="control green"></div></div>
+                <span class="lang-label">python</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre>
+<span class="kw">my_set</span> = {<span class="num">10</span>, <span class="num">5</span>, <span class="num">20</span>, <span class="num">2</span>}
+
+<span class="kw">sorted_set</span> = <span class="func">sorted</span>(<span class="kw">my_set</span>)
+
+<span class="func">print</span>(<span class="kw">sorted_set</span>)
+<span class="com"># Output: [2, 5, 10, 20]</span></pre>
+        </div>
+
+        <h2 id="sort-dict">8. Sorting Dictionaries</h2>
+        <p>Sorting dictionaries requires deciding whether to sort by <strong>keys</strong> or by <strong>values</strong>. In Python 3.7+, dictionaries maintain insertion order.</p>
+
+        <h3>Sorting by Keys</h3>
+        <div class="code-window">
+            <div class="code-header">
+                <div class="window-controls"><div class="control red"></div><div class="control yellow"></div><div class="control green"></div></div>
+                <span class="lang-label">python</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre>
+<span class="kw">prices</span> = {<span class="str">'apple'</span>: <span class="num">5</span>, <span class="str">'banana'</span>: <span class="num">2</span>, <span class="str">'cherry'</span>: <span class="num">7</span>}
+
+<span class="com"># Get sorted list of keys</span>
+<span class="kw">sorted_keys</span> = <span class="func">sorted</span>(<span class="kw">prices</span>)
+
+<span class="func">print</span>(<span class="kw">sorted_keys</span>)
+<span class="com"># Output: ['apple', 'banana', 'cherry']</span></pre>
+        </div>
+
+        <h3>Sorting by Values</h3>
+        <p>To sort by values, we use the <code>key</code> parameter (explained in detail below).</p>
+        <div class="code-window">
+            <div class="code-header">
+                <div class="window-controls"><div class="control red"></div><div class="control yellow"></div><div class="control green"></div></div>
+                <span class="lang-label">python</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre>
+<span class="kw">prices</span> = {<span class="str">'apple'</span>: <span class="num">5</span>, <span class="str">'banana'</span>: <span class="num">2</span>, <span class="str">'cherry'</span>: <span class="num">7</span>}
+
+<span class="com"># Sort keys based on their values</span>
+<span class="kw">sorted_by_value</span> = <span class="func">sorted</span>(<span class="kw">prices</span>, <span class="kw">key</span>=<span class="kw">prices</span>.get)
+
+<span class="func">print</span>(<span class="kw">sorted_by_value</span>)
+<span class="com"># Output: ['banana', 'apple', 'cherry']</span></pre>
+        </div>
+
+        <!-- Advanced -->
+        <h2 id="sort-by-key">9. Sorting with the <code>key</code> Parameter</h2>
+        <p>The <code>key</code> parameter is powerful. It accepts a function that transforms each element before comparison. It does not change the data, only how it is compared.</p>
+        <p>We often use <strong>lambda functions</strong> here.</p>
+
+        <div class="code-window">
+            <div class="code-header">
+                <div class="window-controls"><div class="control red"></div><div class="control yellow"></div><div class="control green"></div></div>
+                <span class="lang-label">python</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre>
+<span class="com"># Sort a list of strings by their length</span>
+<span class="kw">words</span> = [<span class="str">"apple"</span>, <span class="str">"pie"</span>, <span class="str">"banana"</span>, <span class="str">"kiwi"</span>]
+
+<span class="kw">words</span>.<span class="func">sort</span>(<span class="kw">key</span>=<span class="kw">len</span>)
+
+<span class="func">print</span>(<span class="kw">words</span>)
+<span class="com"># Output: ['pie', 'kiwi', 'apple', 'banana']</span></pre>
+        </div>
+
+        <h2 id="real-world">10. Real World Example: Sort by Price/Name</h2>
+        <p>A common scenario is sorting a list of objects (dictionaries) representing products. We want to sort by specific fields like <strong>price</strong> or <strong>name</strong>.</p>
+
+        <div class="code-window">
+            <div class="code-header">
+                <div class="window-controls"><div class="control red"></div><div class="control yellow"></div><div class="control green"></div></div>
+                <span class="lang-label">python</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre>
+<span class="kw">products</span> = [
+    {<span class="str">'name'</span>: <span class="str">'Laptop'</span>, <span class="str">'price'</span>: <span class="num">999</span>},
+    {<span class="str">'name'</span>: <span class="str">'Mouse'</span>,  <span class="str">'price'</span>: <span class="num">25</span>},
+    {<span class="str">'name'</span>: <span class="str">'Monitor'</span>,<span class="str">'price'</span>: <span class="num">200</span>}
+]
+
+<span class="com"># 1. Sort by Price (Ascending)</span>
+<span class="kw">products_by_price</span> = <span class="func">sorted</span>(<span class="kw">products</span>, <span class="kw">key</span>=<span class="kw">lambda</span> x: x[<span class="str">'price'</span>])
+
+<span class="com"># 2. Sort by Name (Alphabetical)</span>
+<span class="kw">products_by_name</span> = <span class="func">sorted</span>(<span class="kw">products</span>, <span class="kw">key</span>=<span class="kw">lambda</span> x: x[<span class="str">'name'</span>])
+
+<span class="com"># 3. Sort by Price (Descending - Expensive first)</span>
+<span class="kw">products_desc</span> = <span class="func">sorted</span>(<span class="kw">products</span>, <span class="kw">key</span>=<span class="kw">lambda</span> x: x[<span class="str">'price'</span>], <span class="kw">reverse</span>=<span class="kw">True</span>)
+
+<span class="func">print</span>(<span class="str">"Sorted by Price:"</span>)
+<span class="kw">for</span> p <span class="kw">in</span> <span class="kw">products_by_price</span>:
+    <span class="func">print</span>(f<span class="str">"{p['name']}: ${p['price']}"</span>)</pre>
+        </div>
+
+        <!-- Comparison Table -->
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th><code>.sort()</code></th>
+                    <th><code>sorted()</code></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Result</strong></td>
+                    <td>Modifies list in-place (returns None)</td>
+                    <td>Returns a new sorted list</td>
+                </tr>
+                <tr>
+                    <td><strong>Original Data</strong></td>
+                    <td>Lost/Changed</td>
+                    <td>Preserved</td>
+                </tr>
+                <tr>
+                    <td><strong>Data Types</strong></td>
+                    <td>Lists only</td>
+                    <td>Any iterable (List, Tuple, Set, Dict)</td>
+                </tr>
+                <tr>
+                    <td><strong>Memory</strong></td>
+                    <td>More efficient (in-place)</td>
+                    <td>Creates a copy (uses more memory)</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </main>
+</div>
+
+<script>
+    // --- Dark Mode Logic ---
+    const toggleBtn = document.getElementById('theme-toggle');
+    const body = document.body;
+    const sunIcon = document.getElementById('icon-sun');
+    const moonIcon = document.getElementById('icon-moon');
+
+    // Check for saved user preference
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        enableDarkMode();
+    }
+
+    toggleBtn.addEventListener('click', () => {
+        if (body.classList.contains('dark-mode')) {
+            disableDarkMode();
+        } else {
+            enableDarkMode();
+        }
+    });
+
+    function enableDarkMode() {
+        body.classList.add('dark-mode');
+        sunIcon.style.display = 'block';
+        moonIcon.style.display = 'none';
+        localStorage.setItem('theme', 'dark');
+    }
+
+    function disableDarkMode() {
+        body.classList.remove('dark-mode');
+        sunIcon.style.display = 'none';
+        moonIcon.style.display = 'block';
+        localStorage.setItem('theme', 'light');
+    }
+
+    // --- Copy Code Logic ---
+    function copyCode(button) {
+        const codeWindow = button.closest('.code-window');
+        const codeBlock = codeWindow.querySelector('pre');
+        const codeText = codeBlock.innerText;
+
+        navigator.clipboard.writeText(codeText).then(() => {
+            const originalText = button.innerText;
+            button.innerText = 'Copied!';
+            button.style.borderColor = '#27c93f';
+            button.style.color = '#27c93f';
+            
+            setTimeout(() => {
+                button.innerText = originalText;
+                button.style.borderColor = '#5c6370';
+                button.style.color = '#9da5b4';
+            }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy text: ', err);
+        });
+    }
+
+    // --- Active Link Logic ---
+    const sections = document.querySelectorAll('section, h2');
+    const navLinks = document.querySelectorAll('.nav-links a');
+
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.clientHeight;
+            if (pageYOffset >= (sectionTop - 150)) {
+                current = section.getAttribute('id');
+            }
+        });
+
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href').includes(current)) {
+                link.classList.add('active');
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

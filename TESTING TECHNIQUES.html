@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Software Testing Methods & Techniques</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            height: 100vh; 
+        }
+        .slide {
+            width: 100%;
+            min-height: 100vh;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            max-width: 1280px; 
+            margin: 0 auto; 
+            overflow-y: auto; 
+        }
+        
+        /* Custom Scrollbar Styling for Webkit Browsers */
+        .slide::-webkit-scrollbar {
+            width: 12px;
+        }
+        .slide::-webkit-scrollbar-track {
+            background: #1a1a2e; 
+        }
+        .slide::-webkit-scrollbar-thumb {
+            background: #4CAF50; 
+            border-radius: 6px;
+        }
+        .slide::-webkit-scrollbar-thumb:hover {
+            background: #2196F3; 
+        }
+
+    .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .header {
+            padding: 40px 70px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .slide-header {
+            padding: 50px 70px 30px;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+    .content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: 0 70px 40px;
+            gap: 20px;
+        }
+        .slide-content {
+            flex-grow: 1;
+            display: flex;
+            padding: 0 70px 50px;
+            gap: 30px;
+        }
+        .content-container {
+            display: flex;
+            width: 100%;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        .left-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-width: 500px; 
+        }
+        .right-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-width: 500px;
+        }
+        .match-card {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .match-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .intro-card {
+            border-left: 4px solid #4ec9b0;
+        }
+        .syntax-card {
+            border-left: 4px solid #dcdcaa;
+        }
+        .patterns-card {
+            border-left: 4px solid #c586c0;
+        }
+        .example-card {
+            border-left: 4px solid #9cdcfe;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-icon {
+            font-size: 28px;
+        }
+        .intro-card .card-icon {
+            color: #4ec9b0;
+        }
+        .syntax-card .card-icon {
+            color: #dcdcaa;
+        }
+        .patterns-card .card-icon {
+            color: #c586c0;
+        }
+        .example-card .card-icon {
+            color: #9cdcfe;
+        }
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #d4d4d4;
+        }
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+        }
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .point-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .point-icon {
+            font-size: 20px;
+            margin-top: 3px;
+        }
+        .intro-card .point-icon {
+            color: #4ec9b0;
+        }
+        .syntax-card .point-icon {
+            color: #dcdcaa;
+        }
+        .patterns-card .point-icon {
+            color: #c586c0;
+        }
+        .example-card .point-icon {
+            color: #9cdcfe;
+        }
+        .point-text {
+            font-size: 18px;
+            line-height: 1.4;
+            color: #cccccc;
+        }
+        .key-concept {
+            display: inline-block;
+            background-color: rgba(78, 201, 176, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin: 0 2px;
+            color: #4ec9b0;
+            font-weight: 500;
+        }
+        .syntax-card .key-concept {
+            background-color: rgba(220, 220, 170, 0.2);
+            color: #dcdcaa;
+        }
+        .patterns-card .key-concept {
+            background-color: rgba(197, 134, 192, 0.2);
+            color: #c586c0;
+        }
+        .example-card .key-concept {
+            background-color: rgba(156, 220, 254, 0.2);
+            color: #9cdcfe;
+        }
+        .code-example {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 18px;
+            color: #cccccc;
+            line-height: 1.5;
+            overflow: auto;
+            flex-grow: 1;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .keyword {
+            color: #569cd6;
+        }
+        .function {
+            color: #dcdcaa;
+        }
+        .string {
+            color: #ce9178;
+        }
+        .comment {
+            color: #608b4e;
+        }
+        .number {
+            color: #b5cea8;
+        }
+        .pattern-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .pattern-item {
+            background-color: rgba(197, 134, 192, 0.1);
+            border-radius: 6px;
+            padding: 12px;
+            border: 1px solid rgba(197, 134, 192, 0.2);
+        }
+        .pattern-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #c586c0;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .pattern-desc {
+            font-size: 16px;
+            color: #cccccc;
+        }
+        .python-logo {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 10s linear infinite;
+            z-index: 10;
+        }
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .code-decoration {
+            position: sticky;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            color: #608b4e;
+            opacity: 0.6;
+            padding: 20px;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 5;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .code-line {
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="slide-header">
+            <div class="title">Software Testing Methods & Techniques</div>
+        </div>
+        <div class="slide-content">
+            <div class="content-container">
+                
+                <!-- Row 1: Core Methods & Box Testing -->
+                <div class="left-column">
+                    <div class="match-card intro-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">verified_user</i>
+                            <div class="card-title">Core Testing Methods</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">person</i>
+                                    <div class="point-text"><span class="key-concept">Manual Testing</span>: Human inspection to catch errors, usability issues, and verify functional requirements.</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">smart_toy</i>
+                                    <div class="point-text"><span class="key-concept">Automated Testing</span>: Using tools to execute pre-written scripts; ideal for regression testing to ensure changes don't break existing functionality.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="match-card patterns-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">category</i>
+                            <div class="card-title">Test Design Techniques</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="pattern-grid">
+                                <div class="pattern-item">
+                                    <div class="pattern-title">
+                                        <i class="material-icons">filter_1</i>
+                                        Equivalence Partitioning
+                                    </div>
+                                    <div class="pattern-desc">
+                                        Dividing input data into valid and invalid partitions to test representative values.
+                                    </div>
+                                </div>
+                                <div class="pattern-item">
+                                    <div class="pattern-title">
+                                        <i class="material-icons">filter_2</i>
+                                        Boundary Value (BVA)
+                                    </div>
+                                    <div class="pattern-desc">
+                                        Focusing on the edges between partitions where bugs often reside.
+                                    </div>
+                                </div>
+                                <div class="pattern-item">
+                                    <div class="pattern-title">
+                                        <i class="material-icons">filter_3</i>
+                                        Decision Table
+                                    </div>
+                                    <div class="pattern-desc">
+                                        Testing combinations of inputs to determine the correct system output.
+                                    </div>
+                                </div>
+                                <div class="pattern-item">
+                                    <div class="pattern-title">
+                                        <i class="material-icons">filter_4</i>
+                                        State Transition
+                                    </div>
+                                    <div class="pattern-desc">
+                                        Evaluating how the system behaves when moving from one state to another.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="right-column">
+                    <div class="match-card example-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">inventory_2</i>
+                            <div class="card-title">The "Box" Approaches</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="key-points">
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">Black Box</span> (Functional): Testing based on requirements and functionality without knowing the internal code structure.</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">White Box</span> (Structural): Testing with internal knowledge of the code to verify paths, branches, and statements.</div>
+                                </div>
+                                <div class="point-item">
+                                    <i class="material-icons point-icon">check_circle</i>
+                                    <div class="point-text"><span class="key-concept">Gray Box</span>: A hybrid approach using partial knowledge of the internal logic for testing.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="match-card syntax-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">list_alt</i>
+                            <div class="card-title">Testing Types & Levels</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="pattern-grid" style="grid-template-columns: 1fr;">
+                                <div class="pattern-item" style="border-color: rgba(220, 220, 170, 0.2); background-color: rgba(220, 220, 170, 0.05);">
+                                    <div class="pattern-title" style="color: #dcdcaa;">
+                                        <i class="material-icons">layers</i>
+                                        Levels
+                                    </div>
+                                    <div class="pattern-desc" style="display: flex; gap: 15px; flex-wrap: wrap;">
+                                        <span>Unit</span> • <span>Integration</span> • <span>System</span> • <span>Acceptance</span>
+                                    </div>
+                                </div>
+                                <div class="pattern-item" style="border-color: rgba(220, 220, 170, 0.2); background-color: rgba(220, 220, 170, 0.05);">
+                                    <div class="pattern-title" style="color: #dcdcaa;">
+                                        <i class="material-icons">speed</i>
+                                        Non-Functional
+                                    </div>
+                                    <div class="pattern-desc" style="display: flex; gap: 15px; flex-wrap: wrap;">
+                                        <span>Performance</span> • <span>Security</span> • <span>Usability</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 2: Strategies & Practical Example -->
+                <div class="left-column" style="flex: 0 0 auto; min-width: 100%;">
+                    <div class="match-card intro-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">lightbulb</i>
+                            <div class="card-title">Strategies for Effective Testing</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="key-points" style="flex-direction: row; flex-wrap: wrap;">
+                                <div class="point-item" style="flex: 1; min-width: 300px;">
+                                    <i class="material-icons point-icon">functions</i>
+                                    <div class="point-text"><span class="key-concept">Functional Testing</span>: Ensures software meets functional requirements.</div>
+                                </div>
+                                <div class="point-item" style="flex: 1; min-width: 300px;">
+                                    <i class="material-icons point-icon">block</i>
+                                    <div class="point-text"><span class="key-concept">Non-Functional Testing</span>: Evaluates performance, usability, and security.</div>
+                                </div>
+                                <div class="point-item" style="flex: 1; min-width: 300px;">
+                                    <i class="material-icons point-icon">history</i>
+                                    <div class="point-text"><span class="key-concept">Regression Testing</span>: Validates that changes do not create new defects.</div>
+                                </div>
+                                <div class="point-item" style="flex: 1; min-width: 300px;">
+                                    <i class="material-icons point-icon">explore</i>
+                                    <div class="point-text"><span class="key-concept">Exploratory Testing</span>: Simultaneous learning, test design, and execution.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="right-column" style="flex: 0 0 auto; min-width: 100%;">
+                     <div class="match-card example-card">
+                        <div class="card-header">
+                            <i class="material-icons card-icon">code</i>
+                            <div class="card-title">Practical Implementation</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="code-example">
+                                <span class="keyword">import</span> unittest<br><br>
+                                <span class="comment"># Using Equivalence Partitioning & BVA</span><br>
+                                <span class="keyword">class</span> <span class="function">TestLoginSystem</span>(unittest.TestCase):<br>
+                                &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">test_valid_credentials</span>(self):<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Valid Partition</span><br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;result = login(<span class="string">"user"</span>, <span class="string">"pass123"</span>)<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;self.assertTrue(result.success)<br><br>
+                                &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">test_empty_password</span>(self):<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Boundary Value (Empty)</span><br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;result = login(<span class="string">"user"</span>, <span class="string">""</span>)<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;self.assertFalse(result.success)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="python-logo">
+            <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" style="width: 100%; height: 100%;">
+        </div>
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">def</span> <span class="function">quality_assurance</span>():</div>
+            <div class="code-line">    <span class="keyword">if</span> black_box_test() <span class="keyword">and</span> white_box_test():</div>
+            <div class="code-line">        <span class="function">deploy_to_production</span>()</div>
+            <div class="code-line">    <span class="keyword">else</span>:</div>
+            <div class="code-line">        <span class="function">file_bug_report</span>()</div>
+        </div>
+    </div>
+</body>
+</html>

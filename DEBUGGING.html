@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering Python Debugging</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        /* --- BASE RESET & VARS --- */
+        :root {
+            --bg-dark: #121212;
+            --bg-gradient-start: #1a1a2e;
+            --bg-gradient-end: #16213e;
+            --card-bg: rgba(40, 44, 52, 0.7);
+            --accent-green: #4CAF50;
+            --accent-blue: #2196F3;
+            --accent-teal: #4ec9b0;
+            --accent-yellow: #dcdcaa;
+            --accent-purple: #c678dd;
+            --text-light: #ffffff;
+            --text-gray: #cccccc;
+            --code-bg: #1e1e1e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- LAYOUT UTILITIES (Adapted from slide CSS) --- */
+        .page-wrapper {
+            max-width: 1280px;
+            margin: 0 auto;
+            position: relative;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            min-height: 100vh;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            overflow: hidden; /* Contains the rotating logo */
+        }
+
+        /* Subtle background texture */
+        .page-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* --- HEADER & NAV --- */
+        header {
+            padding: 40px 70px 20px;
+            position: relative;
+            z-index: 2;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .nav-links a {
+            color: var(--accent-teal);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+
+        .title {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-gray);
+            max-width: 800px;
+        }
+
+        /* --- MAIN CONTENT AREAS --- */
+        main {
+            position: relative;
+            z-index: 2;
+            padding: 40px 70px;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: var(--accent-blue);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-left: 5px solid var(--accent-teal);
+            padding-left: 15px;
+        }
+
+        /* --- GRID SYSTEMS --- */
+        .content-container {
+            display: flex;
+            width: 100%;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .col-full { flex: 1 1 100%; }
+        .col-half { flex: 1 1 45%; min-width: 300px; }
+
+        /* --- CARDS --- */
+        .info-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-left: 4px solid var(--accent-teal);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            border-left-color: var(--accent-green);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--accent-teal);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature-list, .usage-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .feature-item, .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .feature-icon { font-size: 20px; color: var(--accent-yellow); margin-top: 3px; }
+        
+        .feature-text {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: var(--text-gray);
+        }
+
+        .key-concept {
+            display: inline-block;
+            background-color: rgba(78, 201, 176, 0.15);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin: 0 2px;
+            color: var(--accent-teal);
+            font-weight: 600;
+        }
+
+        /* --- CODE BLOCKS --- */
+        .code-snippet {
+            background-color: var(--code-bg);
+            border-radius: 6px;
+            padding: 20px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 0.9rem;
+            color: #d4d4d4;
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            overflow-x: auto;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        .code-snippet::before {
+            content: 'PYTHON';
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 0.6rem;
+            color: #555;
+            font-weight: bold;
+        }
+
+        .highlight { color: var(--accent-yellow); }
+        .keyword { color: var(--accent-blue); }
+        .string { color: #ce9178; }
+        .comment { color: #6a9955; font-style: italic; }
+        .function-name { color: var(--accent-purple); }
+        .error-msg { color: #f48771; }
+
+        /* --- TECHNIQUES GRID --- */
+        .techniques-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .tech-card {
+            background: rgba(30, 30, 40, 0.6);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .tech-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+            margin-bottom: 5px;
+        }
+
+        .tech-number {
+            background: var(--accent-blue);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* --- DECORATIVE ELEMENTS --- */
+        .python-logo {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 20s linear infinite;
+            opacity: 0.8;
+            z-index: 1;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .footer-deco {
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            padding: 40px 70px;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            z-index: 2;
+            margin-top: 40px;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .title { font-size: 2rem; }
+            .page-wrapper { width: 100%; overflow: visible; }
+            header, main { padding: 30px 20px; }
+            .content-container { flex-direction: column; }
+            .col-half { flex: 1 1 100%; }
+            .python-logo { width: 50px; height: 50px; top: 20px; right: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-wrapper">
+    <!-- Decorative Python Logo -->
+    <div class="python-logo">
+        <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" style="width: 100%; height: 100%;">
+    </div>
+
+    <header>
+        <h1 class="title">Python Debugging Techniques</h1>
+        <p class="subtitle">Identify, analyze, and fix errors to build robust applications.</p>
+        <nav class="nav-links">
+            <a href="#intro">Concepts</a>
+            <a href="#techniques">Techniques</a>
+            <a href="#tools">Tools</a>
+        </nav>
+    </header>
+
+    <main>
+        <!-- SECTION 1: INTRO & TYPES OF ERRORS -->
+        <section id="intro">
+            <h2 class="section-title">
+                <i class="material-icons">bug_report</i>
+                What is Debugging?
+            </h2>
+            <div class="content-container">
+                <div class="col-full info-card" style="border-left-color: var(--accent-blue);">
+                    <p class="feature-text">
+                        Debugging is the process of identifying, analyzing, and fixing errors (bugs) in a program so that it works correctly and efficiently. Unresolved errors may cause program crashes, incorrect output, or unexpected behavior.
+                    </p>
+                </div>
+                
+                <div class="col-half info-card">
+                    <div class="card-title">Syntax Errors</div>
+                    <p class="feature-text">Violations of Python rules (e.g., missing colons, incorrect indentation). The code won't run at all.</p>
+                </div>
+                
+                <div class="col-half info-card">
+                    <div class="card-title">Runtime Errors</div>
+                    <p class="feature-text">Errors that occur while the program is running (e.g., dividing by zero, file not found).</p>
+                </div>
+
+                <div class="col-half info-card">
+                    <div class="card-title">Logical Errors</div>
+                    <p class="feature-text">The program runs successfully but produces the wrong output due to flawed logic.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: TECHNIQUES -->
+        <section id="techniques">
+            <h2 class="section-title">
+                <i class="material-icons">build</i>
+                8 Core Debugging Techniques
+            </h2>
+            
+            <div class="techniques-grid">
+                
+                <!-- 1. Reading Error Messages -->
+                <article class="tech-card">
+                    <div class="tech-header">
+                        <h3>Traceback Analysis</h3>
+                        <span class="tech-number">1</span>
+                    </div>
+                    <p class="feature-text">Read the last line of the error message to identify the file name, line number, and cause.</p>
+                    <div class="code-snippet">
+                        <span class="error-msg">ValueError: invalid literal for int()</span><br><br>
+                        <span class="comment"># Cause: User entered text instead of a number</span><br>
+                        <span class="keyword">try</span>:<br>
+                        &nbsp;&nbsp;quantity = <span class="highlight">int</span>(<span class="highlight">input</span>(<span class="string">"Enter quantity: "</span>))<br>
+                        <span class="keyword">except</span> ValueError:<br>
+                        &nbsp;&nbsp;<span class="highlight">print</span>(<span class="string">"Quantity must be a number."</span>)
+                    </div>
+                </article>
+
+                <!-- 2. Print Debugging -->
+                <article class="tech-card">
+                    <div class="tech-header">
+                        <h3>Print Debugging</h3>
+                        <span class="tech-number">2</span>
+                    </div>
+                    <p class="feature-text">Insert <code>print()</code> statements to check variable values and flow control.</p>
+                    <div class="code-snippet">
+                        <span class="highlight">print</span>(<span class="string">"Subtotal:"</span>, subtotal)<br><br>
+                        <span class="comment"># Problem Found: Discount applied incorrectly</span><br>
+                        <span class="keyword">if</span> subtotal > 2000:<br>
+                        &nbsp;&nbsp;discount = subtotal * 0.10
+                    </div>
+                </article>
+
+                <!-- 3. Input Validation -->
+                <article class="tech-card">
+                    <div class="tech-header">
+                        <h3>Input Validation</h3>
+                        <span class="tech-number">3</span>
+                    </div>
+                    <p class="feature-text">Prevent invalid inputs from breaking the program by checking types and ranges.</p>
+                    <div class="code-snippet">
+                        <span class="keyword">if</span> quantity <= 0:<br>
+                        &nbsp;&nbsp;<span class="keyword">raise</span> ValueError<br><br>
+                        <span class="comment"># Benefit: Prevents negative or zero quantities.</span>
+                    </div>
+                </article>
+
+                <!-- 4. Dry Run -->
+                <article class="tech-card">
+                    <div class="tech-header">
+                        <h3>Step-by-Step (Dry Run)</h3>
+                        <span class="tech-number">4</span>
+                    </div>
+                    <p class="feature-text">Manually trace program logic using sample data on paper to find mismatches.</p>
+                    <div class="code-snippet">
+                        <span class="comment"># Input: Coffee = 2</span><br>
+                        <span class="comment"># Expected: 450 * 2 = 900</span><br>
+                        <span class="comment"># Actual: Incorrect -> Logic error found</span><br>
+                        <span class="comment"># Fix: Corrected multiplication logic.</span>
+                    </div>
+                </article>
+
+                <!-- 5. Python Debugger -->
+                <article class="tech-card">
+                    <div class="tech-header">
+                        <h3>Python Debugger (pdb)</h3>
+                        <span class="tech-number">5</span>
+                    </div>
+                    <p class="feature-text">Pause execution and inspect variables using the built-in debugger.</p>
+                    <div class="code-snippet">
+                        <span class="keyword">import</span> pdb; pdb.set_trace()<br><br>
+                        <span class="comment"># Commands:</span><br>
+                        <span class="comment"># n -> next line</span><br>
+                        <span class="comment"># p subtotal -> print variable</span>
+                    </div>
+                </article>
+
+                <!-- 6. Modular Testing -->
+                <article class="tech-card">
+                    <div class="tech-header">
+                        <h3>Modular Testing</h3>
+                        <span class="tech-number">6</span>
+                    </div>
+                    <p class="feature-text">Test each function separately with sample data to isolate errors.</p>
+                    <div class="code-snippet">
+                        <span class="highlight">print</span>(calculate_bill({<span class="string">"Coffee"</span>: 5}))<br><br>
+                        <span class="comment"># Benefit: Easier to locate specific errors.</span>
+                    </div>
+                </article>
+
+                <!-- 7. Commenting Code -->
+                <article class="tech-card">
+                    <div class="tech-header">
+                        <h3>Commenting Out Code</h3>
+                        <span class="tech-number">7</span>
+                    </div>
+                    <p class="feature-text">Temporarily disable parts of code to isolate the problematic section.</p>
+                    <div class="code-snippet">
+                        <span class="comment"># generate_receipt(order, subtotal, discount, final_total)</span><br><br>
+                        <span class="comment"># Use hash (#) to test remaining code flow.</span>
+                    </div>
+                </article>
+
+                <!-- 8. Logical Checking -->
+                <article class="tech-card">
+                    <div class="tech-header">
+                        <h3>Logical Condition Check</h3>
+                        <span class="tech-number">8</span>
+                    </div>
+                    <p class="feature-text">Verify conditions used in <code>if</code>, <code>elif</code>, and loops.</p>
+                    <div class="code-snippet">
+                        <span class="comment"># Issue: Discount applied when < 2000</span><br>
+                        <span class="comment"># Fix:</span><br>
+                        <span class="keyword">if</span> subtotal > 2000:<br>
+                        &nbsp;&nbsp;apply_discount()
+                    </div>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- SECTION 3: TOOLS & IMPORTANCE -->
+        <section id="tools">
+            <div class="content-container">
+                <div class="col-half info-card">
+                    <div class="card-title">
+                        <i class="material-icons">construction</i>
+                        Debugging Tools Used
+                    </div>
+                    <ul class="feature-list">
+                        <li class="feature-item">
+                            <i class="material-icons feature-icon">check_circle</i>
+                            <span class="feature-text">Python Interpreter</span>
+                        </li>
+                        <li class="feature-item">
+                            <i class="material-icons feature-icon">check_circle</i>
+                            <span class="feature-text">Error Tracebacks</span>
+                        </li>
+                        <li class="feature-item">
+                            <i class="material-icons feature-icon">check_circle</i>
+                            <span class="feature-text">print() statements</span>
+                        </li>
+                        <li class="feature-item">
+                            <i class="material-icons feature-icon">check_circle</i>
+                            <span class="feature-text">try-except blocks</span>
+                        </li>
+                        <li class="feature-item">
+                            <i class="material-icons feature-icon">check_circle</i>
+                            <span class="feature-text">pdb debugger</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-half info-card" style="border-left-color: var(--accent-green);">
+                    <div class="card-title">
+                        <i class="material-icons">verified</i>
+                        Importance of Debugging
+                    </div>
+                    <ul class="feature-list">
+                        <li class="feature-item">
+                            <i class="material-icons feature-icon">arrow_forward</i>
+                            <span class="feature-text">Improves program accuracy</span>
+                        </li>
+                        <li class="feature-item">
+                            <i class="material-icons feature-icon">arrow_forward</i>
+                            <span class="feature-text">Prevents unexpected crashes</span>
+                        </li>
+                        <li class="feature-item">
+                            <i class="material-icons feature-icon">arrow_forward</i>
+                            <span class="feature-text">Enhances user experience</span>
+                        </li>
+                        <li class="feature-item">
+                            <i class="material-icons feature-icon">arrow_forward</i>
+                            <span class="feature-text">Makes system reliable and maintainable</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer-deco">
+        <div style="font-family: 'Source Code Pro', monospace; font-size: 14px; color: #608b4e; opacity: 0.8;">
+            <span class="keyword">def</span> <span class="function-name">master_debugging</span>():<br>
+            &nbsp;&nbsp;errors = <span class="highlight">0</span><br>
+            &nbsp;&nbsp;reliability = <span class="highlight">100</span><br>
+            &nbsp;&nbsp;<span class="keyword">return</span> <span class="string">"Success"</span>
+        </div>
+    </footer>
+</div>
+
+</body>
+</html>

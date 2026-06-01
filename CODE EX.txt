@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Py Code Wallet | Python Code Showcase</title>
+    <style>
+        /* --- CSS Variables & Theme Configuration --- */
+        :root {
+            /* Light Theme */
+            --bg-body: #f4f6f8;
+            --bg-sidebar: #ffffff;
+            --bg-card: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --code-bg: #1e1e1e; /* Always dark for contrast in code blocks */
+            --code-text: #d4d4d4;
+            --accent-bg: #eff6ff;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --transition: all 0.3s ease;
+        }
+
+        body.dark-mode {
+            /* Dark Theme */
+            --bg-body: #0f172a;
+            --bg-sidebar: #1e293b;
+            --bg-card: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border-color: #334155;
+            --primary-color: #60a5fa;
+            --primary-hover: #93c5fd;
+            --accent-bg: #1e293b;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        }
+
+        /* --- Reset & Base Styles --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Header --- */
+        header {
+            background-color: var(--bg-sidebar);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.8rem 2rem; /* Adjusted padding */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            z-index: 10;
+            gap: 1rem; /* Gap between flex items */
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+
+        .logo span {
+            color: var(--text-primary);
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem; /* Space between toggle and python logo */
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--accent-bg);
+            border-color: var(--primary-color);
+        }
+
+        /* --- Python Logo Styling & Animation --- */
+        .python-logo {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .python-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 50%; /* Makes it circular for better rotation */
+            /* Apply the animation */
+            animation: rotatePython 8s linear infinite; 
+        }
+
+        @keyframes rotatePython {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* --- Main Layout --- */
+        .app-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden; /* Prevent body scroll, handle inside components */
+        }
+
+        /* --- Sidebar Navigation --- */
+        aside {
+            width: 300px;
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-header {
+            padding: 1.5rem;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .subject-group {
+            margin-bottom: 1rem;
+        }
+
+        .subject-title {
+            width: 100%;
+            text-align: left;
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .subject-title:hover {
+            background-color: var(--accent-bg);
+            color: var(--primary-color);
+        }
+
+        .subject-title::after {
+            content: '+';
+            font-weight: bold;
+        }
+
+        .subject-title.active::after {
+            content: '-';
+        }
+
+        .submenu {
+            list-style: none;
+            display: none; /* Hidden by default */
+            background-color: var(--accent-bg);
+            padding-bottom: 0.5rem;
+        }
+
+        .submenu.open {
+            display: block;
+        }
+
+        .submenu-item {
+            padding: 0.75rem 1.5rem 0.75rem 2.5rem;
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            border-left: 3px solid transparent;
+            transition: var(--transition);
+        }
+
+        .submenu-item:hover {
+            color: var(--primary-color);
+            background-color: rgba(59, 130, 246, 0.05);
+        }
+
+        .submenu-item.selected {
+            color: var(--primary-color);
+            border-left-color: var(--primary-color);
+            background-color: rgba(59, 130, 246, 0.1);
+            font-weight: 500;
+        }
+
+        /* --- Content Area --- */
+        main {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .placeholder-state {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .placeholder-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .program-view {
+            display: none; /* Hidden until a program is selected */
+            max-width: 900px;
+            margin: 0 auto;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .program-header {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+        }
+
+        .program-title {
+            font-size: 2rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .program-badges {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            border-left: 4px solid var(--primary-color);
+            padding-left: 0.75rem;
+        }
+
+        .features-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .feature-item {
+            background-color: var(--bg-card);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .feature-icon {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        /* --- Code Block Styling --- */
+        .code-container {
+            position: relative;
+            background-color: var(--code-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            border: 1px solid #333;
+        }
+
+        .code-header {
+            background-color: #2d2d2d;
+            padding: 0.5rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+
+        .code-lang {
+            color: #9ca3af;
+            font-size: 0.8rem;
+            font-family: monospace;
+        }
+
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        pre {
+            margin: 0;
+            padding: 1.5rem;
+            overflow-x: auto;
+        }
+
+        code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.95rem;
+            color: var(--code-text);
+        }
+
+        /* --- Simple Syntax Highlighting (No external lib) --- */
+        .token-keyword { color: #c678dd; font-weight: bold; } /* def, class, return */
+        .token-function { color: #61afef; } /* function names */
+        .token-string { color: #98c379; } /* strings */
+        .token-comment { color: #7f848e; font-style: italic; } /* comments */
+        .token-number { color: #d19a66; } /* numbers */
+        .token-operator { color: #56b6c2; } /* =, +, - */
+
+        /* --- Toast Notification --- */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+
+            aside {
+                width: 100%;
+                max-height: 40vh; /* Limit height on mobile so content is visible */
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            main {
+                padding: 1rem;
+            }
+
+            .program-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <span>Py</span>Code Wallet
+        </div>
+        
+        <div class="header-controls">
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle Dark Mode">
+                <span class="icon">◑</span> Mode
+            </button>
+            <div class="python-logo">
+                <!-- Using a reliable high-res python logo URL -->
+                <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo">
+            </div>
+        </div>
+    </header>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar">
+            <div class="nav-header">Library</div>
+            <div id="subjects-container">
+                <!-- Javascript will populate subjects here -->
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main id="main-content">
+            <!-- Initial Placeholder -->
+            <div class="placeholder-state" id="placeholder">
+                <div class="placeholder-icon">⌨️</div>
+                <h2>Welcome to Py Code Wallet</h2>
+                <p>Select a subject from the sidebar, then choose a program to view the code.</p>
+            </div>
+
+            <!-- Program Detail View (Hidden initially) -->
+            <div class="program-view" id="program-view">
+                <div class="program-header">
+                    <h1 class="program-title" id="p-title">Program Title</h1>
+                    <div class="program-badges">
+                        <span class="badge" id="p-subject">Subject</span>
+                        <span class="badge">Python 3</span>
+                    </div>
+                </div>
+
+                <section>
+                    <h3 class="section-title">Features</h3>
+                    <ul class="features-list" id="p-features">
+                        <!-- Features injected here -->
+                    </ul>
+                </section>
+
+                <section>
+                    <h3 class="section-title">Full Code</h3>
+                    <div class="code-container">
+                        <div class="code-header">
+                            <span class="code-lang">main.py</span>
+                            <button class="copy-btn" onclick="copyCode()">Copy Code</button>
+                        </div>
+                        <pre><code id="p-code">Code goes here...</code></pre>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">Code copied to clipboard!</div>
+
+    <script>
+        // --- Data Structure ---
+        const pythonData = {
+            "Data Structures": [
+                {
+                    id: "ds-linkedlist",
+                    title: "Singly Linked List",
+                    features: [
+                        "Node insertion at the beginning",
+                        "Node insertion at the end",
+                        "Display list traversal",
+                        "Delete a node by value"
+                    ],
+                    code: `class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+
+class LinkedList:
+    def __init__(self):
+        self.head = None
+
+    def insert_at_beginning(self, data):
+        new_node = Node(data)
+        new_node.next = self.head
+        self.head = new_node
+
+    def insert_at_end(self, data):
+        new_node = Node(data)
+        if not self.head:
+            self.head = new_node
+            return
+        last = self.head
+        while last.next:
+            last = last.next
+        last.next = new_node
+
+    def delete_node(self, key):
+        curr = self.head
+        if curr and curr.data == key:
+            self.head = curr.next
+            curr = None
+            return
+        prev = None
+        while curr and curr.data != key:
+            prev = curr
+            curr = curr.next
+        if curr is None:
+            return
+        prev.next = curr.next
+        curr = None
+
+    def print_list(self):
+        temp = self.head
+        while temp:
+            print(temp.data, end=" -> ")
+            temp = temp.next
+        print("None")
+
+# Usage
+llist = LinkedList()
+llist.insert_at_end(1)
+llist.insert_at_beginning(2)
+llist.insert_at_end(3)
+llist.print_list()`
+                },
+                {
+                    id: "ds-stack",
+                    title: "Stack Implementation",
+                    features: [
+                        "Push items onto stack",
+                        "Pop items from stack",
+                        "Peek at top item",
+                        "Check if empty"
+                    ],
+                    code: `class Stack:
+    def __init__(self):
+        self.items = []
+
+    def is_empty(self):
+        return len(self.items) == 0
+
+    def push(self, item):
+        self.items.append(item)
+
+    def pop(self):
+        if not self.is_empty():
+            return self.items.pop()
+        return "Stack is empty"
+
+    def peek(self):
+        if not self.is_empty():
+            return self.items[-1]
+        return "Stack is empty"
+
+    def size(self):
+        return len(self.items)
+
+# Usage
+stack = Stack()
+stack.push('A')
+stack.push('B')
+print(stack.pop())  # Output: B`
+                }
+            ],
+            "Algorithms": [
+                {
+                    id: "algo-bubblesort",
+                    title: "Bubble Sort",
+                    features: [
+                        "Sorts an array in ascending order",
+                        "Optimized with early termination flag",
+                        "Visualization of swaps (print statements)"
+                    ],
+                    code: `def bubble_sort(arr):
+    n = len(arr)
+    # Traverse through all array elements
+    for i in range(n):
+        swapped = False
+        # Last i elements are already in place
+        for j in range(0, n-i-1):
+            # Traverse the array from 0 to n-i-1
+            # Swap if the element found is greater than the next element
+            if arr[j] > arr[j+1]:
+                arr[j], arr[j+1] = arr[j+1], arr[j]
+                swapped = True
+        # If no two elements were swapped by inner loop, then break
+        if not swapped:
+            break
+    return arr
+
+# Example Usage
+sample_list = [64, 34, 25, 12, 22, 11, 90]
+sorted_list = bubble_sort(sample_list)
+print("Sorted array:", sorted_list)`
+                },
+                {
+                    id: "algo-fibonacci",
+                    title: "Fibonacci Generator",
+                    features: [
+                        "Generates sequence up to n terms",
+                        "Efficient iterative approach",
+                        "Memory efficient (O(1) space)"
+                    ],
+                    code: `def fibonacci_sequence(n):
+    sequence = []
+    a, b = 0, 1
+    if n <= 0:
+        return sequence
+    elif n == 1:
+        sequence.append(a)
+        return sequence
+    else:
+        sequence.append(a)
+        sequence.append(b)
+        for _ in range(2, n):
+            c = a + b
+            sequence.append(c)
+            a, b = b, c
+        return sequence
+
+# Example Usage
+terms = 10
+result = fibonacci_sequence(terms)
+print(f"First {terms} terms: {result}")`
+                }
+            ],
+            "File Handling": [
+                {
+                    id: "file-wordcount",
+                    title: "Word Counter",
+                    features: [
+                        "Reads a text file",
+                        "Counts total words",
+                        "Handles punctuation removal",
+                        "Error handling for missing files"
+                    ],
+                    code: `import string
+
+def count_words(filename):
+    try:
+        with open(filename, 'r', encoding='utf-8') as file:
+            text = file.read()
+            
+        # Remove punctuation
+        translator = str.maketrans('', '', string.punctuation)
+        clean_text = text.translate(translator)
+        
+        words = clean_text.split()
+        return len(words)
+        
+    except FileNotFoundError:
+        return "File not found. Please check the path."
+    except Exception as e:
+        return f"An error occurred: {e}"
+
+# Usage (ensure 'example.txt' exists or change name)
+# count = count_words("example.txt")
+# print(f"Total words: {count}")`
+                }
+            ]
+        };
+
+        // --- DOM Elements ---
+        const subjectsContainer = document.getElementById('subjects-container');
+        const placeholder = document.getElementById('placeholder');
+        const programView = document.getElementById('program-view');
+        const pTitle = document.getElementById('p-title');
+        const pSubject = document.getElementById('p-subject');
+        const pFeatures = document.getElementById('p-features');
+        const pCode = document.getElementById('p-code');
+        const themeToggle = document.getElementById('themeToggle');
+        const toast = document.getElementById('toast');
+
+        // --- Initialization ---
+        function init() {
+            renderSidebar();
+            loadTheme();
+        }
+
+        // --- Render Sidebar ---
+        function renderSidebar() {
+            subjectsContainer.innerHTML = '';
+            
+            for (const [subject, programs] of Object.entries(pythonData)) {
+                // Create Subject Group
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'subject-group';
+
+                // Create Subject Button
+                const btn = document.createElement('button');
+                btn.className = 'subject-title';
+                btn.textContent = subject;
+                btn.onclick = () => toggleSubject(btn);
+
+                // Create Submenu List
+                const ul = document.createElement('ul');
+                ul.className = 'submenu';
+                ul.id = `menu-${subject.replace(/\s+/g, '-')}`;
+
+                programs.forEach(prog => {
+                    const li = document.createElement('li');
+                    li.className = 'submenu-item';
+                    li.textContent = prog.title;
+                    li.dataset.id = prog.id;
+                    li.onclick = (e) => {
+                        e.stopPropagation(); // Prevent bubbling
+                        loadProgram(subject, prog, li);
+                    };
+                    ul.appendChild(li);
+                });
+
+                groupDiv.appendChild(btn);
+                groupDiv.appendChild(ul);
+                subjectsContainer.appendChild(groupDiv);
+            }
+        }
+
+        // --- Interaction Logic ---
+        function toggleSubject(btn) {
+            // Close other menus (accordion behavior)
+            const allMenus = document.querySelectorAll('.submenu');
+            const allTitles = document.querySelectorAll('.subject-title');
+            
+            // Find the sibling UL
+            const submenu = btn.nextElementSibling;
+
+            if (submenu.classList.contains('open')) {
+                submenu.classList.remove('open');
+                btn.classList.remove('active');
+            } else {
+                // Optional: Close others
+                allMenus.forEach(m => m.classList.remove('open'));
+                allTitles.forEach(t => t.classList.remove('active'));
+                
+                submenu.classList.add('open');
+                btn.classList.add('active');
+            }
+        }
+
+        function loadProgram(subject, programData, listElement) {
+            // Highlight active menu item
+            document.querySelectorAll('.submenu-item').forEach(el => el.classList.remove('selected'));
+            listElement.classList.add('selected');
+
+            // Switch views
+            placeholder.style.display = 'none';
+            programView.style.display = 'block';
+
+            // Populate content
+            pTitle.textContent = programData.title;
+            pSubject.textContent = subject;
+            
+            // Populate Features
+            pFeatures.innerHTML = '';
+            programData.features.forEach(feat => {
+                const li = document.createElement('li');
+                li.className = 'feature-item';
+                li.innerHTML = `<span class="feature-icon">✓</span> ${feat}`;
+                pFeatures.appendChild(li);
+            });
+
+            // Populate Code with Syntax Highlighting
+            pCode.innerHTML = highlightPython(programData.code);
+
+            // On mobile, scroll to main content
+            if (window.innerWidth <= 768) {
+                document.getElementById('main-content').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- Simple Python Syntax Highlighter (Regex) ---
+        function highlightPython(code) {
+            // Escape HTML entities first to prevent injection/rendering issues
+            let safeCode = code.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+            // Order matters for regex to avoid conflicts
+            
+            // Comments
+            safeCode = safeCode.replace(/(#.*)/g, '<span class="token-comment">$1</span>');
+            
+            // Strings (single or double quotes)
+            safeCode = safeCode.replace(/(["'])(?:(?=(\\?))\2.)*?\1/g, '<span class="token-string">$&</span>');
+            
+            // Keywords
+            const keywords = /\b(def|class|return|if|elif|else|for|while|in|try|except|import|from|as|pass|break|continue|print|True|False|None)\b/g;
+            safeCode = safeCode.replace(keywords, '<span class="token-keyword">$1</span>');
+            
+            // Function Calls (name followed by parentheses) - simple heuristic
+            safeCode = safeCode.replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)(?=\()/g, '<span class="token-function">$1</span>');
+
+            // Numbers
+            safeCode = safeCode.replace(/\b(\d+)\b/g, '<span class="token-number">$1</span>');
+
+            return safeCode;
+        }
+
+        // --- Utility: Copy Code ---
+        function copyCode() {
+            // Get raw text (strip HTML tags)
+            const rawCode = pCode.innerText;
+            
+            navigator.clipboard.writeText(rawCode).then(() => {
+                showToast();
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+        }
+
+        function showToast() {
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // --- Theme Logic ---
+        function loadTheme() {
+            const isDark = localStorage.getItem('theme') === 'dark';
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+            }
+        }
+
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+
+        // Start
+        init();
+
+    </script>
+</body>
+</html>

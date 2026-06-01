@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Manual Testing: From Theory to Practice</title>
+    <style>
+        :root {
+            /* Light Theme (Default) */
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #64748b;
+            --accent: #0ea5e9;
+            --bg-light: #f8fafc;
+            --bg-white: #ffffff;
+            --text-dark: #0f172a;
+            --text-gray: #475569;
+            --success: #10b981;
+            --danger: #ef4444;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --header-bg: #ffffff;
+            --table-hover: #e2e8f0;
+            --table-even: #f1f5f9;
+            --uat-bg: #fffbeb;
+            --uat-border: #fcd34d;
+            --uat-text: #475569;
+        }
+
+        /* Dark Theme (Dark Blue Palette) */
+        [data-theme="dark"] {
+            --primary: #60a5fa; /* Lighter blue for dark mode readability */
+            --primary-dark: #3b82f6;
+            --secondary: #94a3b8;
+            --accent: #38bdf8;
+            --bg-light: #0f172a; /* Deep Midnight Blue */
+            --bg-white: #1e293b; /* Slate Blue for Cards */
+            --text-dark: #f1f5f9; /* Off-white text */
+            --text-gray: #cbd5e1; /* Light gray text */
+            --success: #34d399;
+            --danger: #f87171;
+            --border: #334155;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+            --header-bg: #0f172a;
+            --table-hover: #334155;
+            --table-even: #1e293b;
+            --uat-bg: #451a03; /* Darker amber/brown for UAT box */
+            --uat-border: #78350f;
+            --uat-text: #fcd34d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--bg-light);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Navigation */
+        header {
+            background-color: var(--header-bg);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-gray);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-dark);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--border);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary-dark), var(--accent));
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto 2rem auto;
+            color: white; /* Force white in hero */
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: white;
+            color: var(--primary-dark);
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Main Content */
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        section {
+            background: var(--bg-white);
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        h2 {
+            color: var(--text-dark);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            color: var(--primary-dark);
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem 0;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-gray);
+        }
+
+        ul {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+            color: var(--text-gray);
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+            margin-bottom: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-dark);
+        }
+
+        th {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: var(--table-even);
+        }
+
+        tr:hover {
+            background-color: var(--table-hover);
+        }
+
+        /* Status Badges */
+        .status-pass {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            border: 1px solid #059669;
+        }
+
+        .status-fail {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            border: 1px solid #dc2626;
+        }
+
+        /* Interactive Assignment Section */
+        .assignment-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media(min-width: 900px) {
+            .assignment-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .form-group input, 
+        .form-group textarea, 
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: inherit;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .generated-report {
+            background-color: var(--bg-white);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            border-radius: 8px;
+            display: none; /* Hidden by default */
+        }
+
+        .generated-report.visible {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .report-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 1rem;
+        }
+
+        .report-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .report-section h4 {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .action-buttons {
+            margin-top: 1rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* UAT Box */
+        .uat-box {
+            background-color: var(--uat-bg);
+            border: 1px solid var(--uat-border);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+        
+        .uat-box ol {
+            color: var(--uat-text);
+        }
+
+        .questionnaire-item {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--text-dark);
+            color: var(--text-gray);
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+            border-top: 1px solid var(--border);
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none; /* Simple hiding for mobile for this showcase */
+            }
+            h1 { font-size: 2rem; }
+            section { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <header>
+        <nav>
+            <a href="#" class="logo">QA Academy</a>
+            <ul class="nav-links">
+                <li><a href="#why-testing">Why Test?</a></li>
+                <li><a href="#test-plan-docs">Test Plans & Cases</a></li>
+                <li><a href="#library-example">Library Example</a></li>
+                <li><a href="#student-assignment">Student Assignment</a></li>
+                <!-- Theme Toggle -->
+                <li>
+                    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+                        🌙
+                    </button>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero -->
+    <div class="hero">
+        <h1>Master Manual Testing</h1>
+        <p>Learn the fundamentals of Software Quality Assurance (SQA), understand test plans, analyze test cases, and master the art of documentation.</p>
+        <a href="#why-testing" class="btn">Start Learning</a>
+    </div>
+
+    <main>
+        <!-- Section 1: Why Testing? -->
+        <section id="why-testing">
+            <h2>1. Why Do We Test?</h2>
+            <p>Software testing is not just about finding bugs; it's about ensuring reliability, user satisfaction, and business continuity. Here are the core reasons:</p>
+            <ul>
+                <li><strong>To identify defects:</strong> Catching errors early reduces the cost of fixing them significantly.</li>
+                <li><strong>To ensure quality:</strong> Verifies that the software meets the specified requirements and standards.</li>
+                <li><strong>To provide security:</strong> Helps in identifying vulnerabilities and security risks.</li>
+                <li><strong>To improve user experience:</strong> Ensures the application is intuitive and performs well under load.</li>
+            </ul>
+        </section>
+
+        <!-- Section 2: Test Plan & Test Cases (Shop Example) -->
+        <section id="test-plan-docs">
+            <h2>2. Test Documents: Items Shop Software</h2>
+            <p>Below is a comprehensive example of a Test Document for an Items Shop software. This illustrates the flow from the Test Plan to User Acceptance Testing (UAT).</p>
+
+            <h3>2.1 Test Plan</h3>
+            <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border: 1px solid var(--border);">
+                <p><strong>Objective:</strong> To ensure the items shop software meets specified requirements and functions correctly.</p>
+                <p><strong>Testing Approach:</strong> Manual testing of key functionalities including user authentication, items browsing, purchase process, and data management.</p>
+                <p><strong>Testing Tools:</strong> No specific testing tools required. Manual testing will be performed.</p>
+            </div>
+
+            <h3>2.2 Test Cases</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Test Case ID</th>
+                            <th>Description</th>
+                            <th>Steps</th>
+                            <th>Expected Result</th>
+                            <th>Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>TC-01</td>
+                            <td>User Authentication</td>
+                            <td>1. Open software.<br>2. Enter valid user/pass.<br>3. Verify login.</td>
+                            <td>User logged in successfully.</td>
+                            <td><span class="status-pass">PASSED</span></td>
+                        </tr>
+                        <tr>
+                            <td>TC-02</td>
+                            <td>Browse Items</td>
+                            <td>1. Login.<br>2. Navigate to 'Browse Items'.<br>3. Select category.</td>
+                            <td>Items under category displayed.</td>
+                            <td><span class="status-pass">PASSED</span></td>
+                        </tr>
+                        <tr>
+                            <td>TC-03</td>
+                            <td>Purchase Item</td>
+                            <td>1. Search & select item.<br>2. Proceed to checkout.<br>3. Complete transaction.</td>
+                            <td>Item purchased & reflected in account.</td>
+                            <td><span class="status-pass">PASSED</span></td>
+                        </tr>
+                        <tr>
+                            <td>TC-04</td>
+                            <td>Data Management</td>
+                            <td>1. Add new item.<br>2. Edit existing.<br>3. Delete item.</td>
+                            <td>Changes reflected without errors.</td>
+                            <td><span class="status-pass">PASSED</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>2.3 User Acceptance Testing (UAT) Plan</h3>
+            <div class="uat-box">
+                <p><strong>Objective:</strong> To verify if the shop software meets user requirements and is ready for deployment.</p>
+                <ol style="margin-left: 1.5rem;">
+                    <li><strong>Invite Users:</strong> Invite stakeholders to participate.</li>
+                    <li><strong>Provide Instructions:</strong> Explain purpose and tasks.</li>
+                    <li><strong>Perform Tasks:</strong> Ask users to perform various actions.</li>
+                    <li><strong>Gather Feedback:</strong> Collect UX and functionality feedback.</li>
+                    <li><strong>Analyze Feedback:</strong> Evaluate for improvements.</li>
+                </ol>
+            </div>
+
+            <h3>2.4 Sample UAT Questionnaire</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="60%">Question</th>
+                            <th>Feedback Options</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>On a scale of 1 to 5, how intuitive was the software to navigate and use?</td>
+                            <td>[1] Not Intuitive ... [5] Extremely Intuitive</td>
+                        </tr>
+                        <tr>
+                            <td>Did you encounter any difficulties during the purchase process?</td>
+                            <td>Yes / No (Describe)</td>
+                        </tr>
+                        <tr>
+                            <td>What features did you find most useful?</td>
+                            <td>[Open Response]</td>
+                        </tr>
+                        <tr>
+                            <td>Overall, how satisfied are you with the book shop software?</td>
+                            <td>Very Dissatisfied ... Very Satisfied</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section 3: Library Management System Example -->
+        <section id="library-example">
+            <h2>3. Library Management System (LMS) Test Suite</h2>
+            <p>A detailed breakdown of testing various modules in a Library Management System. This covers Login, Book Entry, User Accounts, Issue/Return, and Billing.</p>
+
+            <h3>3.1 Login Form Testing</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>SL No</th>
+                            <th>Test Case</th>
+                            <th>Expected Result</th>
+                            <th>Test Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Enter valid name and password & click login</td>
+                            <td>Software should display main window</td>
+                            <td><span class="status-pass">Successful</span></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Enter invalid credentials</td>
+                            <td>Software should not display main window</td>
+                            <td><span class="status-pass">Successful</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>3.2 Book Entry Form Testing</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>SL No</th>
+                            <th>Test Case</th>
+                            <th>Expected Result</th>
+                            <th>Test Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Click ADD button</td>
+                            <td>Validate data types. If valid, add record to DB.</td>
+                            <td><span class="status-pass">Successful</span></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Click DELETE Button</td>
+                            <td>Deletes details of book by Accession no.</td>
+                            <td><span class="status-pass">Successful</span></td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Click UPDATE Button</td>
+                            <td>Modified records updated in database.</td>
+                            <td><span class="status-pass">Successful</span></td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Click SEARCH Button</td>
+                            <td>Display details for Accession no. or error msg.</td>
+                            <td><span class="status-pass">Successful</span></td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Click CLEAR Button</td>
+                            <td>Clears all fields.</td>
+                            <td><span class="status-pass">Successful</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>3.3 User Account Form Testing</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>SL No</th>
+                            <th>Test Case</th>
+                            <th>Expected Result</th>
+                            <th>Test Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Click ADD button</td>
+                            <td>Validate data (text/number). Add to DB if valid.</td>
+                            <td><span class="status-pass">Successful</span></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Click DELETE Button</td>
+                            <td>Deletes details of student by Register no.</td>
+                            <td><span class="status-pass">Successful</span></td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Click SEARCH Button</td>
+                            <td>Display details for Register no. or error msg.</td>
+                            <td><span class="status-pass">Successful</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>3.4 Book Issue & Return Forms</h3>
+            <p><strong>Issue Form Check:</strong> Verify that if a book is already issued, the system alerts the user before adding a new issue record.</p>
+            <p><strong>Return Form Check:</strong> Verify that returned books update the inventory and remove the entry from the active issues list.</p>
+
+            <h3>3.5 Billing & Discount Calculation Logic</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Test Case ID</th>
+                            <th>Test Case</th>
+                            <th>Expected Result</th>
+                            <th>Test Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>TC-1</td>
+                            <td>Subtotal calculation</td>
+                            <td>Valid Order: Correct subtotal. Invalid: Error message.</td>
+                            <td><span class="status-pass">Successful</span></td>
+                        </tr>
+                        <tr>
+                            <td>TC-2</td>
+                            <td>Discount below threshold</td>
+                            <td>Subtotal = 2500LKR: No discount applied.</td>
+                            <td><span class="status-pass">Successful</span></td>
+                        </tr>
+                        <tr>
+                            <td>TC-3</td>
+                            <td>Discount above threshold</td>
+                            <td>Subtotal >= 3000LKR: 10% discount applied.</td>
+                            <td><span class="status-pass">Successful</span></td>
+                        </tr>
+                        <tr>
+                            <td>TC-4</td>
+                            <td>Final Total calculation</td>
+                            <td>Subtotal – discount = correct payable amount.</td>
+                            <td><span class="status-pass">Successful</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section 4: Student Assignment Tool -->
+        <section id="student-assignment">
+            <h2>4. Student Assignment: Documentation Generator</h2>
+            <p>Based on your learning, answer the following scenario. Fill in the fields below to generate a professional Test Documentation Report.</p>
+            <div class="assignment-container">
+                
+                <!-- Input Form -->
+                <div class="input-side">
+                    <h3>Project Details</h3>
+                    <div class="form-group">
+                        <label>System Name / Purpose</label>
+                        <input type="text" id="sysName" placeholder="e.g., Library Management System">
+                    </div>
+                    <div class="form-group">
+                        <label>Key Features & Functions</label>
+                        <textarea id="sysFeatures" placeholder="List the main features..."></textarea>
+                    </div>
+
+                    <h3>Test Plan</h3>
+                    <div class="form-group">
+                        <label>Input Data</label>
+                        <input type="text" id="testInput" placeholder="e.g., User ID 'admin', Book ID '101'">
+                    </div>
+                    <div class="form-group">
+                        <label>Expected Output</label>
+                        <input type="text" id="testExpected" placeholder="e.g., Login Successful, Book details shown">
+                    </div>
+                    <div class="form-group">
+                        <label>Actual Output</label>
+                        <input type="text" id="testActual" placeholder="e.g., Login failed, Book details not shown">
+                    </div>
+
+                    <h3>Error Logging & Debugging</h3>
+                    <div class="form-group">
+                        <label>Errors Encountered</label>
+                        <textarea id="errors" placeholder="Describe the bugs found..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Resolution & Debugging Techniques</label>
+                        <textarea id="resolution" placeholder="How did you fix it? (e.g., checked logs, corrected variable types)"></textarea>
+                    </div>
+
+                    <h3>Reflection</h3>
+                    <div class="form-group">
+                        <label>Limitations & Development Reflection</label>
+                        <textarea id="reflection" placeholder="What were the limits? What did you learn?"></textarea>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn-primary" onclick="generateReport()">Generate Report</button>
+                    </div>
+                </div>
+
+                <!-- Output Preview -->
+                <div class="output-side">
+                    <div id="reportPreview" class="generated-report">
+                        <div class="report-header">
+                            <h2>Test Documentation Report</h2>
+                            <p>System: <span id="outName"></span></p>
+                            <p>Date: <span id="outDate"></span></p>
+                        </div>
+
+                        <div class="report-section">
+                            <h4>1. Purpose & Features</h4>
+                            <p><strong>Purpose:</strong> <span id="outPurpose"></span></p>
+                            <p><strong>Features:</strong></p>
+                            <p id="outFeatures"></p>
+                        </div>
+
+                        <div class="report-section">
+                            <h4>2. Test Plan & Results</h4>
+                            <table style="width:100%; border: 1px solid var(--border); font-size: 0.9rem;">
+                                <tr style="background: var(--bg-light);">
+                                    <th style="border:1px solid var(--border);">Input Data</th>
+                                    <th style="border:1px solid var(--border);">Expected Output</th>
+                                    <th style="border:1px solid var(--border);">Actual Output</th>
+                                </tr>
+                                <tr>
+                                    <td style="border:1px solid var(--border);" id="outInput"></td>
+                                    <td style="border:1px solid var(--border);" id="outExpected"></td>
+                                    <td style="border:1px solid var(--border);" id="outActual"></td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="report-section">
+                            <h4>3. Error Report & Resolution</h4>
+                            <p><strong>Errors Encountered:</strong> <span id="outErrors"></span></p>
+                            <p><strong>Resolution Techniques:</strong> <span id="outResolution"></span></p>
+                        </div>
+
+                        <div class="report-section">
+                            <h4>4. Conclusion & Reflection</h4>
+                            <p><strong>Limitations:</strong> N/A (User to specify if needed)</p>
+                            <p><strong>Reflection:</strong> <span id="outReflection"></span></p>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <button class="btn-secondary" onclick="window.print()">Print / Save PDF</button>
+                        </div>
+                    </div>
+                    <!-- Placeholder when no report is generated -->
+                    <div id="reportPlaceholder" style="text-align: center; color: var(--secondary); padding: 2rem; border: 2px dashed var(--border); border-radius: 8px;">
+                        <p>Fill out the form on the left and click "Generate Report" to see your documentation here.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 QA Academy. Educational Resource for Manual Testing.</p>
+    </footer>
+
+    <script>
+        // --- Theme Toggle Logic ---
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const htmlElement = document.documentElement;
+        
+        // Check local storage for saved theme
+        const savedTheme = localStorage.getItem('theme');
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        // Set initial theme
+        if (savedTheme) {
+            htmlElement.setAttribute('data-theme', savedTheme);
+            updateButtonIcon(savedTheme);
+        } else if (systemPrefersDark) {
+            htmlElement.setAttribute('data-theme', 'dark');
+            updateButtonIcon('dark');
+        } else {
+            htmlElement.setAttribute('data-theme', 'light');
+            updateButtonIcon('light');
+        }
+
+        // Handle click event
+        themeToggleBtn.addEventListener('click', () => {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            htmlElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateButtonIcon(newTheme);
+        });
+
+        function updateButtonIcon(theme) {
+            if (theme === 'dark') {
+                themeToggleBtn.textContent = '☀️'; // Sun icon to switch back to light
+            } else {
+                themeToggleBtn.textContent = '🌙'; // Moon icon to switch to dark
+            }
+        }
+
+        // --- Original Report Generation Logic ---
+        function generateReport() {
+            // Get values
+            const sysName = document.getElementById('sysName').value || "Not Provided";
+            const sysFeatures = document.getElementById('sysFeatures').value || "Not Provided";
+            const testInput = document.getElementById('testInput').value || "Not Provided";
+            const testExpected = document.getElementById('testExpected').value || "Not Provided";
+            const testActual = document.getElementById('testActual').value || "Not Provided";
+            const errors = document.getElementById('errors').value || "No errors encountered.";
+            const resolution = document.getElementById('resolution').value || "No resolution needed.";
+            const reflection = document.getElementById('reflection').value || "Not Provided";
+
+            // Set values in preview
+            document.getElementById('outName').textContent = sysName;
+            document.getElementById('outDate').textContent = new Date().toLocaleDateString();
+            document.getElementById('outPurpose').textContent = "To ensure the " + sysName + " meets specified requirements and functions correctly.";
+            document.getElementById('outFeatures').textContent = sysFeatures;
+            
+            document.getElementById('outInput').textContent = testInput;
+            document.getElementById('outExpected').textContent = testExpected;
+            document.getElementById('outActual').textContent = testActual;
+            
+            document.getElementById('outErrors').textContent = errors;
+            document.getElementById('outResolution').textContent = resolution;
+            document.getElementById('outReflection').textContent = reflection;
+
+            // Toggle visibility
+            document.getElementById('reportPlaceholder').style.display = 'none';
+            document.getElementById('reportPreview').classList.add('visible');
+            
+            // Scroll to report on mobile
+            document.getElementById('reportPreview').scrollIntoView({behavior: "smooth"});
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Project Scenarios & Requirements</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .main-container {
+            width: 100%;
+            max-width: 1400px; /* Wider than slide to fit 3 columns comfortably */
+            position: relative;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .main-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ad01850ed30c.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .page-header {
+            padding: 40px 50px 20px;
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .title {
+            font-size: 42px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #ffffff, #b0b0b0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+
+        /* Project Section Layout */
+        .project-section {
+            position: relative;
+            z-index: 5;
+            padding: 40px 50px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .project-title {
+            font-size: 28px;
+            margin-bottom: 25px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .project-grid {
+            display: grid;
+            grid-template-columns: 35% 32.5% 32.5%; /* Scenario gets slightly more space */
+            gap: 20px;
+        }
+
+        .card {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            background-color: rgba(50, 55, 65, 0.9);
+        }
+
+        /* Project 1 Colors */
+        .p1-theme .project-title { color: #FFD740; border-left: 5px solid #FFD740; padding-left: 15px; }
+        .p1-theme .card-icon { color: #FFD740; }
+        .p1-theme .scenario-card { border-top: 4px solid #FFD740; }
+        .p1-theme .func-card { border-top: 4px solid #FFB74D; }
+        .p1-theme .nonfunc-card { border-top: 4px solid #FF9800; }
+
+        /* Project 2 Colors */
+        .p2-theme .project-title { color: #69F0AE; border-left: 5px solid #69F0AE; padding-left: 15px; }
+        .p2-theme .card-icon { color: #69F0AE; }
+        .p2-theme .scenario-card { border-top: 4px solid #69F0AE; }
+        .p2-theme .func-card { border-top: 4px solid #00E676; }
+        .p2-theme .nonfunc-card { border-top: 4px solid #00C853; }
+
+        /* Project 3 Colors */
+        .p3-theme .project-title { color: #40C4FF; border-left: 5px solid #40C4FF; padding-left: 15px; }
+        .p3-theme .card-icon { color: #40C4FF; }
+        .p3-theme .scenario-card { border-top: 4px solid #40C4FF; }
+        .p3-theme .func-card { border-top: 4px solid #18FFFF; }
+        .p3-theme .nonfunc-card { border-top: 4px solid #00B0FF; }
+
+        /* Project 4 Colors */
+        .p4-theme .project-title { color: #F48FB1; border-left: 5px solid #F48FB1; padding-left: 15px; }
+        .p4-theme .card-icon { color: #F48FB1; }
+        .p4-theme .scenario-card { border-top: 4px solid #F48FB1; }
+        .p4-theme .func-card { border-top: 4px solid #EC407A; }
+        .p4-theme .nonfunc-card { border-top: 4px solid #D81B60; }
+
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .card-title-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: #d4d4d4;
+        }
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex-grow: 1;
+            overflow-y: auto;
+            max-height: 500px; /* Scrollable content */
+            padding-right: 5px;
+        }
+        
+        /* Scrollbar styling */
+        .card-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .card-content::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+        }
+
+        .scenario-text {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #e0e0e0;
+            text-align: justify;
+        }
+
+        .req-section-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .req-list {
+            list-style: none;
+            padding-left: 5px;
+        }
+        .req-list li {
+            position: relative;
+            padding-left: 18px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            line-height: 1.4;
+            color: #cccccc;
+        }
+        .req-list li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: inherit;
+            font-weight: bold;
+            font-size: 1.2em;
+            line-height: 1;
+            top: 2px;
+        }
+        
+        .python-logo {
+            position: absolute;
+            top: 40px;
+            right: 50px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 10s linear infinite;
+            z-index: 20;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .code-decoration {
+            background-color: #121212;
+            width: 100%;
+            padding: 40px 50px;
+            border-top: 1px solid #333;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 13px;
+            color: #608b4e;
+            opacity: 0.7;
+        }
+        .code-line {
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        
+        <div class="python-logo">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/1024px-Python-logo-notext.svg.png" alt="Python Logo" style="width: 100%; height: 100%;">
+        </div>
+
+        <div class="page-header">
+            <div class="title">Python Project Scenarios & Requirements</div>
+        </div>
+
+        <!-- ================= PROJECT 1: MR. KIM'S STORE ================= -->
+        <div class="project-section p1-theme">
+            <div class="project-title">
+                <i class="material-icons card-icon">store</i> Project 1: KCSMS (Store Management)
+            </div>
+            <div class="project-grid">
+                <!-- Scenario -->
+                <div class="card scenario-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">article</i>
+                        <div class="card-title-text">Scenario</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="scenario-text">
+                            <strong>Mr. Kim’s Convenience Store</strong> relies on manual records, leading to incorrect billing, lost records, and poor stock tracking. Items are sold without recording, prices miscalculated, and identifying stock shortages is difficult.
+                            <br><br>
+                            <strong>Goal:</strong> Design a menu-driven Python application (<strong>KCSMS</strong>) to manage inventory, track categories, calculate bills, monitor stock, generate reports, and handle errors to improve operations.
+                        </div>
+                    </div>
+                </div>
+                <!-- Functional -->
+                <div class="card func-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">list_alt</i>
+                        <div class="card-title-text">Functional Requirements</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="req-section-title">Item Display & Inventory</div>
+                        <ul class="req-list">
+                            <li>Show Item ID, Name, Category, Price, Qty, Stock Status (Available/Low/Out).</li>
+                            <li>Manage: Add new items, Update qty/price, Remove items, Mark Out of Stock.</li>
+                        </ul>
+                        <div class="req-section-title">Search & Sort</div>
+                        <ul class="req-list">
+                            <li>Search by ID or Name.</li>
+                            <li>Sort by Price (High-Low), Qty (Low-High), Category.</li>
+                        </ul>
+                        <div class="req-section-title">Billing</div>
+                        <ul class="req-list">
+                            <li>Total = Price × Qty.</li>
+                            <li>5% discount if Total > set amount.</li>
+                            <li>Show breakdown, discount, final amount.</li>
+                            <li>Warning if Qty < 10; Block selling Out of Stock items.</li>
+                        </ul>
+                        <div class="req-section-title">Reports & Exit</div>
+                        <ul class="req-list">
+                            <li>Identify items needing restock/frequently sold.</li>
+                            <li>Generate summary report (txt): Total sales, revenue, items sold, inventory.</li>
+                            <li>Safe exit (Save records).</li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Non-Functional -->
+                <div class="card nonfunc-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">architecture</i>
+                        <div class="card-title-text">Non-Functional Reqs</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="req-section-title">User Interface</div>
+                        <ul class="req-list">
+                            <li>Menu-driven, easy to use.</li>
+                            <li>Clear output with minimal complexity.</li>
+                        </ul>
+                        <div class="req-section-title">Modular Design</div>
+                        <ul class="req-list">
+                            <li>Separate functions for: Display, Add/Update/Delete, Billing, Stock Monitor, Reports, Search/Sort, Validation.</li>
+                        </ul>
+                        <div class="req-section-title">Coding Standards</div>
+                        <ul class="req-list">
+                            <li>Follow <strong>PEP8</strong>.</li>
+                            <li>Meaningful names, indentation, comments, docstrings.</li>
+                        </ul>
+                        <div class="req-section-title">Input Validation</div>
+                        <ul class="req-list">
+                            <li>Reject invalid IDs, negative prices/quantities.</li>
+                            <li>Validate categories; prevent crashes.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PROJECT 2: GREEN LANTERN RECYCLERS ================= -->
+        <div class="project-section p2-theme">
+            <div class="project-title">
+                <i class="material-icons card-icon">recycling</i> Project 2: AEWMS (E-Waste Management)
+            </div>
+            <div class="project-grid">
+                <!-- Scenario -->
+                <div class="card scenario-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">article</i>
+                        <div class="card-title-text">Scenario</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="scenario-text">
+                            <strong>Green Lantern Corps Recyclers</strong> currently use manual registers for e-waste. This leads to incorrect weight calculations, loss of records, and difficulty tracking hazardous items. Storage overflow and reporting delays are common issues.
+                            <br><br>
+                            <strong>Goal:</strong> Implement an <strong>Automated E-Waste Management System (AEWMS)</strong> to record collections, track categories/weights, calculate fees, monitor storage capacity, and generate environmental impact reports.
+                        </div>
+                    </div>
+                </div>
+                <!-- Functional -->
+                <div class="card func-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">list_alt</i>
+                        <div class="card-title-text">Functional Requirements</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="req-section-title">E-Waste Display & Mgmt</div>
+                        <ul class="req-list">
+                            <li>Show: ID, Device Name, Category (Recyclable/Hazardous/Non), Weight, Fee/kg, Storage Status.</li>
+                            <li>Mgmt: Add entries, Update weight, Remove processed items, Mark Recycled/Disposed.</li>
+                        </ul>
+                        <div class="req-section-title">Search & Sort</div>
+                        <ul class="req-list">
+                            <li>Search by ID or Device Name.</li>
+                            <li>Sort by Weight (High-Low) or Category.</li>
+                        </ul>
+                        <div class="req-section-title">Billing & Storage</div>
+                        <ul class="req-list">
+                            <li>Fee = Weight × Fee/kg. 5% disc if Weight > 50kg.</li>
+                            <li>Storage Cap: Track limit (e.g., 1000kg).</li>
+                            <li>Warning > 80% capacity; Block adding if full.</li>
+                        </ul>
+                        <div class="req-section-title">Alerts & Reports</div>
+                        <ul class="req-list">
+                            <li>Alert: Hazardous items stored > 30 days; High accumulation categories.</li>
+                            <li>Report: Total weight (daily/monthly), Total fees, Items processed.</li>
+                            <li>Safe exit (Save records).</li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Non-Functional -->
+                <div class="card nonfunc-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">architecture</i>
+                        <div class="card-title-text">Non-Functional Reqs</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="req-section-title">User Interface</div>
+                        <ul class="req-list">
+                            <li>Menu-driven, easy for non-technical staff.</li>
+                        </ul>
+                        <div class="req-section-title">Modular Design</div>
+                        <ul class="req-list">
+                            <li>Functions for: Display, Add/Update/Delete, Calc Fee, Check Capacity, Report Gen, Searching.</li>
+                        </ul>
+                        <div class="req-section-title">Input Validation</div>
+                        <ul class="req-list">
+                            <li>Prevent invalid IDs; Reject negative weights.</li>
+                            <li>Validate category selection; Handle input errors gracefully.</li>
+                        </ul>
+                        <div class="req-section-title">Coding Standards</div>
+                        <ul class="req-list">
+                            <li>Follow <strong>PEP8</strong>.</li>
+                            <li>Meaningful names, indentation, comments, docstrings.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PROJECT 3: HEISEN SUPERMARKET ================= -->
+        <div class="project-section p3-theme">
+            <div class="project-title">
+                <i class="material-icons card-icon">warehouse</i> Project 3: HWMS (Warehouse Management)
+            </div>
+            <div class="project-grid">
+                <!-- Scenario -->
+                <div class="card scenario-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">article</i>
+                        <div class="card-title-text">Scenario</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="scenario-text">
+                            <strong>Heisen Supermarket</strong> operates a large warehouse using manual registers. This leads to stock miscalculations, misplaced items, and delays in identifying low-stock products.
+                            <br><br>
+                            <strong>Goal:</strong> Develop a Python-based <strong>Supermarket Warehouse Management System</strong> to automate inventory tracking, improve stock management efficiency, and handle dispatch logistics.
+                        </div>
+                    </div>
+                </div>
+                <!-- Functional -->
+                <div class="card func-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">list_alt</i>
+                        <div class="card-title-text">Functional Requirements</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="req-section-title">Inventory & Stock</div>
+                        <ul class="req-list">
+                            <li>Display: Product ID, Name, Category, Quantity, Price.</li>
+                            <li>Stock Mgmt: Add new products, Update quantities, Remove depleted items.</li>
+                        </ul>
+                        <div class="req-section-title">Search & Sort</div>
+                        <ul class="req-list">
+                            <li>Search by Name or ID.</li>
+                            <li>Sort Alphabetically or by Quantity.</li>
+                        </ul>
+                        <div class="req-section-title">Billing & Alerts</div>
+                        <ul class="req-list">
+                            <li>Billing Dispatch: Cost = Quantity × Unit Price.</li>
+                            <li>5% discount if dispatch total > <strong>LKR 10,000</strong>.</li>
+                            <li>Low Stock Alert: Display items with Quantity < 10.</li>
+                        </ul>
+                        <div class="req-section-title">Reports & Exit</div>
+                        <ul class="req-list">
+                            <li>Summary: Current stock levels, Total inventory value, Number of products.</li>
+                            <li>Safe exit option.</li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Non-Functional -->
+                <div class="card nonfunc-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">architecture</i>
+                        <div class="card-title-text">Non-Functional Reqs</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="req-section-title">System Design</div>
+                        <ul class="req-list">
+                            <li>User-friendly, menu-driven, modular.</li>
+                            <li>Functions for: Display, Search, Update, Billing, Reporting.</li>
+                        </ul>
+                        <div class="req-section-title">Validation & Standards</div>
+                        <ul class="req-list">
+                            <li>Input validation and error handling required.</li>
+                            <li>Follow <strong>PEP8</strong> standards.</li>
+                            <li>Meaningful variable names, comments, docstrings.</li>
+                        </ul>
+                        <div class="req-section-title">Maintainability</div>
+                        <ul class="req-list">
+                            <li>Promote modularity and reusability of code.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PROJECT 4: CENTRAL PERK CAFE ================= -->
+        <div class="project-section p4-theme">
+            <div class="project-title">
+                <i class="material-icons card-icon">local_cafe</i> Project 4: SCMS (Cafe Management)
+            </div>
+            <div class="project-grid">
+                <!-- Scenario -->
+                <div class="card scenario-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">article</i>
+                        <div class="card-title-text">Scenario</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="scenario-text">
+                            <strong>Central Perk</strong> is a small but popular local café known for quick service and freshly brewed beverages. Staff use paper-based order slips, causing miscalculations and delays. During peak hours, handling orders manually is a struggle.
+                            <br><br>
+                            <strong>Goal:</strong> Implement a simple Python-based <strong>Smart Cafe Management System</strong> to automate basic daily operations.
+                        </div>
+                    </div>
+                </div>
+                <!-- Functional -->
+                <div class="card func-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">list_alt</i>
+                        <div class="card-title-text">Functional Requirements</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="req-section-title">Menu & Order</div>
+                        <ul class="req-list">
+                            <li>Display menu items (dict/list) with prices.</li>
+                            <li>Select multiple items & enter quantities.</li>
+                            <li>Validate menu selections & numerical quantities.</li>
+                        </ul>
+                        <div class="req-section-title">Billing & Search</div>
+                        <ul class="req-list">
+                            <li>Calc subtotal, discount, final amount.</li>
+                            <li>10% discount for orders > <strong>LKR 2000</strong>.</li>
+                            <li>Search item by name; Sort by price/alphabetical.</li>
+                        </ul>
+                        <div class="req-section-title">Receipt & Exit</div>
+                        <ul class="req-list">
+                            <li>Display item-wise breakdown, totals, discount.</li>
+                            <li>Safe exit option after completing order.</li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Non-Functional -->
+                <div class="card nonfunc-card">
+                    <div class="card-header">
+                        <i class="material-icons card-icon">architecture</i>
+                        <div class="card-title-text">Non-Functional Reqs</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="req-section-title">Design & Modularity</div>
+                        <ul class="req-list">
+                            <li>User friendly, modular design.</li>
+                            <li>Separate functions for: Menu display, Ordering, Billing, Discount calc, Searching, Sorting.</li>
+                        </ul>
+                        <div class="req-section-title">Validation & Standards</div>
+                        <ul class="req-list">
+                            <li>Use input validation and error handling.</li>
+                            <li>Follow <strong>PEP8</strong> coding standards for readability.</li>
+                            <li>Include appropriate comments and docstrings.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+	<div class="python-logo">
+            <img src="https://sfile.chatglm.cn/images-ppt/e615f397f8d8.png" alt="Python Logo" style="width: 100%; height: 100%;">
+        </div>
+
+        <div class="code-decoration">
+            <div class="code-line"><span class="keyword">def</span> <span class="function">main</span>():</div>
+            <div class="code-line">    <span class="keyword">print</span>(<span class="string">"Select Project to Launch:"</span>)</div>
+            <div class="code-line">    <span class="keyword">print</span>(<span class="string">"1. KCSMS (Store)"</span>)</div>
+            <div class="code-line">    <span class="keyword">print</span>(<span class="string">"2. AEWMS (E-Waste)"</span>)</div>
+            <div class="code-line">    <span class="keyword">print</span>(<span class="string">"3. HWMS (Warehouse)"</span>)</div>
+            <div class="code-line">    <span class="keyword">print</span>(<span class="string">"4. SCMS (Cafe)"</span>)</div>
+            <div class="code-line">    <span class="function">run_system</span>(<span class="function">input</span>())</div>
+        </div>
+        
+    </div>
+</body>
+</html>

@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment Brief: Kim's Convenience Store Management System</title>
+    <style>
+        /* --- CSS Variables & Reset --- */
+        :root {
+            /* Light Mode Palette */
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #64748b;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #475569;
+            --accent-red: #ef4444;
+            --accent-green: #10b981;
+            --accent-yellow: #f59e0b;
+            --border: #e2e8f0;
+            --container-width: 1100px;
+            --radius: 8px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            
+            /* Specific Component Colors (Light) */
+            --scenario-bg: #eff6ff;
+            --scenario-border: #2563eb;
+            --edge-bg: #fff7ed;
+            --edge-border: #f97316;
+            --edge-text: #431407;
+            --table-row-hover: #f1f5f9;
+        }
+
+        /* Dark Mode Palette */
+        [data-theme="dark"] {
+            /* Core Colors */
+            --primary: #3b82f6;       /* Brighter Blue for Dark Mode */
+            --primary-dark: #60a5fa;  /* Light Blue */
+            --secondary: #94a3b8;
+            --bg-body: #020617;       /* Deepest Slate */
+            --bg-card: #0f172a;       /* Dark Slate */
+            --text-main: #f1f5f9;     /* Off-white text */
+            --text-muted: #94a3b8;   /* Muted Slate */
+            --accent-red: #f87171;
+            --accent-green: #34d399;
+            --accent-yellow: #fbbf24;
+            --border: #334155;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+
+            /* Component Overrides */
+            --scenario-bg: #172554;
+            --scenario-border: #3b82f6;
+            --edge-bg: #431407;
+            --edge-border: #c2410c;
+            --edge-text: #ffedd5;
+            --table-row-hover: #1e293b;
+        }
+
+        /* Global Transitions */
+        body, .card, .question-block, .criteria-table td, .criteria-table th, header {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: var(--text-main); background-color: var(--bg-body); font-size: 16px; }
+        
+        /* Typography Fixes for Dark Mode Contrast */
+        h1, h2, h3, h4 { line-height: 1.3; color: var(--text-main); margin-bottom: 0.5rem; }
+        
+        h1 { 
+            font-size: 2rem; 
+            font-weight: 800; 
+            color: var(--text-main); /* Fixed: Uses text color, not primary-dark, for better contrast */
+        }
+        
+        /* Override Header H1 specifically */
+        header h1 { color: white; }
+
+        h2 { font-size: 1.5rem; font-weight: 700; border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; margin-top: 2rem; }
+        h3 { font-size: 1.25rem; font-weight: 600; margin-top: 1.5rem; color: var(--primary); }
+        h4 { font-size: 1.1rem; font-weight: 600; margin-top: 1rem; }
+        
+        p { margin-bottom: 1rem; }
+        ul, ol { margin-bottom: 1rem; padding-left: 1.5rem; }
+        li { margin-bottom: 0.4rem; }
+
+        /* --- Layout --- */
+        .container { max-width: var(--container-width); margin: 0 auto; padding: 0 20px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+
+        /* --- Components --- */
+        .card { background: var(--bg-card); border-radius: var(--radius); padding: 2rem; box-shadow: var(--shadow); margin-bottom: 2rem; border: 1px solid var(--border); }
+        
+        .header-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        .scenario-img { width: 100%; height: 200px; object-fit: cover; border-radius: var(--radius); margin-bottom: 1.5rem; }
+        .scenario { border-left: 5px solid var(--scenario-border); background-color: var(--scenario-bg); }
+        
+        .req-list { list-style: none; padding-left: 0; }
+        .req-list li { position: relative; padding-left: 1.8rem; margin-bottom: 0.8rem; }
+        .req-list li::before { content: '✓'; position: absolute; left: 0; top: 2px; color: var(--primary); font-weight: bold; }
+        
+        .feature-tag { display: inline-block; padding: 0.2rem 0.6rem; background-color: var(--primary); color: #fff; border-radius: 4px; font-size: 0.85rem; font-weight: 600; margin-right: 0.5rem; }
+        
+        .question-block { border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; background-color: var(--bg-card); position: relative; }
+        .question-block::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background-color: var(--primary); }
+        
+        .marks-label { display: inline-block; background-color: var(--text-main); color: var(--bg-card); padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.8rem; font-weight: bold; vertical-align: middle; margin-left: 0.5rem; }
+        
+        .sub-task { margin-top: 1rem; padding: 1rem; background-color: var(--bg-body); border-radius: 4px; }
+
+        /* --- Theme Toggle Button --- */
+        .theme-toggle {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.3); /* Lighter border for dark header */
+            color: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .theme-toggle:hover {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.05);
+        }
+        .theme-toggle svg {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* --- Assessment Criteria Styles --- */
+        .lo-badge { display: inline-flex; align-items: center; background-color: var(--primary); color: #fff; padding: 0.4rem 0.8rem; border-radius: 20px; font-weight: 600; font-size: 0.9rem; margin-right: 0.5rem; margin-bottom: 0.5rem; }
+        .lo-badge svg { width: 16px; height: 16px; margin-right: 6px; fill: currentColor; stroke: none; }
+        
+        .edge-box { background: var(--edge-bg); border-left: 4px solid var(--edge-border); padding: 1rem; font-size: 0.95rem; color: var(--edge-text); margin-bottom: 1rem; }
+        .skill-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+        .skill-tag { background-color: var(--border); color: var(--text-muted); padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.85rem; border: 1px solid transparent; }
+
+        /* --- Criteria Tables --- */
+        .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .criteria-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; min-width: 800px; }
+        .criteria-table th, .criteria-table td { border: 1px solid var(--border); padding: 0.75rem; vertical-align: top; text-align: left; }
+        
+        .criteria-table th { font-weight: 700; color: #fff; }
+        .col-poor { background-color: var(--accent-red); }
+        .col-sat { background-color: var(--accent-yellow); }
+        .col-good { background-color: var(--primary); }
+        .col-exc { background-color: var(--accent-green); }
+        
+        [data-theme="dark"] .criteria-table th { opacity: 0.9; }
+        [data-theme="dark"] .row-header { background-color: #334155 !important; color: #fff; }
+        [data-theme="dark"] .criteria-table tr:nth-child(even) td:not(.row-header) { background-color: rgba(255,255,255,0.05); }
+
+        .row-header { background-color: var(--table-row-hover); font-weight: 700; width: 18%; white-space: nowrap; }
+        .criteria-table tr:nth-child(even) td:not(.row-header) { background-color: rgba(0,0,0,0.02); }
+
+        /* --- Header & Footer --- */
+        header { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); color: white; padding: 3rem 0; margin-bottom: 2rem; box-shadow: var(--shadow); }
+        .header-meta { font-size: 1.1rem; opacity: 0.9; }
+        .grade-badge { background-color: rgba(255,255,255,0.2); backdrop-filter: blur(4px); padding: 0.5rem 1rem; border-radius: 50px; border: 1px solid rgba(255,255,255,0.4); font-weight: bold; display: flex; align-items: center; gap: 0.5rem; }
+        
+        .guidelines-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; margin-bottom: 1rem; }
+        .guidelines-table th, .guidelines-table td { border: 1px solid var(--border); padding: 0.75rem; text-align: left; }
+        .guidelines-table th { background-color: var(--border); font-weight: 600; width: 30%; }
+
+        footer { background-color: var(--text-main); color: var(--bg-card); text-align: center; padding: 2rem 0; margin-top: 4rem; font-size: 0.9rem; }
+        
+        /* Print Styles */
+        @media print {
+            body { background-color: white !important; color: black !important; font-size: 12pt; }
+            [data-theme="dark"] { } /* Empty block just to be safe */
+            
+            header { background: none; color: black !important; padding: 0; border-bottom: 2px solid black; box-shadow: none; margin-bottom: 1rem; }
+            header h1 { color: black !important; }
+            .theme-toggle { display: none; }
+            
+            .card { box-shadow: none; border: 1px solid #ccc; break-inside: avoid; background-color: white !important; }
+            .grid-2 { display: block; }
+            .scenario-img { display: none; }
+            .question-block { border: 1px solid #000; }
+            .question-block::before { background-color: #000; }
+            
+            .col-poor, .col-sat, .col-good, .col-exc { background-color: #eee !important; color: black !important; -webkit-print-color-adjust: exact; }
+            .edge-box { border-left-color: black !important; background: none !important; border: 1px solid #ccc; color: black !important; }
+            .table-responsive { overflow: visible; }
+            footer { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header>
+        <div class="container header-content">
+            <div class="header-title">
+                <h1>Written Assignment: KCSMS</h1>
+                <div class="header-meta">Kim's Convenience Store Management System</div>
+            </div>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <div class="grade-badge">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>2000 Words | 50% Total Grade</span>
+                </div>
+                <!-- Dark Mode Toggle Button -->
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+                    <!-- Sun Icon (Visible in Dark Mode) -->
+                    <svg class="sun-icon" style="display: none;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></svg>
+                    <!-- Moon Icon (Visible in Light Mode) -->
+                    <svg class="moon-icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <!-- Scenario Section -->
+        <section class="card scenario">
+            <h2>Assessment Brief</h2>
+            <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 300px;">
+                    <img src="https://picsum.photos/seed/kimstore/600/300" alt="Convenience Store Interior" class="scenario-img">
+                </div>
+                <div style="flex: 2; min-width: 300px;">
+                    <h3>The Scenario</h3>
+                    <p><strong>Mr. Kim’s Convenience Store</strong> is a small family-run shop currently struggling with manual record books and paper-based registers. This legacy system causes:</p>
+                    <ul class="req-list" style="columns: 2;">
+                        <li>Incorrect billing calculations</li>
+                        <li>Loss of item records</li>
+                        <li>Poor stock tracking</li>
+                        <li>Delays in sales summaries</li>
+                        <li>Misplaced records</li>
+                        <li>Frequent shortages/overstocking</li>
+                    </ul>
+                    <br>
+                    <p><strong>The Goal:</strong> Design and implement a <em>menu-driven Python application</em> to automate inventory, billing, and reporting. The system must reduce human errors and improve operations for items like <span class="feature-tag">Ramen</span> <span class="feature-tag">Milk</span> <span class="feature-tag">Chips</span> etc.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Requirements Grid -->
+        <div class="grid-2">
+            <!-- Functional Requirements -->
+            <article class="card">
+                <h2><span style="border-bottom: 3px solid var(--primary);">Functional</span> Requirements</h2>
+                
+                <h3>1. Item Display & Inventory</h3>
+                <p>Display all items with: <em>ID, Name, Category (Grocery/Snacks/etc.), Price, Quantity, Stock Status</em>.</p>
+                <p><strong>Management Actions:</strong></p>
+                <ul class="req-list">
+                    <li>Add, Update, Delete items</li>
+                    <li>Mark as "Out of Stock"</li>
+                    <li>Search by ID or Name</li>
+                    <li>Sort by Price, Quantity, or Category</li>
+                </ul>
+
+                <h3>2. Billing & Checkout</h3>
+                <p>Calculate <code>Total = Price × Quantity</code>.</p>
+                <ul class="req-list">
+                    <li><strong>Discount:</strong> Apply 5% if total exceeds set amount (bulk/regulars).</li>
+                    <li><strong>Warnings:</strong> Alert if Quantity &lt; 10 units. Prevent selling Out of Stock items.</li>
+                    <li><strong>Output:</strong> Item-wise breakdown, Subtotal, Discount, Final Payable.</li>
+                </ul>
+
+                <h3>3. Reporting & Safety</h3>
+                <ul class="req-list">
+                    <li>Generate text report: Total Sales, Revenue, Items Sold, Remaining Inventory.</li>
+                    <li>Highlight items needing restock or frequently sold items.</li>
+                    <li>Safe Exit: Save all records to prevent data loss.</li>
+                </ul>
+            </article>
+
+            <!-- Non-Functional Requirements -->
+            <article class="card">
+                <h2><span style="border-bottom: 3px solid var(--secondary);">Non-Functional</span> Requirements</h2>
+                
+                <h3>1. Interface & Usability</h3>
+                <ul class="req-list">
+                    <li>Menu-driven interface</li>
+                    <li>Clear output with minimal technical jargon</li>
+                    <li>Input Validation: Reject invalid IDs, negative values, and wrong categories.</li>
+                    <li>Robust Error Handling: No crashes on incorrect input.</li>
+                </ul>
+
+                <h3>2. Code Quality & Structure</h3>
+                <ul class="req-list">
+                    <li><strong>Modular Design:</strong> Separate functions for Display, Billing, Searching, etc.</li>
+                    <li><strong>PEP8 Standards:</strong> Proper indentation, meaningful names, docstrings/comments.</li>
+                    <li><strong>Scalability:</strong> Structure code to allow future features (e.g., Barcode scanning).</li>
+                </ul>
+                
+                <div style="background: var(--accent-yellow); opacity: 0.1; border: 1px solid var(--accent-yellow); padding: 1rem; border-radius: 6px; margin-top: 1rem;">
+                    <strong>Note on Data:</strong> Plan how to store data (Dictionaries, Lists, Tuples, or Objects).
+                </div>
+            </article>
+        </div>
+
+        <!-- Assessment Breakdown -->
+        <section class="card" id="assessment">
+            <h2>Assessment Breakdown</h2>
+            <p>Complete the following tasks and submit as a single report.</p>
+
+            <!-- Question 1 -->
+            <div class="question-block">
+                <h3>Question 1: Program Development <span class="marks-label">60 Marks</span></h3>
+                <p>Develop a modularized Python program (KCSMS) meeting all system requirements.</p>
+
+                <div class="sub-task">
+                    <h4>1.1 Technical Document Annex <span class="marks-label" style="background-color: var(--primary);">10 Marks</span></h4>
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">Length: 1-2 Pages (LO3)</p>
+                    <ul>
+                        <li><strong>Problem Summary:</strong> 1 paragraph.</li>
+                        <li><strong>IPO Analysis:</strong> Table showing Input, Process, and Output.</li>
+                        <li><strong>Data Representation Plan:</strong> Explain how items/inventory are stored.</li>
+                        <li><strong>Function Planning:</strong> Table listing functions and purpose (Modularization Map).</li>
+                        <li><strong>Algorithmic Logic:</strong> Explanation of decision structures/algorithms used.</li>
+                    </ul>
+                </div>
+
+                <div class="sub-task">
+                    <h4>1.2 Python Program Source File <span class="marks-label" style="background-color: var(--primary);">40 Marks</span></h4>
+                    <p>The actual <code>.py</code> implementation.</p>
+                </div>
+
+                <div class="sub-task">
+                    <h4>1.3 Evidence of Program Run <span class="marks-label" style="background-color: var(--primary);">10 Marks</span></h4>
+                    <p>Screenshots or console logs showing developed functions working.</p>
+                </div>
+            </div>
+
+            <!-- Question 2 -->
+            <div class="question-block">
+                <h3>Question 2: Testing, Debugging & Documentation <span class="marks-label">40 Marks</span></h3>
+                <p>Verify all features work correctly and document the process.</p>
+                <ul>
+                    <li><strong>Test Plan:</strong> Input data, Expected output vs Actual output.</li>
+                    <li><strong>Debugging:</strong> Record errors encountered and how they were resolved.</li>
+                    <li><strong>Documentation Report:</strong>
+                        <ul style="list-style-type: circle; margin-top: 0.5rem;">
+                            <li>System Purpose & Features</li>
+                            <li>Functions Summary</li>
+                            <li>Testing Results</li>
+                            <li>Limitations</li>
+                            <li>Reflection on the development process</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Guidelines Section -->
+        <section class="card">
+            <h2>Submission Guidelines</h2>
+            <div class="grid-2">
+                <div>
+                    <h3>Paper Format</h3>
+                    <table class="guidelines-table">
+                        <tr><th>Paper Size</th><td>A4</td></tr>
+                        <tr><th>Margins</th><td>1.5” (Left), 1” (Right/Top/Bottom)</td></tr>
+                        <tr><th>Page Numbers</th><td>Bottom, Right</td></tr>
+                        <tr><th>Line Spacing</th><td>1.5</td></tr>
+                        <tr><th>Font Face</th><td>Times New Roman</td></tr>
+                        <tr><th>Headings</th><td>14pt, Bold</td></tr>
+                        <tr><th>Normal Text</th><td>12pt</td></tr>
+                    </table>
+                </div>
+                <div>
+                    <h3>Referencing & Word Count</h3>
+                    <div style="background-color: var(--border); padding: 1.5rem; border-radius: 6px; height: 100%;">
+                        <p><strong>Referencing Style:</strong> Harvard Referencing (Anglia Ruskin University).</p>
+                        <p style="font-size: 0.9rem; font-style: italic;">"In the Harvard system, the author's surname and year of publication are cited in the text... The full details are included in a reference list at the end."</p>
+                        <hr style="margin: 1rem 0; border: 0; border-top: 1px solid var(--border);">
+                        <p><strong>Word Count:</strong> 2000 words.</p>
+                        <ul style="font-size: 0.9rem; color: var(--text-muted);">
+                            <li>Includes: Text, tables, calculations, figures, subtitles, citations.</li>
+                            <li>Excludes: Reference list and appendices contents.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Assessment Criteria -->
+        <section class="card">
+            <h2>Assessment Criteria</h2>
+            
+            <!-- Learning Outcomes & Skills Grid -->
+            <div class="grid-2" style="margin-bottom: 2rem;">
+                <div>
+                    <h3>Learning Outcomes Assessed</h3>
+                    <div style="margin-top: 0.5rem;">
+                        <span class="lo-badge">
+                            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"/></svg>
+                            LO3: Design a structured computer program
+                        </span>
+                        <span class="lo-badge">
+                            <svg viewBox="0 0 24 24"><path d="M14.6 16.6l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4zm-5.2 0L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4z"/></svg>
+                            LO4: Develop a modularized computer programme for a prepared design
+                        </span>
+                        <span class="lo-badge">
+                            <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                            LO5: Compile, test, and document software effectively
+                        </span>
+                    </div>
+                </div>
+                <div>
+                    <h3>Other Skills Developed</h3>
+                    <div class="edge-box">
+                        This includes elements of the Cardiff Met <strong>EDGE</strong> (Ethical, Digital, Global and Entrepreneurial skills) and other attributes developed in students through the completion of the module. Assessments are not just a way of auditing student knowledge. They are a process which provides additional learning and development.
+                    </div>
+                    <div class="skill-tags">
+                        <span class="skill-tag">IPO Analysis</span>
+                        <span class="skill-tag">Modularization</span>
+                        <span class="skill-tag">Program Implementation</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Marking Tables -->
+            <h3>Marking / Assessment Criteria</h3>
+            <p style="margin-bottom: 1.5rem;">Detailed breakdown of marks awarded for each section of the report.</p>
+
+            <!-- Table 1: 10 Mark Tasks -->
+            <h4>10 Mark Tasks (Technical Design & Evidence)</h4>
+            <div class="table-responsive" style="margin-bottom: 2rem;">
+                <table class="criteria-table">
+                    <thead>
+                        <tr>
+                            <th class="row-header" style="background-color: var(--border); color: var(--text-main);">Task</th>
+                            <th class="col-poor">Poor (0-2)</th>
+                            <th class="col-sat">Satisfactory (3-5)</th>
+                            <th class="col-good">Good (6-8)</th>
+                            <th class="col-exc">Excellent (9-10)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="row-header">Task 1.1 – Technical Design Document (LO3)</td>
+                            <td>Weak understanding of the problem. Missing or incomplete Problem Summary, IPO, or Function Plan. No clear data representation method. Limited or no discussion on algorithmic logic.</td>
+                            <td>Adequate problem analysis with basic Problem Summary and partial IPO table. Data representation mentioned briefly. Some modularization ideas presented but lacking clarity.</td>
+                            <td>Clear and structured technical document. Includes Problem Summary, IPO, Data Representation, Function Planning, and Algorithmic Logic. Demonstrates good understanding of modular design and system flow.</td>
+                            <td>Comprehensive and professional technical document. All components (Problem Summary, IPO, Data Plan, Function Map, Algorithmic Logic) are complete, coherent, and logically linked. Strong reasoning and attention to modularity and clarity in design.</td>
+                        </tr>
+                        <tr>
+                            <td class="row-header">Task 1.3 – Evidence of Program Run (LO3,LO4)</td>
+                            <td>Minimal or no evidence of program execution. Outputs unclear or irrelevant. Missing proof of working features.</td>
+                            <td>Some screenshots or outputs shown but incomplete. Limited demonstration of core functions.</td>
+                            <td>Adequate program run evidence showing functional modules with clear output examples. Covers main system features.</td>
+                            <td>Comprehensive and clear evidence of successful program runs. Includes multiple sample executions, demonstrating all major system functionalities (menu, ordering, billing, search, sort, receipt generation). Well-labeled and organized outputs.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Table 2: 40 Mark Tasks -->
+            <h4>40 Mark Tasks (Implementation & Testing)</h4>
+            <div class="table-responsive">
+                <table class="criteria-table">
+                    <thead>
+                        <tr>
+                            <th class="row-header" style="background-color: var(--border); color: var(--text-main);">Task</th>
+                            <th class="col-poor">Poor (0-10)</th>
+                            <th class="col-sat">Satisfactory (11-20)</th>
+                            <th class="col-good">Good (21-30)</th>
+                            <th class="col-exc">Excellent (31-40)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="row-header">Task 1.2 – Python Program Implementation (LO3,LO4)</td>
+                            <td>Program incomplete or fails to execute. No modularization or poor code structure. Missing major requirements (menu display, ordering, billing, searching, sorting). Minimal comments or validation.</td>
+                            <td>Program partially functional with some modularization. Includes some system features but may have logical/syntax errors. Limited input validation and documentation.</td>
+                            <td>Functional and modular program covering all major features. Uses functions effectively with proper validation, readable format, and user-friendly output. Includes docstrings and follows most PEP8 conventions.</td>
+                            <td>Fully functional, modular, and professionally written program. All system requirements (menu, order, billing, discount, search, sort, receipt, exit) correctly implemented. Includes excellent input validation, error handling, meaningful variable names, comments, and adherence to PEP8. Code is efficient, readable, and user-focused.</td>
+                        </tr>
+                        <tr>
+                            <td class="row-header">Task 2 – Testing, Debugging & Documentation (LO5)</td>
+                            <td>Little to no testing performed. Test plan missing or incomplete. Debugging not documented. Final documentation lacks structure or detail.</td>
+                            <td>Basic test plan with limited inputs and expected results. Debugging mentioned briefly. Documentation minimal and lacks reflection.</td>
+                            <td>Structured test plan covering main features with expected vs actual results. Debugging steps and corrections described. Documentation summarizes purpose, features, and limitations adequately.</td>
+                            <td>Comprehensive and professional report including detailed test plan (varied inputs, expected vs actual results). Debugging process explained with problem-solving justification. Final documentation well-organized and reflective, detailing purpose, functionality, testing results, limitations, and suggestions for future improvement.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 Department of Computing. Assessment for Python Programming Module.</p>
+            <p style="font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.7;">Ensure work is submitted before the deadline to avoid penalties.</p>
+        </div>
+    </footer>
+
+    <!-- Theme Toggle Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleBtn = document.getElementById('theme-toggle');
+            const sunIcon = document.querySelector('.sun-icon');
+            const moonIcon = document.querySelector('.moon-icon');
+            const html = document.documentElement;
+
+            console.log("Script loaded. Initializing theme...");
+
+            // Function to set theme
+            function setTheme(theme) {
+                console.log("Setting theme to:", theme);
+                html.setAttribute('data-theme', theme);
+                
+                // Update Icons
+                if (theme === 'dark') {
+                    sunIcon.style.display = 'block';
+                    moonIcon.style.display = 'none';
+                } else {
+                    sunIcon.style.display = 'none';
+                    moonIcon.style.display = 'block';
+                }
+            }
+
+            // 1. Check for saved theme
+            try {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                setTheme(savedTheme);
+            } catch (e) {
+                console.error("Could not access localStorage, defaulting to light", e);
+                setTheme('light');
+            }
+
+            // 2. Handle Click
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', () => {
+                    const currentTheme = html.getAttribute('data-theme');
+                    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                    
+                    setTheme(newTheme);
+                    
+                    // Save preference
+                    try {
+                        localStorage.setItem('theme', newTheme);
+                    } catch (e) {
+                        console.warn("Could not save theme to localStorage", e);
+                    }
+                });
+            } else {
+                console.error("Toggle button not found!");
+            }
+        });
+    </script>
+
+</body>
+</html>

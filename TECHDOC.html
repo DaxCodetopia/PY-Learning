@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Software Technical Documentation Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 30px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo-icon {
+            font-size: 36px;
+            color: #4CAF50;
+        }
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        nav a:hover {
+            color: #4CAF50;
+        }
+        .hero {
+            padding: 60px 0;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .hero p {
+            font-size: 20px;
+            max-width: 800px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .section {
+            padding: 60px 0;
+        }
+        .section-title {
+            font-size: 36px;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+        }
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+        .card {
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 12px;
+            padding: 30px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+        }
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        .card-icon {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #4CAF50;
+        }
+        .card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        .card p {
+            line-height: 1.6;
+            color: #cccccc;
+        }
+        .example-section {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 60px;
+        }
+        .example-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .example-title {
+            font-size: 30px;
+            color: #4CAF50;
+        }
+        .example-badge {
+            background-color: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        .doc-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border-left: 4px solid #4CAF50;
+            background-color: rgba(40, 44, 52, 0.5);
+        }
+        .doc-section h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #4CAF50;
+        }
+        .doc-section p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .doc-section ul {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+        .doc-section li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        .code-block {
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Source Code Pro', monospace;
+        }
+        .code-comment {
+            color: #608b4e;
+        }
+        .code-keyword {
+            color: #569cd6;
+        }
+        .code-string {
+            color: #ce9178;
+        }
+        .code-number {
+            color: #b5cea8;
+        }
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: rgba(40, 44, 52, 0.7);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        th {
+            background-color: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .scroll-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 1000;
+        }
+        .scroll-to-top.visible {
+            opacity: 1;
+        }
+        .scroll-to-top:hover {
+            transform: translateY(-5px);
+        }
+        footer {
+            background-color: #0f0f0f;
+            padding: 40px 0;
+            text-align: center;
+        }
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        .footer-section {
+            flex: 1;
+            min-width: 200px;
+        }
+        .footer-title {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #4CAF50;
+        }
+        .footer-links {
+            list-style: none;
+        }
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        .footer-links a {
+            color: #cccccc;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .footer-links a:hover {
+            color: #4CAF50;
+        }
+        .copyright {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #888888;
+        }
+        .animation-fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s, transform 0.6s;
+        }
+        .animation-fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .tab {
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .tab.active {
+            color: #4CAF50;
+            border-bottom: 2px solid #4CAF50;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .highlight-box {
+            background-color: rgba(76, 175, 80, 0.1);
+            border-left: 4px solid #4CAF50;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .highlight-box h4 {
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="material-icons logo-icon">description</i>
+                    <div class="logo-text">TechDoc Guide</div>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#introduction">Introduction</a></li>
+                        <li><a href="#importance">Why It Matters</a></li>
+                        <li><a href="#components">Key Components</a></li>
+                        <li><a href="#example">Example</a></li>
+                        <li><a href="#resources">Resources</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Mastering Software Technical Documentation</h1>
+            <p>Learn how to create clear, comprehensive, and effective technical documentation that bridges the gap between developers, stakeholders, and users.</p>
+            <a href="#example" class="cta-button">Explore Example</a>
+        </div>
+    </section>
+
+    <section id="introduction" class="section">
+        <div class="container">
+            <h2 class="section-title animation-fade-in">What is Technical Documentation?</h2>
+            <div class="card-container">
+                <div class="card animation-fade-in">
+                    <i class="material-icons card-icon">description</i>
+                    <h3>Definition</h3>
+                    <p>Technical documentation is written communication that explains the use, architecture, development, and operation of a software product or system.</p>
+                </div>
+                <div class="card animation-fade-in">
+                    <i class="material-icons card-icon">people</i>
+                    <h3>Audience</h3>
+                    <p>Documentation serves various audiences including developers, project managers, end-users, and stakeholders with different levels of technical expertise.</p>
+                </div>
+                <div class="card animation-fade-in">
+                    <i class="material-icons card-icon">auto_stories</i>
+                    <h3>Purpose</h3>
+                    <p>Good documentation facilitates knowledge transfer, reduces onboarding time, enables maintenance, and improves user experience.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="importance" class="section">
+        <div class="container">
+            <h2 class="section-title animation-fade-in">Why Technical Documentation Matters</h2>
+            <div class="highlight-box animation-fade-in">
+                <h4>Key Benefits</h4>
+                <ul>
+                    <li>Reduces knowledge silos and dependency on specific team members</li>
+                    <li>Accelerates onboarding of new developers</li>
+                    <li>Improves code maintainability and debugging efficiency</li>
+                    <li>Enhances user satisfaction and reduces support requests</li>
+                    <li>Facilitates compliance with industry standards and regulations</li>
+                </ul>
+            </div>
+            <div class="card-container">
+                <div class="card animation-fade-in">
+                    <i class="material-icons card-icon">psychology</i>
+                    <h3>For Developers</h3>
+                    <p>Clear documentation reduces cognitive load, enables efficient problem-solving, and provides a reference for implementation decisions.</p>
+                </div>
+                <div class="card animation-fade-in">
+                    <i class="material-icons card-icon">business</i>
+                    <h3>For Organizations</h3>
+                    <p>Documentation preserves institutional knowledge, reduces training costs, and ensures continuity despite team changes.</p>
+                </div>
+                <div class="card animation-fade-in">
+                    <i class="material-icons card-icon">person</i>
+                    <h3>For Users</h3>
+                    <p>Well-documented products are easier to use, lead to higher adoption rates, and reduce the need for customer support.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="components" class="section">
+        <div class="container">
+            <h2 class="section-title animation-fade-in">Key Components of Technical Documentation</h2>
+            <div class="tabs">
+                <div class="tab active" data-tab="architecture">Architecture</div>
+                <div class="tab" data-tab="api">API Documentation</div>
+                <div class="tab" data-tab="user">User Guides</div>
+                <div class="tab" data-tab="development">Development</div>
+            </div>
+            <div class="tab-content active" id="architecture">
+                <div class="doc-section">
+                    <h3>System Architecture Documentation</h3>
+                    <p>Architecture documentation provides a high-level view of the system's structure, components, and interactions. It helps developers understand the overall design and how different parts of the system work together.</p>
+                    <ul>
+                        <li>System overview and goals</li>
+                        <li>Component diagrams and relationships</li>
+                        <li>Data flow and processing</li>
+                        <li>Technology stack and rationale</li>
+                        <li>Scalability and performance considerations</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="tab-content" id="api">
+                <div class="doc-section">
+                    <h3>API Documentation</h3>
+                    <p>API documentation explains how to interact with software components through programming interfaces. It's essential for developers who need to integrate with or extend the system.</p>
+                    <ul>
+                        <li>Endpoint descriptions and parameters</li>
+                        <li>Request and response formats</li>
+                        <li>Authentication and authorization methods</li>
+                        <li>Error handling and status codes</li>
+                        <li>Code examples and SDKs</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="tab-content" id="user">
+                <div class="doc-section">
+                    <h3>User Guides and Manuals</h3>
+                    <p>User documentation helps end-users understand how to use the software effectively. It should be written in clear, non-technical language and include practical examples.</p>
+                    <ul>
+                        <li>Installation and setup instructions</li>
+                        <li>Feature descriptions and tutorials</li>
+                        <li>Troubleshooting common issues</li>
+                        <li>Frequently asked questions</li>
+                        <li>Best practices and tips</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="tab-content" id="development">
+                <div class="doc-section">
+                    <h3>Development Documentation</h3>
+                    <p>Development documentation guides contributors through the process of working with the codebase, from setting up the environment to submitting changes.</p>
+                    <ul>
+                        <li>Development environment setup</li>
+                        <li>Coding standards and conventions</li>
+                        <li>Testing procedures and guidelines</li>
+                        <li>Contribution workflow</li>
+                        <li>Code review process</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="example" class="section">
+        <div class="container">
+            <h2 class="section-title animation-fade-in">Technical Documentation Example</h2>
+            <div class="example-section animation-fade-in">
+                <div class="example-header">
+                    <div class="example-title">ComicVerse – Smart Comic Book Shop Management System</div>
+                    <div class="example-badge">Example Documentation</div>
+                </div>
+                
+                <div class="doc-section">
+                    <h3>Scenario Overview</h3>
+                    <p>ComicVerse is a small but popular local comic book shop loved by students, collectors, and pop-culture fans. The shop sells a variety of comic books, graphic novels, manga, and merchandise such as posters and keychains, each with unique prices.</p>
+                    <p>Currently, ComicVerse staff manage sales using handwritten bills and manual calculations. This paper-based approach often leads to pricing mistakes, missing sales records, and long waiting times—especially during weekends, new-release days, and promotional events. As customer traffic has increased, the shop staff are struggling to efficiently manage orders and billing manually.</p>
+                    <p>The shop owner has hired <strong>you as a Junior Software Developer</strong> to design and implement a <strong>Python-based Smart Comic Book Shop Management System</strong>. The system will automate daily sales operations in a simple, structured, and user-friendly way, helping ComicVerse improve accuracy, speed, and customer satisfaction.</p>
+                </div>
+                
+                <div class="doc-section">
+                    <h3>System Requirements</h3>
+                    <h4>Functional Requirements</h4>
+                    <ul>
+                        <li><strong>Catalog Display</strong>: Display all available comic books and merchandise with prices. Items should be stored in a dictionary or list.</li>
+                        <li><strong>Order Management</strong>: Allow the cashier to select multiple items and enter quantities. Validate inputs to ensure correct item selection and numeric quantities.</li>
+                        <li><strong>Bill Calculation</strong>: Calculate subtotal, discount (if applicable), and final payable amount. Apply a <strong>10% discount for purchases above LKR 3000</strong> (special collector discount).</li>
+                        <li><strong>Search and Sorting Features</strong>:
+                            <ul>
+                                <li>Search items by name to check price or availability.</li>
+                                <li>Sort items alphabetically or by price.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Receipt Generation</strong>: Display ordered items, quantities, unit prices, subtotal, discount, and final total.</li>
+                        <li><strong>Exit Option</strong>: Allow safe system exit after completing transactions.</li>
+                    </ul>
+                    
+                    <h4>Non-Functional Requirements</h4>
+                    <ul>
+                        <li>The system must be <strong>user-friendly, modular, and easy to understand</strong>.</li>
+                        <li>Use <strong>separate functions</strong> for catalog display, ordering, billing, discount calculation, searching, and sorting.</li>
+                        <li>Implement <strong>input validation and error handling</strong>.</li>
+                        <li>Follow <strong>PEP8 coding standards</strong>.</li>
+                        <li>Include <strong>clear comments and docstrings</strong>.</li>
+                    </ul>
+                </div>
+                
+                <div class="doc-section">
+                    <h3>Introduction</h3>
+                    <h4>Problem Summary</h4>
+                    <p>ComicVerse currently relies on manual billing and handwritten sales records. This results in calculation errors, misplaced bills, and slow customer service during peak hours. To solve these issues, a Python-based Smart Comic Book Shop Management System is proposed. The system will automate product display, order handling, billing, discounts, searching, sorting, and receipt generation, improving efficiency and accuracy.</p>
+                    
+                    <h4>Purpose</h4>
+                    <p>The purpose of this document is to define the scope, features, and technical specifications of the Smart Comic Book Shop Management System. The desired outcome is a reliable, easy-to-use software solution that streamlines daily sales operations and enhances customer experience.</p>
+                    
+                    <h4>Project Scope</h4>
+                    <p>The system focuses on point-of-sale operations within ComicVerse. Key objectives include:</p>
+                    <ul>
+                        <li>Reducing billing errors</li>
+                        <li>Speeding up checkout during busy hours</li>
+                        <li>Improving record accuracy</li>
+                        <li>Supporting future enhancements such as inventory tracking</li>
+                    </ul>
+                    <p>These objectives align with the shop's goal of delivering fast, accurate, and enjoyable service to comic lovers.</p>
+                </div>
+                
+                <div class="doc-section">
+                    <h3>Input–Process–Output (IPO) Analysis</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Input</th>
+                                    <th>Process</th>
+                                    <th>Output</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Comic items and prices</td>
+                                    <td>Store items in dictionary or list</td>
+                                    <td>Formatted catalog display</td>
+                                </tr>
+                                <tr>
+                                    <td>User item selection</td>
+                                    <td>Validate item name/number</td>
+                                    <td>Accepted selection or error message</td>
+                                </tr>
+                                <tr>
+                                    <td>Quantity</td>
+                                    <td>Check numeric validity</td>
+                                    <td>Updated order list</td>
+                                </tr>
+                                <tr>
+                                    <td>Total order amount</td>
+                                    <td>Calculate subtotal</td>
+                                    <td>Subtotal value</td>
+                                </tr>
+                                <tr>
+                                    <td>Subtotal</td>
+                                    <td>Apply 10% discount if > LKR 3000</td>
+                                    <td>Discount amount</td>
+                                </tr>
+                                <tr>
+                                    <td>Search keyword</td>
+                                    <td>Match with catalog</td>
+                                    <td>Item price / availability</td>
+                                </tr>
+                                <tr>
+                                    <td>Sorting choice</td>
+                                    <td>Sort alphabetically or by price</td>
+                                    <td>Sorted catalog</td>
+                                </tr>
+                                <tr>
+                                    <td>Exit command</td>
+                                    <td>Terminate program safely</td>
+                                    <td>Exit message</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="doc-section">
+                    <h3>Data Representation Plan</h3>
+                    <p>The system uses Python's built-in data structures:</p>
+                    <div class="highlight-box">
+                        <h4>Comic Catalog (Dictionary)</h4>
+                        <div class="code-block">
+                            <span class="code-keyword">catalog</span> = {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-string">"Spider-Man Comic"</span>: <span class="code-number">1200</span>,<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-string">"Batman Graphic Novel"</span>: <span class="code-number">2500</span>,<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-string">"One Piece Manga"</span>: <span class="code-number">900</span>,<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-string">"Anime Poster"</span>: <span class="code-number">600</span><br>
+                            }
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="doc-section">
+                    <h3>Function Planning (Modularization Map)</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Function Name</th>
+                                    <th>Purpose</th>
+                                    <th>Modular Benefit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>display_catalog()</td>
+                                    <td>Displays all items with prices</td>
+                                    <td>Improves readability</td>
+                                </tr>
+                                <tr>
+                                    <td>take_order()</td>
+                                    <td>Accepts item selection and quantity</td>
+                                    <td>Separates input logic</td>
+                                </tr>
+                                <tr>
+                                    <td>validate_input()</td>
+                                    <td>Validates item names and quantities</td>
+                                    <td>Prevents errors</td>
+                                </tr>
+                                <tr>
+                                    <td>calculate_subtotal()</td>
+                                    <td>Calculates total cost</td>
+                                    <td>Isolates calculations</td>
+                                </tr>
+                                <tr>
+                                    <td>apply_discount()</td>
+                                    <td>Applies collector discount</td>
+                                    <td>Easy policy change</td>
+                                </tr>
+                                <tr>
+                                    <td>search_item()</td>
+                                    <td>Searches catalog by name</td>
+                                    <td>Better usability</td>
+                                </tr>
+                                <tr>
+                                    <td>sort_catalog()</td>
+                                    <td>Sorts items by name or price</td>
+                                    <td>Easier navigation</td>
+                                </tr>
+                                <tr>
+                                    <td>generate_receipt()</td>
+                                    <td>Displays final bill</td>
+                                    <td>Clear output</td>
+                                </tr>
+                                <tr>
+                                    <td>main()</td>
+                                    <td>Controls system flow</td>
+                                    <td>Central coordination</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="doc-section">
+                    <h3>Algorithmic Logic Discussion</h3>
+                    <p>The system uses <strong>selection, iteration, and modular functions</strong>:</p>
+                    
+                    <h4>Decision Structures (if-else)</h4>
+                    <ul>
+                        <li>Validate item selection and quantities</li>
+                        <li>Apply discount only when subtotal exceeds LKR 3000</li>
+                        <li>Handle invalid inputs gracefully</li>
+                    </ul>
+                    
+                    <h4>Loops (for, while)</h4>
+                    <ul>
+                        <li>Allow multiple items per order</li>
+                        <li>Iterate through catalog and orders</li>
+                        <li>Repeat operations until exit option is selected</li>
+                    </ul>
+                    
+                    <h4>Sorting</h4>
+                    <p>Python's built-in <code>sorted()</code> function is used for alphabetical and price-based sorting.</p>
+                    
+                    <h4>Error Handling</h4>
+                    <p>Prevents invalid item names and non-numeric quantities, ensuring system stability.</p>
+                    
+                    <p>This structured logic ensures the system is efficient, beginner-friendly, and expandable for future features such as inventory tracking and sales reports.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="resources" class="section">
+        <div class="container">
+            <h2 class="section-title animation-fade-in">Documentation Resources</h2>
+            <div class="card-container">
+                <div class="card animation-fade-in">
+                    <i class="material-icons card-icon">menu_book</i>
+                    <h3>Style Guides</h3>
+                    <p>Established documentation style guides help maintain consistency across your documentation. Consider adopting industry standards like the Microsoft Writing Style Guide or Google's developer documentation style guide.</p>
+                </div>
+                <div class="card animation-fade-in">
+                    <i class="material-icons card-icon">integration_instructions</i>
+                    <h3>Documentation Tools</h3>
+                    <p>Modern documentation tools like Sphinx, MkDocs, Javadoc, and Swagger can automate much of the documentation process and generate professional-looking output.</p>
+                </div>
+                <div class="card animation-fade-in">
+                    <i class="material-icons card-icon">psychology_alt</i>
+                    <h3>Best Practices</h3>
+                    <p>Focus on clarity, accuracy, and completeness. Use consistent terminology, include examples, and keep documentation updated with code changes.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3 class="footer-title">About</h3>
+                    <p>This guide is designed to help software developers create effective technical documentation that improves collaboration, reduces onboarding time, and enhances user experience.</p>
+                </div>
+                <div class="footer-section">
+                    <h3 class="footer-title">Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#introduction">Introduction</a></li>
+                        <li><a href="#importance">Why It Matters</a></li>
+                        <li><a href="#components">Key Components</a></li>
+                        <li><a href="#example">Example</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3 class="footer-title">Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Documentation Tools</a></li>
+                        <li><a href="#">Style Guides</a></li>
+                        <li><a href="#">Templates</a></li>
+                        <li><a href="#">Community</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 Technical Documentation Guide. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div class="scroll-to-top" id="scrollToTop">
+        <i class="material-icons">keyboard_arrow_up</i>
+    </div>
+
+    <script>
+        // Scroll to top functionality
+        const scrollToTopButton = document.getElementById('scrollToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollToTopButton.classList.add('visible');
+            } else {
+                scrollToTopButton.classList.remove('visible');
+            }
+        });
+        
+        scrollToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Fade in animation on scroll
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.animation-fade-in').forEach(el => {
+            observer.observe(el);
+        });
+        
+        // Tab functionality
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.getAttribute('data-tab');
+                
+                // Remove active class from all tabs and contents
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(tc => tc.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                tab.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

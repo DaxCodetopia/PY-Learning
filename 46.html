@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Searching Masterclass & Boba Shop Simulation</title>
+    <style>
+        :root {
+            /* --- LIGHT MODE VARIABLES --- */
+            --primary: #3776ab; /* Python Blue */
+            --secondary: #ffd343; /* Python Yellow */
+            --bg-color: #f8f9fa;
+            --text-color: #333;
+            --card-bg: #ffffff;
+            --code-bg: #282c34;
+            --border-color: #ddd;
+            --panel-bg: #fdfdfd;
+            --shelf-bg: #fff;
+            --shelf-border: #ccc;
+            --log-bg: #222;
+            
+            /* Card specific */
+            --card-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            --success: #28a745;
+            --danger: #dc3545;
+            
+            /* Boba Colors */
+            --boba-brown: #8d6e63; 
+            --boba-black: #3e2723;
+            --cup-border: #dfe6e9;
+            --liquid-opacity: 0.9;
+        }
+
+        /* --- DARK MODE VARIABLES (Dark Blue Theme) --- */
+        body.dark-mode {
+            --primary: #64ffda; /* Cyan Accent */
+            --secondary: #ffd343; /* Python Yellow (kept for readability) */
+            --bg-color: #0a192f; /* Deep Navy Blue */
+            --text-color: #ccd6f6; /* Off-white text */
+            --card-bg: #112240; /* Navy Blue Card */
+            --code-bg: #020c1b;
+            --border-color: #233554;
+            --panel-bg: #112240;
+            --shelf-bg: #112240;
+            --shelf-border: #233554;
+            --log-bg: #020c1b;
+
+            --card-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            --success: #64ffda;
+            --danger: #ff6b6b;
+
+            /* Dark Mode Boba adjustments */
+            --boba-brown: #6d4c41; 
+            --boba-black: #251614;
+            --cup-border: #4a5b75;
+            --liquid-opacity: 0.7;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            padding-bottom: 4rem;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* --- Header & Logo Animation --- */
+        header {
+            background: linear-gradient(135deg, var(--primary), #26547c);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+        }
+
+        @media(min-width: 600px) {
+            header {
+                flex-direction: row;
+                justify-content: center;
+                text-align: left;
+            }
+        }
+
+        /* Python Logo SVG Styles */
+        .python-logo {
+            width: 60px;
+            height: 60px;
+            animation: spin 10s linear infinite;
+        }
+
+        @keyframes spin { 
+            100% { transform: rotate(360deg); } 
+        }
+
+        .header-content {
+            flex: 1;
+        }
+        
+        /* Theme Toggle Button */
+        .theme-toggle {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.4);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .theme-toggle:hover {
+            background: rgba(255,255,255,0.4);
+        }
+
+        header h1 { font-size: 2.2rem; margin-bottom: 0.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        header p { font-size: 1.1rem; opacity: 0.95; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+
+        main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        section {
+            background: var(--card-bg);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-color);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        h2 { 
+            color: var(--primary); 
+            margin-top: 0; 
+            margin-bottom: 1rem; 
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        h3 { color: var(--text-color); margin-top: 1.5rem; margin-bottom: 0.8rem; font-size: 1.2rem; }
+        h4 { color: var(--primary); margin-top: 1rem; margin-bottom: 0.5rem; font-size: 1.05rem; }
+        p { margin-bottom: 1rem; }
+        ul, ol { margin-left: 1.5rem; margin-bottom: 1rem; }
+        li { margin-bottom: 0.5rem; }
+
+        /* --- Feature Boxes --- */
+        .pros-cons-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        .pro-con-box {
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 5px solid #ccc;
+            background: rgba(0,0,0,0.02); /* Slight tint */
+        }
+        .pros { border-left-color: var(--success); background-color: rgba(40, 167, 69, 0.1); }
+        .cons { border-left-color: var(--danger); background-color: rgba(220, 53, 69, 0.1); }
+
+        /* --- Concept Grid --- */
+        .concept-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        /* --- Code Blocks --- */
+        pre {
+            background: var(--code-bg);
+            color: #abb2bf;
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Syntax Highlighting */
+        .kw { color: #c678dd; font-weight: bold; } 
+        .str { color: #98c379; } 
+        .func { color: #61afef; } 
+        .cmt { color: #5c6370; font-style: italic; } 
+        .num { color: #d19a66; } 
+
+        /* --- Interactive Simulation Styles --- */
+        .simulation-interface {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .control-panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .form-group { margin-bottom: 1rem; }
+
+        label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.9;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.7rem;
+            border: 1px solid var(--border-color);
+            background: var(--bg-color);
+            color: var(--text-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-top: 1.5rem;
+        }
+
+        button:not(.theme-toggle) {
+            width: 100%;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+
+        button:not(.theme-toggle):active { transform: scale(0.98); }
+        button:not(.theme-toggle):disabled { background: #ccc; cursor: not-allowed; transform: none; opacity: 0.6; }
+
+        .btn-primary { background-color: var(--primary); color: #0a192f; }
+        .btn-primary:hover { opacity: 0.9; }
+
+        .btn-secondary { background-color: var(--secondary); color: #333; }
+        .btn-secondary:hover { opacity: 0.9; }
+
+        /* Visual Shelf Container */
+        .visual-shelf-container {
+            background: var(--shelf-bg);
+            border: 2px dashed var(--shelf-border);
+            border-radius: 12px;
+            min-height: 300px;
+            position: relative;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+            gap: 15px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+            transition: background-color 0.3s;
+        }
+
+        .boba-card {
+            width: 110px;
+            min-width: 110px;
+            background: var(--card-bg);
+            border-top: 6px solid var(--primary);
+            padding: 10px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 8px; 
+            transition: all 0.3s ease;
+            border-left: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        /* --- PROPER CUP DESIGN --- */
+        .boba-icon {
+            width: 40px;
+            height: 60px;
+            margin: 0 auto;
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+
+        .straw {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-10deg);
+            width: 6px;
+            height: 45px;
+            background: #ff9f43;
+            border: 1px solid #e67e22;
+            z-index: 10;
+        }
+
+        .lid {
+            width: 44px;
+            height: 14px;
+            background: #2d3436;
+            border-radius: 8px 8px 0 0;
+            position: absolute;
+            top: -2px;
+            z-index: 5;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .cup-body {
+            width: 40px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid var(--cup-border);
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            position: absolute;
+            bottom: 0;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .liquid {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 85%;
+            background: var(--boba-brown);
+            opacity: var(--liquid-opacity);
+        }
+
+        .pearls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 12px;
+            background: 
+                radial-gradient(circle, var(--boba-black) 3px, transparent 4px),
+                radial-gradient(circle, var(--boba-black) 3px, transparent 4px);
+            background-size: 10px 10px;
+            background-position: 2px bottom, 7px bottom;
+            opacity: 0.8;
+        }
+        /* ---------------------- */
+
+        .card-info h4 { margin: 0; color: var(--primary); font-size: 1rem; text-align: center; margin-top: 5px;}
+        .card-info span { font-size: 0.8rem; color: #777; display: block; text-align: center; }
+
+        /* Animation States */
+        .boba-card.active {
+            transform: scale(1.15);
+            background-color: var(--secondary);
+            border-color: #f57f17;
+            z-index: 10;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        .boba-card.active h4 { color: #333; }
+
+        .boba-card.found {
+            transform: scale(1.15);
+            background-color: var(--success);
+            border-top-color: #1e7e34;
+            z-index: 10;
+        }
+        .boba-card.found h4 { color: #0a192f; } /* Dark text on bright green */
+
+        .boba-card.eliminated {
+            opacity: 0.3;
+            filter: grayscale(100%);
+            transform: scale(0.9);
+        }
+
+        /* Pointer Labels for Binary Search */
+        .pointer-label {
+            position: absolute;
+            top: -25px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: var(--primary);
+            background: var(--card-bg);
+            padding: 2px 5px;
+            border-radius: 4px;
+            border: 1px solid var(--primary);
+            opacity: 0;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+        }
+
+        /* Log Output */
+        .system-log {
+            margin-top: 1.5rem;
+            background: var(--log-bg);
+            color: #0f0;
+            font-family: monospace;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .empty-msg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--text-color);
+            opacity: 0.5;
+            font-style: italic;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .concept-grid, .simulation-interface, .pros-cons-grid {
+                grid-template-columns: 1fr;
+            }
+            .visual-shelf-container {
+                padding: 1rem;
+                gap: 10px;
+            }
+            .boba-card {
+                width: 100px;
+                min-width: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <!-- Rotating Python Logo SVG -->
+    <svg class="python-logo" viewBox="0 0 256 255" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <linearGradient id="a" x1="12.959%" x2="79.639%" y1="12.039%" y2="78.201%">
+                <stop offset="0%" stop-color="#387EB8"/>
+                <stop offset="100%" stop-color="#366994"/>
+            </linearGradient>
+            <linearGradient id="b" x1="19.128%" x2="90.742%" y1="20.579%" y2="88.429%">
+                <stop offset="0%" stop-color="#FFE052"/>
+                <stop offset="100%" stop-color="#FFC331"/>
+            </linearGradient>
+        </defs>
+        <path fill="url(#a)" d="M126.916.072c-64.832 0-60.784 28.115-60.784 28.115l.072 29.128h61.868v8.745H41.631S.145 61.355.145 126.77c0 65.417 36.21 63.097 36.21 63.097h21.61v-30.356s-1.165-36.21 35.632-36.21h61.362s34.475.557 34.475-33.319V33.97S194.67.072 126.916.072zM92.802 19.66a11.12 11.12 0 0 1 11.13 11.13 11.12 11.12 0 0 1-11.13 11.13 11.12 11.12 0 0 1-11.13-11.13 11.12 11.12 0 0 1 11.13-11.13z"/>
+        <path fill="url(#b)" d="M128.757 254.126c64.832 0 60.784-28.115 60.784-28.115l-.072-29.127H127.6v-8.745h86.241s41.486 4.705 41.486-60.712c0-65.416-36.21-63.096-36.21-63.096h-21.61v30.355s1.165 36.21-35.632 36.21h-61.362s-34.475-.557-34.475 33.32v56.013s-5.235 33.897 62.518 33.897zm34.114-19.586a11.12 11.12 0 0 1-11.13-11.13 11.12 11.12 0 0 1 11.13-11.131 11.12 11.12 0 0 1 11.13 11.13 11.12 11.12 0 0 1-11.13 11.13z"/>
+    </svg>
+
+    <div class="header-content">
+        <h1>Python Searching: Boba Shop</h1>
+        <p>Master Linear & Binary Search with Interactive Simulations</p>
+    </div>
+
+    <button class="theme-toggle" id="themeBtn" aria-label="Toggle Dark Mode" onclick="toggleTheme()">
+        🌙
+    </button>
+</header>
+
+<main>
+    <!-- Section 1: Concept & Theory -->
+    <section>
+        <h2>The Problem: Finding the Right Order</h2>
+        <div class="concept-grid">
+            <div>
+                <p><strong>Searching</strong> is the process of finding a specific element in a collection of data. In programming, efficiency is key.</p>
+                <p>In our <strong>Boba Tea Shop</strong>, we have a list of orders. Each order has a unique <strong>ID</strong>. We need to find the correct drink ticket quickly to serve the customer.</p>
+                <p>We will explore two fundamental algorithms:</p>
+                <ol>
+                    <li><strong>Linear Search:</strong> Checking every item one by one.</li>
+                    <li><strong>Binary Search:</strong> Dividing the sorted list in half repeatedly.</li>
+                </ol>
+            </div>
+            <div style="text-align: center; padding: 1rem; background: var(--bg-color); border-radius: 8px; border: 1px solid var(--border-color);">
+                <div style="font-size: 3rem;">🧋</div>
+                <h4 style="color: var(--text-color);">Shop Inventory</h4>
+                <p style="font-size: 0.9rem;">List of orders: <code>[101, 102, 103...]</code></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: Linear Search -->
+    <section>
+        <h2>1. Linear Search</h2>
+        <p>Analogous to looking through a messy pile of order tickets. You pick the top one, check it, and if it's not right, you move to the next.</p>
+
+        <div class="pros-cons-grid">
+            <div class="pro-con-box pros">
+                <h3>Advantages</h3>
+                <ul>
+                    <li>Works on <strong>unsorted</strong> data.</li>
+                    <li>Simple to implement.</li>
+                    <li>Efficient for very small lists.</li>
+                </ul>
+            </div>
+            <div class="pro-con-box cons">
+                <h3>Disadvantages</h3>
+                <ul>
+                    <li>Slow for large lists.</li>
+                    <li>Time Complexity: <strong>O(n)</strong> (Grows linearly with data).</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>Python Implementation</h3>
+        <pre><code><span class="kw">def</span> <span class="func">linear_search</span>(orders, target_id):
+    <span class="cmt"># Iterate through the list of dictionaries</span>
+    <span class="kw">for</span> order <span class="kw">in</span> orders:
+        <span class="kw">if</span> order[<span class="str">"id"</span>] == target_id:
+            <span class="kw">return</span> order  <span class="cmt"># Found!</span>
+    <span class="kw">return</span> <span class="kw">None</span>  <span class="cmt"># Not found</span></code></pre>
+
+        <h3>Interactive Simulation</h3>
+        <p>Try searching for an ID (e.g., 107). The data is <strong>randomized</strong> to prove it works on unsorted lists.</p>
+        
+        <div class="simulation-interface">
+            <!-- Controls -->
+            <div class="control-panel">
+                <div class="form-group">
+                    <label for="linearTarget">Target Order ID</label>
+                    <input type="text" id="linearTarget" value="107" placeholder="e.g. 107">
+                </div>
+                
+                <div class="btn-group">
+                    <button class="btn-primary" id="btnLinearStart" onclick="startLinearSearch()">Start Linear Search</button>
+                    <button class="btn-secondary" onclick="resetLinear()">Shuffle / Reset</button>
+                </div>
+
+                <div class="system-log" id="linearLog">> Ready to search...</div>
+            </div>
+
+            <!-- Visual -->
+            <div class="visual-shelf-container" id="linearShelf">
+                <!-- Items generated by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Binary Search -->
+    <section>
+        <h2>2. Binary Search (Introduction)</h2>
+        <p>Analogous to a numbered menu. You open it in the middle. If your target number is higher, you discard the left half. If lower, discard the right half.</p>
+        <div class="info-box" style="background: var(--secondary); border-left: 5px solid #333; padding: 1rem; margin-bottom: 1rem; color: #333;">
+            <strong>Requirement:</strong> The list <strong>MUST</strong> be sorted for Binary Search to work.
+        </div>
+
+        <div class="pros-cons-grid">
+            <div class="pro-con-box pros">
+                <h3>Advantages</h3>
+                <ul>
+                    <li>Extremely fast.</li>
+                    <li>Time Complexity: <strong>O(log n)</strong>.</li>
+                    <li>Efficient for massive datasets.</li>
+                </ul>
+            </div>
+            <div class="pro-con-box cons">
+                <h3>Disadvantages</h3>
+                <ul>
+                    <li>Data must be sorted first.</li>
+                    <li>More complex logic to implement.</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>Python Implementation</h3>
+        <pre><code><span class="kw">def</span> <span class="func">binary_search</span>(orders, target_id):
+    low = <span class="num">0</span>
+    high = <span class="func">len</span>(orders) - <span class="num">1</span>
+
+    <span class="kw">while</span> low <= high:
+        mid = (low + high) // <span class="num">2</span>
+        <span class="kw">if</span> orders[mid][<span class="str">"id"</span>] == target_id:
+            <span class="kw">return</span> orders[mid]
+        <span class="kw">elif</span> orders[mid][<span class="str">"id"</span>] < target_id:
+            low = mid + <span class="num">1</span>  <span class="cmt"># Look right</span>
+        <span class="kw">else</span>:
+            high = mid - <span class="num">1</span>  <span class="cmt"># Look left</span>
+    <span class="kw">return</span> <span class="kw">None</span></code></pre>
+
+        <h3>Interactive Simulation</h3>
+        <p>Try searching for an ID (e.g., 104). The data is automatically <strong>sorted</strong>.</p>
+
+        <div class="simulation-interface">
+            <!-- Controls -->
+            <div class="control-panel">
+                <div class="form-group">
+                    <label for="binaryTarget">Target Order ID</label>
+                    <input type="text" id="binaryTarget" value="104" placeholder="e.g. 104">
+                </div>
+                
+                <div class="btn-group">
+                    <button class="btn-primary" id="btnBinaryStart" onclick="startBinarySearch()">Start Binary Search</button>
+                    <button class="btn-secondary" onclick="resetBinary()">Reset (Sort)</button>
+                </div>
+
+                <div class="system-log" id="binaryLog">> Ready to search...</div>
+            </div>
+
+            <!-- Visual -->
+            <div class="visual-shelf-container" id="binaryShelf">
+                <!-- Items generated by JS -->
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer style="text-align: center; color: var(--text-color); opacity: 0.7;">
+    <p>&copy; Python Learning Resources. 2D Interactive Web Module.</p>
+</footer>
+
+<script>
+    // --- THEME TOGGLE LOGIC ---
+    function toggleTheme() {
+        const body = document.body;
+        const btn = document.getElementById('themeBtn');
+        body.classList.toggle('dark-mode');
+        
+        if (body.classList.contains('dark-mode')) {
+            btn.innerText = '☀️'; // Sun icon for light mode
+        } else {
+            btn.innerText = '🌙'; // Moon icon for dark mode
+        }
+    }
+
+    /**
+     * DATA GENERATOR
+     */
+    const drinks = ["Taro", "Milk", "Thai", "Matcha", "Mango", "Coffee", "Strawberry", "Wintermelon", "Almond", "Coconut"];
+    
+    // Generate 10 orders: ID 101 to 110
+    const generateOrders = () => {
+        return drinks.map((drink, i) => ({
+            id: (101 + i).toString(),
+            name: drink + " Tea"
+        }));
+    };
+
+    let linearData = [];
+    let binaryData = [];
+
+    /**
+     * HELPER: Create Boba Card DOM Element with "Proper Cup" HTML
+     */
+    function createBobaCard(item) {
+        const div = document.createElement('div');
+        div.className = 'boba-card';
+        div.dataset.id = item.id;
+        
+        // Binary Search Pointers
+        const lowLabel = document.createElement('div');
+        lowLabel.className = 'pointer-label pointer-low';
+        lowLabel.innerText = 'Low';
+        
+        const midLabel = document.createElement('div');
+        midLabel.className = 'pointer-label pointer-mid';
+        midLabel.innerText = 'Mid';
+        
+        const highLabel = document.createElement('div');
+        highLabel.className = 'pointer-label pointer-high';
+        highLabel.innerText = 'High';
+
+        div.innerHTML = `
+            <div class="boba-icon">
+                <div class="straw"></div>
+                <div class="lid"></div>
+                <div class="cup-body">
+                    <div class="liquid">
+                        <div class="pearls"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-info">
+                <h4>#${item.id}</h4>
+                <span>${item.name}</span>
+            </div>
+        `;
+        
+        div.appendChild(lowLabel);
+        div.appendChild(midLabel);
+        div.appendChild(highLabel);
+        return div;
+    }
+
+    function wait(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function updateLog(elementId, msg) {
+        const el = document.getElementById(elementId);
+        el.innerHTML = `> ${msg}`;
+    }
+
+    /* =========================================
+       LINEAR SEARCH LOGIC
+       ========================================= */
+    
+    function resetLinear() {
+        // Shuffle data to simulate unsorted list
+        linearData = [...generateOrders()].sort(() => Math.random() - 0.5);
+        const container = document.getElementById('linearShelf');
+        container.innerHTML = '';
+        linearData.forEach(item => container.appendChild(createBobaCard(item)));
+        document.getElementById('linearTarget').disabled = false;
+        document.getElementById('btnLinearStart').disabled = false;
+        updateLog('linearLog', 'Data shuffled. Ready.');
+    }
+
+    async function startLinearSearch() {
+        const target = document.getElementById('linearTarget').value.trim();
+        if(!target) return;
+
+        const container = document.getElementById('linearShelf');
+        const cards = Array.from(container.children);
+        
+        document.getElementById('linearTarget').disabled = true;
+        document.getElementById('btnLinearStart').disabled = true;
+        updateLog('linearLog', 'Starting Linear Scan...');
+
+        let found = false;
+
+        for (let i = 0; i < cards.length; i++) {
+            const card = cards[i];
+            const id = card.dataset.id;
+
+            // Animation: Active
+            card.classList.add('active');
+            updateLog('linearLog', `Checking index ${i}: ID ${id}...`);
+            await wait(800);
+
+            if (id === target) {
+                card.classList.remove('active');
+                card.classList.add('found');
+                updateLog('linearLog', `<span style="color:#4cd137">SUCCESS: Found ${target} at index ${i}!</span>`);
+                found = true;
+                break;
+            } else {
+                card.classList.remove('active');
+                updateLog('linearLog', `${id} is not a match. Moving next...`);
+            }
+            await wait(200);
+        }
+
+        if(!found) {
+            updateLog('linearLog', `<span style="color:#e84118">FAILED: Order ${target} not found.</span>`);
+        }
+
+        document.getElementById('linearTarget').disabled = false;
+        document.getElementById('btnLinearStart').disabled = false;
+    }
+
+
+    /* =========================================
+       BINARY SEARCH LOGIC
+       ========================================= */
+
+    function resetBinary() {
+        // Binary requires sorted data
+        binaryData = generateOrders(); 
+        const container = document.getElementById('binaryShelf');
+        container.innerHTML = '';
+        binaryData.forEach(item => container.appendChild(createBobaCard(item)));
+        document.getElementById('binaryTarget').disabled = false;
+        document.getElementById('btnBinaryStart').disabled = false;
+        updateLog('binaryLog', 'Data sorted by ID. Ready.');
+    }
+
+    async function startBinarySearch() {
+        const target = document.getElementById('binaryTarget').value.trim();
+        if(!target) return;
+
+        const container = document.getElementById('binaryShelf');
+        const cards = Array.from(container.children);
+        
+        document.getElementById('binaryTarget').disabled = true;
+        document.getElementById('btnBinaryStart').disabled = true;
+        updateLog('binaryLog', 'Starting Binary Search...');
+
+        let low = 0;
+        let high = cards.length - 1;
+        let found = false;
+
+        // Clear previous visuals
+        cards.forEach(c => c.className = 'boba-card');
+
+        while (low <= high) {
+            // Update Pointers
+            updatePointers(cards, low, high);
+            await wait(500);
+
+            const mid = Math.floor((low + high) / 2);
+            const midCard = cards[mid];
+            const midId = midCard.dataset.id;
+
+            // Show Mid
+            midCard.classList.add('active');
+            midCard.classList.add('show-mid'); // Show label via CSS logic
+            updateLog('binaryLog', `Range [${low}-${high}]. Checking Mid (${midId})...`);
+            await wait(1000);
+
+            if (midId === target) {
+                midCard.classList.remove('active');
+                midCard.classList.add('found');
+                updateLog('binaryLog', `<span style="color:#4cd137">SUCCESS: Found ${target} at index ${mid}!</span>`);
+                found = true;
+                updatePointers(cards, -1, -1); // Clear pointers
+                break;
+            } else if (midId < target) {
+                // Target is higher, discard left
+                updateLog('binaryLog', `${midId} < ${target}. Discarding left half.`);
+                for(let i=low; i<=mid; i++) {
+                    cards[i].classList.add('eliminated');
+                }
+                low = mid + 1;
+            } else {
+                // Target is lower, discard right
+                updateLog('binaryLog', `${midId} > ${target}. Discarding right half.`);
+                for(let i=mid; i<=high; i++) {
+                    cards[i].classList.add('eliminated');
+                }
+                high = mid - 1;
+            }
+
+            midCard.classList.remove('active');
+            await wait(500);
+        }
+
+        if(!found) {
+            updateLog('binaryLog', `<span style="color:#e84118">FAILED: Order ${target} not found.</span>`);
+            updatePointers(cards, -1, -1);
+        }
+
+        document.getElementById('binaryTarget').disabled = false;
+        document.getElementById('btnBinaryStart').disabled = false;
+    }
+
+    function updatePointers(cards, low, high) {
+        cards.forEach((card, index) => {
+            // Remove labels
+            const labels = card.querySelectorAll('.pointer-label');
+            labels.forEach(l => l.style.opacity = '0');
+            card.classList.remove('show-low', 'show-high');
+
+            if (index === low) {
+                card.classList.add('show-low');
+                card.querySelector('.pointer-low').style.opacity = '1';
+            }
+            if (index === high) {
+                card.classList.add('show-high');
+                card.querySelector('.pointer-high').style.opacity = '1';
+            }
+        });
+    }
+
+    // Initialize on Load
+    resetLinear();
+    resetBinary();
+
+</script>
+
+</body>
+</html>
